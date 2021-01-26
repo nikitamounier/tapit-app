@@ -49,6 +49,7 @@
 		E488D08025C03CCF002DEDD8 /* Tap ItUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tap ItUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E488D08425C03CCF002DEDD8 /* Tap_ItUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tap_ItUITests.swift; sourceTree = "<group>"; };
 		E488D08625C03CCF002DEDD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E488D09825C04199002DEDD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +80,7 @@
 		E488D05625C03CCF002DEDD8 = {
 			isa = PBXGroup;
 			children = (
+				E488D09825C04199002DEDD8 /* README.md */,
 				E488D06125C03CCF002DEDD8 /* Tap It */,
 				E488D07825C03CCF002DEDD8 /* Tap ItTests */,
 				E488D08325C03CCF002DEDD8 /* Tap ItUITests */,
