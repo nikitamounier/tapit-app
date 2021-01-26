@@ -29,7 +29,7 @@ Work was started beginning of September (made a new main branch and deleted mast
 
 ## Author
 
-Nikita Mounier, nikita.mounier@gmail.com – started working on it beginning of Sept
+Nikita Mounier, nikita.mounier@gmail.com
 
 ## Copyright
 
