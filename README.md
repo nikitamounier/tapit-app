@@ -25,11 +25,11 @@ Tap It aims to drastically streamline this process, to both parties simply press
 
 ## Current Progress
 
-The data-sharing code has been figured out. Now onto the UI!
+Work was started beginning of September (made a new main branch and deleted master). After many ups and downs, the data-sharing code has been figured out. Now onto the UI!
 
 ## Author
 
-Nikita Mounier, nikita.mounier@gmail.com
+Nikita Mounier, nikita.mounier@gmail.com – started working on it beginning of Sept
 
 ## Copyright
 
