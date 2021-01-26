@@ -33,6 +33,6 @@ Nikita Mounier, nikita.mounier@gmail.com
 
 ## Copyright
 
-This project does not have a license, hence default copyright laws apply, meaning that I retain all rights to my source code and no one may reproduce, distribute, or create derivative works from my work. Of course, you have the right to view and fork this repository! Just had to make this little disclaimer so that no one steals.
+This project does not have a license, hence default copyright laws apply, meaning that I retain all rights to my source code and no one may reproduce, distribute, or create derivative works from my work.
 
 
