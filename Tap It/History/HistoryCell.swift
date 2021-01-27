@@ -8,25 +8,30 @@
 import SwiftUI
 
 struct HistoryCell: View {
-    @ScaledMetric private var size: CGFloat = 120
+    let profilePicture: Image
+    let name: String
+    let socials: [String] // for now
+    let date: String
+    
+    @ScaledMetric private var dynamicHeight: CGFloat = 120
     
     var profile: some View {
         GeometryReader { geo in
             HStack(spacing: 0) {
-                Image(systemName: "person.crop.square.fill")
+                profilePicture
                     .resizable()
                     .clipShape(Circle())
                     .frame(width: geo.size.width / 6, height: geo.size.width / 6)
                     .padding(.horizontal)
                 VStack(alignment: .leading) {
                     HStack(alignment: .center, spacing: 0) {
-                        Text("Nikita Mounier")
+                        Text(name)
                             .font(.headline)
                         Spacer()
                         Image(systemName: "calendar")
                             .foregroundColor(.gray)
                             .font(.footnote)
-                        Text("27/01/2020")
+                        Text(date)
                             .foregroundColor(.gray)
                             .padding(.trailing)
                             .font(.footnote)
@@ -34,8 +39,8 @@ struct HistoryCell: View {
                     Divider()
                     HStack(alignment: .center) {
                         HStack {
-                            ForEach(1..<5) { app in
-                                Image(systemName: "person.crop.square.fill")
+                            ForEach(socials.prefix(4), id: \.self) { app in
+                                Image(systemName: app)
                                     .resizable()
                                     .scaledToFit()
                                     .cornerRadius(10)
@@ -57,7 +62,7 @@ struct HistoryCell: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 25, style: .continuous)
             .foregroundColor(.white)
-            .frame(width: UIScreen.main.bounds.width - 35, height: size)
+            .frame(width: UIScreen.main.bounds.width - 35, height: dynamicHeight)
             .shadow(radius: 5)
             .overlay(profile)
     }
@@ -68,9 +73,10 @@ struct HistoryCell_Previews: PreviewProvider {
         ScrollView {
             LazyVStack(spacing: 20) {
                 ForEach(0..<100) { item in
-                    HistoryCell()
+                    HistoryCell(profilePicture: Image(systemName: "person.crop.square.fill"), name: "Nikita Mounier", socials: Array(repeating: "person.crop.square.fill", count: Int.random(in: 1...6)), date: "27/01/2020")
                 }
             }
+            .padding(.top)
             .frame(maxWidth: .infinity)
         }
         .environment(\.sizeCategory, .medium)
