@@ -18,7 +18,6 @@ struct HistoryCell: View {
                     .clipShape(Circle())
                     .frame(width: geo.size.width / 6, height: geo.size.width / 6)
                     .padding(.horizontal)
-                //.border(Color.red)
                 VStack(alignment: .leading) {
                     HStack(alignment: .center, spacing: 0) {
                         Text("Nikita Mounier")
@@ -34,7 +33,6 @@ struct HistoryCell: View {
                     }
                     Divider()
                     HStack(alignment: .center) {
-                        //ScrollView(.horizontal) {
                         HStack {
                             ForEach(1..<5) { app in
                                 Image(systemName: "person.crop.square.fill")
