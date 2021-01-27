@@ -11,7 +11,15 @@ import CoreData
 struct ContentView: View {
     
     var body: some View {
-        Text("Hello world!")
+        ScrollView {
+            LazyVStack(spacing: 20) {
+                ForEach(0..<100) { item in
+                    HistoryCell(profilePicture: Image(systemName: "person.crop.square.fill"), name: "Nikita Mounier", socials: Array(repeating: "person.crop.square.fill", count: Int.random(in: 1...6)), date: "27/01/2020")
+                }
+            }
+            .padding(.top)
+            .frame(maxWidth: .infinity)
+        }
     }
 }
 

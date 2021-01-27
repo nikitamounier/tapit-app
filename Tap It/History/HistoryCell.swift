@@ -18,12 +18,15 @@ struct HistoryCell: View {
     var profile: some View {
         GeometryReader { geo in
             HStack(spacing: 0) {
+                
                 profilePicture
                     .resizable()
                     .clipShape(Circle())
                     .frame(width: geo.size.width / 6, height: geo.size.width / 6)
                     .padding(.horizontal)
+                
                 VStack(alignment: .leading) {
+                    
                     HStack(alignment: .center, spacing: 0) {
                         Text(name)
                             .font(.headline)
@@ -36,7 +39,10 @@ struct HistoryCell: View {
                             .padding(.trailing)
                             .font(.footnote)
                     }
+                    .lineLimit(1)
+                    
                     Divider()
+                    
                     HStack(alignment: .center) {
                         HStack {
                             ForEach(socials.prefix(4), id: \.self) { app in
