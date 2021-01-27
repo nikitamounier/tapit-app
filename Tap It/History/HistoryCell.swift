@@ -49,7 +49,7 @@ struct HistoryCell: View {
                         }
                         Color.tapGradient
                             .mask(Image(systemName: "ellipsis").font(.title))
-                            .frame(width: geo.size.width / 10, height: 10)
+                            .frame(width: geo.size.width / 10)
                             .padding(.trailing)
                     }
                     .frame(height: geo.size.height / 3)
@@ -62,7 +62,7 @@ struct HistoryCell: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 25, style: .continuous)
             .foregroundColor(.white)
-            .frame(width: UIScreen.main.bounds.width - 35, height: dynamicHeight)
+            .frame(width: UIScreen.main.bounds.width * 0.9, height: dynamicHeight)
             .shadow(radius: 5)
             .overlay(profile)
     }
