@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		E408F62625C1DE86005F91A3 /* Neumorphism.swift in Sources */ = {isa = PBXBuildFile; fileRef = E408F62525C1DE86005F91A3 /* Neumorphism.swift */; };
 		E408F62E25C1E084005F91A3 /* NeumorphicOuter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E408F62D25C1E084005F91A3 /* NeumorphicOuter.swift */; };
+		E40CDA6225C346EC0016CB7C /* InstagramIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6125C346EC0016CB7C /* InstagramIcon.swift */; };
+		E40CDA6725C373010016CB7C /* SnapchatIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6625C373010016CB7C /* SnapchatIcon.swift */; };
 		E44A42E925C0D10500C22FC3 /* Color+Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44A42E825C0D10500C22FC3 /* Color+Gradient.swift */; };
 		E470346525C238C500E2FC8C /* ProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E470346425C238C500E2FC8C /* ProfilePreview.swift */; };
 		E488D06325C03CCF002DEDD8 /* Tap_ItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D06225C03CCF002DEDD8 /* Tap_ItApp.swift */; };
@@ -20,6 +22,7 @@
 		E488D07A25C03CCF002DEDD8 /* Tap_ItTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D07925C03CCF002DEDD8 /* Tap_ItTests.swift */; };
 		E488D08525C03CCF002DEDD8 /* Tap_ItUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D08425C03CCF002DEDD8 /* Tap_ItUITests.swift */; };
 		E488D09B25C06873002DEDD8 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D09A25C06873002DEDD8 /* HistoryCell.swift */; };
+		E4CA35C925C2CDB600255C75 /* TwitterIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4CA35C825C2CDB600255C75 /* TwitterIcon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +45,8 @@
 /* Begin PBXFileReference section */
 		E408F62525C1DE86005F91A3 /* Neumorphism.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Neumorphism.swift; sourceTree = "<group>"; };
 		E408F62D25C1E084005F91A3 /* NeumorphicOuter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeumorphicOuter.swift; sourceTree = "<group>"; };
+		E40CDA6125C346EC0016CB7C /* InstagramIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramIcon.swift; sourceTree = "<group>"; };
+		E40CDA6625C373010016CB7C /* SnapchatIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapchatIcon.swift; sourceTree = "<group>"; };
 		E44A42E825C0D10500C22FC3 /* Color+Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Gradient.swift"; sourceTree = "<group>"; };
 		E470346425C238C500E2FC8C /* ProfilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePreview.swift; sourceTree = "<group>"; };
 		E488D05F25C03CCF002DEDD8 /* Tap It.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tap It.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,6 +65,7 @@
 		E488D08625C03CCF002DEDD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E488D09825C04199002DEDD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E488D09A25C06873002DEDD8 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
+		E4CA35C825C2CDB600255C75 /* TwitterIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterIcon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +131,7 @@
 				E488D06425C03CCF002DEDD8 /* ContentView.swift */,
 				E488D09925C06855002DEDD8 /* History */,
 				E488D06625C03CCF002DEDD8 /* Assets.xcassets */,
+				E4CA35C725C2CD9400255C75 /* Social Icons */,
 				E408F62425C1DE76005F91A3 /* Styling */,
 				E488D06B25C03CCF002DEDD8 /* Persistence.swift */,
 				E488D07025C03CCF002DEDD8 /* Info.plist */,
@@ -167,6 +174,16 @@
 				E470346425C238C500E2FC8C /* ProfilePreview.swift */,
 			);
 			path = History;
+			sourceTree = "<group>";
+		};
+		E4CA35C725C2CD9400255C75 /* Social Icons */ = {
+			isa = PBXGroup;
+			children = (
+				E40CDA6125C346EC0016CB7C /* InstagramIcon.swift */,
+				E40CDA6625C373010016CB7C /* SnapchatIcon.swift */,
+				E4CA35C825C2CDB600255C75 /* TwitterIcon.swift */,
+			);
+			path = "Social Icons";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,12 +315,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4CA35C925C2CDB600255C75 /* TwitterIcon.swift in Sources */,
 				E488D06F25C03CCF002DEDD8 /* Tap_It.xcdatamodeld in Sources */,
 				E408F62E25C1E084005F91A3 /* NeumorphicOuter.swift in Sources */,
 				E470346525C238C500E2FC8C /* ProfilePreview.swift in Sources */,
 				E488D06C25C03CCF002DEDD8 /* Persistence.swift in Sources */,
 				E408F62625C1DE86005F91A3 /* Neumorphism.swift in Sources */,
 				E488D06525C03CCF002DEDD8 /* ContentView.swift in Sources */,
+				E40CDA6225C346EC0016CB7C /* InstagramIcon.swift in Sources */,
+				E40CDA6725C373010016CB7C /* SnapchatIcon.swift in Sources */,
 				E488D06325C03CCF002DEDD8 /* Tap_ItApp.swift in Sources */,
 				E488D09B25C06873002DEDD8 /* HistoryCell.swift in Sources */,
 				E44A42E925C0D10500C22FC3 /* Color+Gradient.swift in Sources */,
