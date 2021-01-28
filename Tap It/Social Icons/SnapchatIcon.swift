@@ -16,14 +16,15 @@ struct SnapchatIcon: View {
     
     var silhouette: some View {
         SnapchatSilhouette()
-            .stroke()
+            .stroke(lineWidth: 20)
+            .scale(0.7272)
     }
     
     var body: some View {
         SnapchatShape(cornerRadiusScale: cornerRadiusScale)
             .scaledToFit()
             .foregroundColor(.init(red: 255 / 255, green: 233 / 255, blue: 38 / 255))
-            .overlay(SnapchatSilhouette().stroke(lineWidth: 20).scale(0.7272))
+            .overlay(silhouette)
     }
 }
 
