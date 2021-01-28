@@ -11,15 +11,20 @@ import CoreData
 struct ContentView: View {
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 20) {
-                ForEach(0..<100) { item in
-                    HistoryCell(profilePicture: Image(systemName: "person.crop.square.fill"), name: "Nikita Mounier", socials: Array(repeating: "person.crop.square.fill", count: Int.random(in: 1...6)), date: "27/01/2020")
+        ZStack {
+            Neumorphic.mainColor
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(0..<100) { item in
+                        HistoryCell(profilePicture: Image(systemName: "person.crop.square.fill"), name: "Nikita Mounier", socials: Array(repeating: "person.crop.square.fill", count: Int.random(in: 1...6)), date: "27/01")
+                    }
                 }
+                .padding(.top)
+                .frame(maxWidth: .infinity)
             }
-            .padding(.top)
-            .frame(maxWidth: .infinity)
         }
+        .navigationBarTitle("History", displayMode: .large)
+        .ignoresSafeArea()
     }
 }
 

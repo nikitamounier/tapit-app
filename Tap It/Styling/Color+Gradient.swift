@@ -12,5 +12,5 @@ extension Color {
     
     static let gradientEnd = Color(red: 243 / 255, green: 0, blue: 246 / 255)
     
-    static let tapGradient = LinearGradient(gradient: Gradient(colors: [Color.gradientStart, Color.gradientEnd]), startPoint: .topLeading, endPoint: .bottomTrailing)
+    static let tapGradient = LinearGradient(gradient: Gradient(colors: [Color.gradientStart, Color.gradientEnd]), startPoint: .topLeading, endPoint: .bottom)
 }
