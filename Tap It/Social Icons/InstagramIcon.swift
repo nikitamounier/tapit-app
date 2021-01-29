@@ -4,12 +4,13 @@
 //
 //  Created by Nikita Mounier on 28/01/2021.
 //
+// Thanks to Quassum Manus and his tool to convert SVG code to SwiftUI shapes: https://quassummanus.github.io/SVG-to-SwiftUI/
 
 import SwiftUI
 
+// MARK: - Icon
 struct InstagramIcon: View {
     let cornerRadiusScale: CGFloat
-    
     
     init(cornerRadiusScale: CGFloat = 10 / 57) {
         self.cornerRadiusScale = cornerRadiusScale
@@ -17,12 +18,21 @@ struct InstagramIcon: View {
     
     var body: some View {
         InstagramShape(cornerRadiusScale: cornerRadiusScale)
-            .fill(Color.pink) // temporary
+            .fill(instagramGradient) // temporary - until I find true gradient
             .scaledToFit()
         
     }
+    
+    private let instagramGradient: LinearGradient = {
+        let color1 = Color(red: 255 / 255, green: 221 / 255, blue: 85 / 255)
+        let color2 = Color(red: 255 / 255, green: 84 / 255, blue: 62 / 255)
+        let color3 = Color(red: 200 / 255, green: 55 / 255, blue: 171 / 255)
+        let gradient = Gradient(colors: [color1, color2, color3])
+        return LinearGradient(gradient: gradient, startPoint: .bottomLeading, endPoint: .topTrailing)
+    }()
 }
 
+// MARK: - Shape
 struct InstagramShape: Shape {
     let cornerRadiusScale: CGFloat
     
