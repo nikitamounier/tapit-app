@@ -4,6 +4,7 @@
 //
 //  Created by Nikita Mounier on 29/01/2021.
 //
+// Thanks to Quassum Manus and his tool to convert SVG code to SwiftUI shapes: https://quassummanus.github.io/SVG-to-SwiftUI/
 
 import SwiftUI
 
