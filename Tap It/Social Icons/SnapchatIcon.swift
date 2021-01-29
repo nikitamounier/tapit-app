@@ -4,9 +4,11 @@
 //
 //  Created by Nikita Mounier on 28/01/2021.
 //
+// Thanks to Quassum Manus and his tool to convert SVG code to SwiftUI shapes: https://quassummanus.github.io/SVG-to-SwiftUI/
 
 import SwiftUI
 
+// MARK: - Icon
 struct SnapchatIcon: View {
     let cornerRadiusScale: CGFloat
     
@@ -28,6 +30,7 @@ struct SnapchatIcon: View {
     }
 }
 
+// MARK: - Shape
 struct SnapchatShape: Shape {
     let cornerRadiusScale: CGFloat
     
@@ -109,7 +112,7 @@ struct SnapchatShape: Shape {
     }
 }
 
-
+// MARK: - Silhouette Outline
 private struct SnapchatSilhouette: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
