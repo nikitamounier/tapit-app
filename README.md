@@ -6,15 +6,15 @@ Tap It enables two people to seamlessly share their social media information (e.
 
 Tap It uses:
 
-  * [SwiftUI](https://developer.apple.com/documentation/swiftui)
+   *  [SwiftUI](https://developer.apple.com/documentation/swiftui)
   
-  * [Combine](https://developer.apple.com/documentation/combine)
+   *  [Combine](https://developer.apple.com/documentation/combine)
   
-  * [Network Framework](https://developer.apple.com/documentation/network) ([P2PShareKit](https://github.com/dobster/P2PShareKit))
+   *  [Network Framework](https://developer.apple.com/documentation/network) ([P2PShareKit](https://github.com/dobster/P2PShareKit))
   
-  * [Core Location](https://developer.apple.com/documentation/corelocation) and [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) ([iBeacon](https://developer.apple.com/documentation/corelocation/clbeacon))
+   *  [Core Location](https://developer.apple.com/documentation/corelocation) and [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) ([iBeacon](https://developer.apple.com/documentation/corelocation/clbeacon))
   
-  * [Core Data](https://developer.apple.com/documentation/coredata)
+   *  [Core Data](https://developer.apple.com/documentation/coredata)
   
 
 ## Motivation
