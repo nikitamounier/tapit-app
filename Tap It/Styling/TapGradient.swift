@@ -26,15 +26,15 @@ extension LinearGradient {
         let colors: [Color] = [Color.tapGradientStart, Color.tapGgradientEnd]
         switch tapGradient {
         case .topLeftToBottom:
-            self = LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottom)
+            self.init(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottom)
         case .topLeftToBottomRight:
-            self =  LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
+            self.init(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
         case .topToBottom:
-            self =  LinearGradient(gradient: Gradient(colors: colors), startPoint: .top, endPoint: .bottom)
+            self.init(gradient: Gradient(colors: colors), startPoint: .top, endPoint: .bottom)
         case .leftToRight:
-            self = LinearGradient(gradient: Gradient(colors: colors), startPoint: .leading, endPoint: .trailing)
+            self.init(gradient: Gradient(colors: colors), startPoint: .leading, endPoint: .trailing)
         case .rightToLeft:
-            self = LinearGradient(gradient: Gradient(colors: colors), startPoint: .trailing, endPoint: .leading)
+            self.init(gradient: Gradient(colors: colors), startPoint: .trailing, endPoint: .leading)
         }
     }
 }
