@@ -4,9 +4,11 @@
 //
 //  Created by Nikita Mounier on 28/01/2021.
 //
+// Thanks to Quassum Manus and his tool to convert SVG code to SwiftUI shapes: https://quassummanus.github.io/SVG-to-SwiftUI/
 
 import SwiftUI
 
+// MARK: - Icon
 struct TwitterIcon: View {
     let cornerRadiusScale: CGFloat
     
@@ -22,6 +24,7 @@ struct TwitterIcon: View {
     }
 }
 
+// MARK: - Shape
 struct TwitterShape: Shape {
     let cornerRadiusScale: CGFloat
     
