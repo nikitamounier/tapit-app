@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,8 +13,11 @@
 		E40CDA6725C373010016CB7C /* SnapchatIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6625C373010016CB7C /* SnapchatIcon.swift */; };
 		E40CDA6F25C378FE0016CB7C /* FacebookIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6E25C378FE0016CB7C /* FacebookIcon.swift */; };
 		E42DF81325C38D6100B58CE1 /* PhoneIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42DF81225C38D6100B58CE1 /* PhoneIcon.swift */; };
+		E42EA29F25C874AD00CB51BC /* HistoryNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42EA29E25C874AD00CB51BC /* HistoryNavBar.swift */; };
+		E43BD2E125C831FD00587951 /* HistoryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43BD2E025C831FD00587951 /* HistoryList.swift */; };
 		E44A42E925C0D10500C22FC3 /* TapGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44A42E825C0D10500C22FC3 /* TapGradient.swift */; };
 		E470346525C238C500E2FC8C /* ProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E470346425C238C500E2FC8C /* ProfilePreview.swift */; };
+		E474188D25C4CCAB005961BE /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = E474188C25C4CCAB005961BE /* History.swift */; };
 		E488D06325C03CCF002DEDD8 /* Tap_ItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D06225C03CCF002DEDD8 /* Tap_ItApp.swift */; };
 		E488D06525C03CCF002DEDD8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D06425C03CCF002DEDD8 /* ContentView.swift */; };
 		E488D06725C03CCF002DEDD8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E488D06625C03CCF002DEDD8 /* Assets.xcassets */; };
@@ -25,6 +28,7 @@
 		E488D08525C03CCF002DEDD8 /* Tap_ItUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D08425C03CCF002DEDD8 /* Tap_ItUITests.swift */; };
 		E488D09B25C06873002DEDD8 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D09A25C06873002DEDD8 /* HistoryCell.swift */; };
 		E4CA35C925C2CDB600255C75 /* TwitterIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4CA35C825C2CDB600255C75 /* TwitterIcon.swift */; };
+		E4EB7B2025C7332A00595398 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = E4EB7B1F25C7332A00595398 /* SwiftUIX */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,8 +55,11 @@
 		E40CDA6625C373010016CB7C /* SnapchatIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapchatIcon.swift; sourceTree = "<group>"; };
 		E40CDA6E25C378FE0016CB7C /* FacebookIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookIcon.swift; sourceTree = "<group>"; };
 		E42DF81225C38D6100B58CE1 /* PhoneIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneIcon.swift; sourceTree = "<group>"; };
+		E42EA29E25C874AD00CB51BC /* HistoryNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryNavBar.swift; sourceTree = "<group>"; };
+		E43BD2E025C831FD00587951 /* HistoryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryList.swift; sourceTree = "<group>"; };
 		E44A42E825C0D10500C22FC3 /* TapGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapGradient.swift; sourceTree = "<group>"; };
 		E470346425C238C500E2FC8C /* ProfilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePreview.swift; sourceTree = "<group>"; };
+		E474188C25C4CCAB005961BE /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		E488D05F25C03CCF002DEDD8 /* Tap It.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tap It.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E488D06225C03CCF002DEDD8 /* Tap_ItApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tap_ItApp.swift; sourceTree = "<group>"; };
 		E488D06425C03CCF002DEDD8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4EB7B2025C7332A00595398 /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +182,9 @@
 		E488D09925C06855002DEDD8 /* History */ = {
 			isa = PBXGroup;
 			children = (
+				E474188C25C4CCAB005961BE /* History.swift */,
+				E42EA29E25C874AD00CB51BC /* HistoryNavBar.swift */,
+				E43BD2E025C831FD00587951 /* HistoryList.swift */,
 				E488D09A25C06873002DEDD8 /* HistoryCell.swift */,
 				E470346425C238C500E2FC8C /* ProfilePreview.swift */,
 			);
@@ -208,6 +219,9 @@
 			dependencies = (
 			);
 			name = "Tap It";
+			packageProductDependencies = (
+				E4EB7B1F25C7332A00595398 /* SwiftUIX */,
+			);
 			productName = "Tap It";
 			productReference = E488D05F25C03CCF002DEDD8 /* Tap It.app */;
 			productType = "com.apple.product-type.application";
@@ -279,6 +293,9 @@
 				Base,
 			);
 			mainGroup = E488D05625C03CCF002DEDD8;
+			packageReferences = (
+				E4EB7B1E25C7332A00595398 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
+			);
 			productRefGroup = E488D06025C03CCF002DEDD8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -327,9 +344,12 @@
 				E42DF81325C38D6100B58CE1 /* PhoneIcon.swift in Sources */,
 				E470346525C238C500E2FC8C /* ProfilePreview.swift in Sources */,
 				E488D06C25C03CCF002DEDD8 /* Persistence.swift in Sources */,
+				E42EA29F25C874AD00CB51BC /* HistoryNavBar.swift in Sources */,
 				E40CDA6F25C378FE0016CB7C /* FacebookIcon.swift in Sources */,
 				E408F62625C1DE86005F91A3 /* Neumorphism.swift in Sources */,
 				E488D06525C03CCF002DEDD8 /* ContentView.swift in Sources */,
+				E474188D25C4CCAB005961BE /* History.swift in Sources */,
+				E43BD2E125C831FD00587951 /* HistoryList.swift in Sources */,
 				E40CDA6225C346EC0016CB7C /* InstagramIcon.swift in Sources */,
 				E40CDA6725C373010016CB7C /* SnapchatIcon.swift in Sources */,
 				E488D06325C03CCF002DEDD8 /* Tap_ItApp.swift in Sources */,
@@ -654,6 +674,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E4EB7B1E25C7332A00595398 /* XCRemoteSwiftPackageReference "SwiftUIX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E4EB7B1F25C7332A00595398 /* SwiftUIX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4EB7B1E25C7332A00595398 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		E488D06D25C03CCF002DEDD8 /* Tap_It.xcdatamodeld */ = {

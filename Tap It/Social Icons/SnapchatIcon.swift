@@ -18,7 +18,7 @@ struct SnapchatIcon: View {
     
     var silhouette: some View {
         SnapchatSilhouette()
-            .stroke(lineWidth: 20)
+            .stroke()
             .scale(0.7272)
     }
     
