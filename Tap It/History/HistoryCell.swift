@@ -15,8 +15,6 @@ struct HistoryCell: View {
     
     @ScaledMetric private var dynamicHeight: CGFloat = 110
     
-    
-    
     var body: some View {
         RoundedRectangle(cornerRadius: 25, style: .continuous)
             .fill(Neumorphic.mainColor)
