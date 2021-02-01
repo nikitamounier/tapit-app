@@ -8,16 +8,18 @@
 import SwiftUI
 
 struct ProfilePreview: View {
-    let profilePicture: Image
+    let profilePicture: UIImage
     let name: String
     let socials: [String] // for now
     let date: String
+    
+    let numberOfIcons = Int.random(in: 1...4)
     
     var body: some View {
         GeometryReader { geo in
             HStack(spacing: 0) {
                 
-                profilePicture
+                Image(uiImage: profilePicture)
                     .resizable()
                     .clipShape(Circle())
                     .frame(width: geo.size.width / 6, height: geo.size.width / 6)
@@ -47,20 +49,32 @@ struct ProfilePreview: View {
             
             HStack(alignment: .center) {
                 HStack {
-                    ForEach(socials.prefix(4), id: \.self) { app in
-                        Image(systemName: app)
-                            .resizable()
-                            .scaledToFit()
-                            .cornerRadius(10)
+                    switch numberOfIcons { // to test ui without building whole model, since can't store views in an array
+                    case 1:
+                        InstagramIcon(cornerRadiusScale: 0.3)
+                    case 2:
+                        SnapchatIcon(cornerRadiusScale: 0.3)
+                        PhoneIcon(cornerRadiusScale: 0.3)
+                    case 3:
+                        PhoneIcon(cornerRadiusScale: 0.3)
+                        TwitterIcon(cornerRadiusScale: 0.3)
+                        InstagramIcon(cornerRadiusScale: 0.3)
+                    case 4:
+                        InstagramIcon(cornerRadiusScale: 0.3)
+                        SnapchatIcon(cornerRadiusScale: 0.3)
+                        TwitterIcon(cornerRadiusScale: 0.3)
+                        PhoneIcon(cornerRadiusScale: 0.3)
+                    default:
+                        InstagramIcon(cornerRadiusScale: 0.3)
                     }
                     Spacer()
                 }
-                Color.tapGradient
+                LinearGradient(tapGradient: .leftToRight)
                     .mask(Image(systemName: "ellipsis").font(.title))
                     .frame(width: geo.size.width / 10, height: geo.size.height / 10)
                     .padding(.trailing)
             }
-            .frame(height: geo.size.height / 4)
+            .frame(height: geo.size.height / 3.5)
         }
     }
 }
