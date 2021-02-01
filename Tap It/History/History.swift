@@ -19,7 +19,7 @@ struct History: View {
     var historyLists: some View {
         TabView(selection: $selectedTab) {
             ForEach(Category.allCases, id: \.self) { category in
-                HistoryList()
+                HistoryList(category: category)
             }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))

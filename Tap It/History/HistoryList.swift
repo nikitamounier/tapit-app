@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HistoryList: View {
+    let category: History.Category
+    
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 15) {
