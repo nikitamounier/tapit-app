@@ -9,7 +9,6 @@ import SwiftUI
 
 struct HistoryNavigationBar: View {
     @Binding var selectedTab: History.Category
-    
     @Namespace private var animation
     
     var body: some View {
