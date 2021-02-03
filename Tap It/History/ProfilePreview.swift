@@ -33,7 +33,6 @@ struct ProfilePreview: View {
     
     func profileDetails(in geo: GeometryProxy) -> some View {
         VStack(alignment: .leading) {
-            
             HStack(alignment: .bottom, spacing: 0) {
                 Text(name)
                     .font(.headline)
