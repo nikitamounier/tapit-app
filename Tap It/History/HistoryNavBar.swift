@@ -12,28 +12,35 @@ struct HistoryNavigationBar: View {
     @Namespace private var animation
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("History")
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding(.leading)
             Divider()
-            categoriesRow
+            categoriesNames
                 .padding(.leading)
         }
     }
     
-    var categoriesRow: some View {
+    var categoriesNames: some View {
         HStack(spacing: 20) {
             ForEach(History.Category.allCases, id: \.self) { category in
                 VStack(alignment: .leading, spacing: 5) {
-                    Button(action: { selectedTab = category }) {
-                        Text(category.rawValue.capitalized)
-                            .foregroundColor(selectedTab == category ? .blue : .gray)
+                    Text(category.rawValue.capitalized)
+                        .foregroundColor(selectedTab == category ? .blue : .gray)
+                        .onTapGesture { } // Go to said tab - right now capsule bugs if switching quickly, will do nothing for now
+                    if selectedTab == category {
+                        Capsule()
+                            .frame(width: 20, height: 2)
+                            .foregroundColor(.blue)
+                            .matchedGeometryEffect(id: "capsule", in: animation, properties: .position)
+                            .animation(.linear(duration: 0.05))
+                    } else {
+                        Capsule()
+                            .frame(width: 20, height: 2)
+                            .hidden()
                     }
-                    Capsule()
-                        .frame(width: 20, height: 2)
-                        .foregroundColor(selectedTab == category ? .blue : .clear)
                 }
             }
         }
