@@ -14,29 +14,27 @@ struct History: View {
         case all, favourites, college, work
     }
     
-    @State private var selectedTab: Category = .all//temporary, will be in viewModel
-    
-    var historyLists: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(Category.allCases, id: \.self) { category in
-                HistoryList(category: category)
-            }
-        }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-    }
+    @State private var selectedTab: Category = .all // temporary, will be in viewModel
     
     var body: some View {
         GeometryReader { geo in
             NavigationView {
                 ZStack(alignment: .topLeading) {
-                    VStack(spacing: 0) {
-                        HistoryNavigationBar(selectedTab: .constant(.all))
+                    VStack {
+                        HistoryNavigationBar(selectedTab: .constant(.all)) // dummy nav bar to make TabView go down
                             .padding(.top, geo.safeAreaInsets.top)
                             .hidden()
-                        historyLists
+                        TabView(selection: $selectedTab) {
+                            ForEach(Category.allCases, id: \.self) { category in
+                                HistoryList(category: category)
+                            }
+                        }
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     }
-                    HistoryNavigationBar(selectedTab: $selectedTab)
+                    HistoryNavigationBar(selectedTab: $selectedTab) // actual nav bar
                         .padding(.top, geo.safeAreaInsets.top)
+                        .background(Neumorphic.mainColor)
+                        .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6)
                 }
                 .navigationBarHidden(true)
                 .background(Neumorphic.backgroundColor)
