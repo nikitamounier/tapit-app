@@ -15,7 +15,7 @@ extension View {
     ///   - offset: The offset of the shadow – how far up should the subject be.
     ///   - radius: How pronunced should be the shaodw.
     /// - Returns: A view with a nuemorphic shadow around it.
-    func neumorphicOuter(dark: Color = Neumorphic.darkShadowColor, light: Color = Neumorphic.lightShadowColor, offset: CGFloat = 6, radius: CGFloat = 3) -> some View {
+    func neumorphicOuter(dark: Color = Neumorphic.darkShadowColor, light: Color = Neumorphic.lightShadowColor, offset: CGFloat = 6, radius: CGFloat = 5) -> some View {
         modifier(NeumorphicOuter(dark: dark, light: light, offset: offset, radius: radius))
     }
 }
