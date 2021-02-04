@@ -20,7 +20,7 @@ struct History: View {
         GeometryReader { geo in
             NavigationView {
                 ZStack(alignment: .topLeading) {
-                    VStack {
+                    VStack(spacing: 0) {
                         HistoryNavigationBar(selectedTab: .constant(.all)) // dummy nav bar to make TabView go down
                             .padding(.top, geo.safeAreaInsets.top)
                             .hidden()
