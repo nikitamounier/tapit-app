@@ -13,7 +13,7 @@ struct HistoryCell: View {
     let socials: [String] // for now
     let date: String
     
-    @ScaledMetric private var dynamicHeight: CGFloat = 110
+    @ScaledMetric private var dynamicHeight: CGFloat = 105
     
     var body: some View {
         RoundedRectangle(cornerRadius: 25, style: .continuous)
