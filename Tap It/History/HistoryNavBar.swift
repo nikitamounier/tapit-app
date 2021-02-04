@@ -18,8 +18,10 @@ struct HistoryNavigationBar: View {
                 .fontWeight(.semibold)
                 .padding(.leading)
             Divider()
-            categoriesNames
-                .padding(.leading)
+            ScrollView(.horizontal) {
+                categoriesNames
+                    .padding(.leading)
+            }
         }
     }
     
