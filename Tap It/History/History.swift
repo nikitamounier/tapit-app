@@ -6,32 +6,43 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 struct History: View {
     
-    enum Category: String, CaseIterable { // temporary
-        case all, favourites, college, work
+    struct Category: Hashable { // temporary
+        var name: String
     }
+    let categories: [Category] = [.init(name: "All"), .init(name: "Favourites"), .init(name: "Friends"), .init(name: "Work")]
     
-    @State private var selectedTab: Category = .all // temporary, will be in viewModel
+    @State private var currentCategory: Category // temporary, will be in viewModel
+    
+    init() {
+        _currentCategory = State(wrappedValue: categories[0])
+    }
     
     var body: some View {
         GeometryReader { geo in
             NavigationView {
                 ZStack(alignment: .topLeading) {
                     VStack(spacing: 0) {
-                        HistoryNavigationBar(selectedTab: .constant(.all)) // dummy nav bar to make TabView go down
+                        NavigationBar(title: Text("History")) // dummy nav bar to make TabView go down
+                            .underline {
+                                TabHeader(categories, selection: .constant(categories[0]), name: \.name) // no need for it to update every time since dummy
+                            }
                             .padding(.top, geo.safeAreaInsets.top)
                             .hidden()
-                        TabView(selection: $selectedTab) {
-                            ForEach(Category.allCases, id: \.self) { category in
+                        TabView(selection: $currentCategory) {
+                            ForEach(categories, id: \.self) { category in
                                 HistoryList(category: category)
+                                    .tag(category.hashValue)
                             }
                         }
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     }
-                    HistoryNavigationBar(selectedTab: $selectedTab) // actual nav bar
+                    NavigationBar(title: Text("History"))
+                        .underline {
+                            TabHeader(categories, selection: $currentCategory, name: \.name)
+                        }
                         .padding(.top, geo.safeAreaInsets.top)
                         .background(Neumorphic.mainColor)
                         .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6)
