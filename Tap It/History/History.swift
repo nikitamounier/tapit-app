@@ -9,10 +9,10 @@ import SwiftUI
 
 struct History: View {
     
-    struct Category: Hashable { // temporary
+    struct Category: Hashable, Equatable { // temporary - until I've made my Core Data models
         var name: String
     }
-    let categories: [Category] = [.init(name: "All"), .init(name: "Favourites"), .init(name: "Friends"), .init(name: "Work")]
+    let categories: [Category] = [.init(name: "All"), .init(name: "Favourites"), .init(name: "Friends"), .init(name: "Work"), .init(name: "Golf"), .init(name: "Wine Tasting")] // mock categories - would come from Core Data
     
     @State private var currentCategory: Category // temporary, will be in viewModel
     
@@ -39,7 +39,7 @@ struct History: View {
                         }
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     }
-                    NavigationBar(title: Text("History"))
+                    NavigationBar(title: Text("History")) // actual visible nav bar
                         .underline {
                             TabHeader(categories, selection: $currentCategory, name: \.name)
                         }
