@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TabHeader<Tabs>: View where Tabs: RandomAccessCollection, Tabs.Element: Hashable {
-    private  let tabs: Tabs
+    private let tabs: Tabs
     private var tabNames: [Tabs.Element: String] = [:]
     
     @Binding var currentTab: Tabs.Element
@@ -26,21 +26,25 @@ struct TabHeader<Tabs>: View where Tabs: RandomAccessCollection, Tabs.Element: H
     }
     
     var body: some View {
-        HStack(spacing: 20) {
-            ForEach(tabs, id: \.self) { tab in
-                VStack(alignment: .leading, spacing: 5) {
-                    Button {
-                        withAnimation {
-                            currentTab = tab
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                ForEach(tabs, id: \.self) { tab in
+                    VStack(alignment: .leading, spacing: 5) {
+                        Button {
+                            withAnimation {
+                                currentTab = tab
+                            }
+                        } label: {
+                            Text(tabNames[tab] ?? "")
+                                .foregroundColor(currentTab == tab ? .blue : .gray)
                         }
-                    } label: {
-                        Text(tabNames[tab] ?? "")
-                            .foregroundColor(currentTab == tab ? .blue : .gray)
+                        TabCapsule(for: tab, current: currentTab, animation: animation)
                     }
-                    TabCapsule(for: tab, current: currentTab, animation: animation)
+                    .contentShape(Rectangle())
                 }
             }
         }
+        .animation(.linear(duration: 0.1))
     }
 }
 
@@ -60,13 +64,11 @@ private struct TabCapsule<Tab: Equatable>: View {
             Capsule()
                 .frame(width: 20, height: 2)
                 .foregroundColor(.blue)
-                .matchedGeometryEffect(id: "capsule", in: animation)
-                .animation(.linear(duration: 0.1))
+                .matchedGeometryEffect(id: Data.init(), in: animation, properties: .position)
         } else {
             Capsule()
                 .frame(width: 20, height: 2)
-                .foregroundColor(.blue)
-                .hidden()
+                .foregroundColor(.clear)
         }
     }
 }
