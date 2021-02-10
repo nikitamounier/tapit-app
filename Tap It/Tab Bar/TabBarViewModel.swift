@@ -8,14 +8,13 @@
 import SwiftUI
 import Combine
 
-enum Tab: CaseIterable {
-    case history
-    case tap
-    case profile
+enum Tab: String {
+    case history = "rectangle.stack.person.crop"
+    case tap = "" // since using custom iamge in the future
+    case profile = "person.crop.circle"
 }
 
 class TabBarViewModel: ObservableObject {
-    private var cancellables = Set<AnyCancellable>()
     
     @Published var selectedTab: Tab = .history
     
@@ -30,4 +29,8 @@ class TabBarViewModel: ObservableObject {
             selectedTab = tab
         }
     }
+    
+//    func currentlySelectingTab(_ tab: Tab) {
+//        
+//    }
 }
