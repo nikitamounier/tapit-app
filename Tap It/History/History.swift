@@ -23,22 +23,24 @@ struct History: View {
     var body: some View {
         GeometryReader { geo in
             NavigationView {
-                ZStack(alignment: .topLeading) {
-                    VStack(spacing: 0) {
-                        NavigationBar(title: Text("History")) // dummy nav bar to make TabView go down
-                            .underline {
-                                TabHeader(categories, selection: .constant(categories[0]), name: \.name) // no need for it to update every time since dummy
-                            }
-                            .padding(.top, geo.safeAreaInsets.top)
-                            .hidden()
-                        TabView(selection: $currentCategory) {
-                            ForEach(categories, id: \.self) { category in
-                                HistoryList(category: category)
-                                    .tag(category.hashValue)
-                            }
+                VStack(spacing: 0) {
+                    NavigationBar(title: Text("History")) // dummy nav bar to make TabView go down
+                        .underline {
+                            TabHeader(categories, selection: .constant(categories[0]), name: \.name) // no need for it to update every time since dummy
                         }
-                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .padding(.top, geo.safeAreaInsets.top)
+                        .hidden()
+                    
+                    TabView(selection: $currentCategory) {
+                        ForEach(categories, id: \.self) { category in
+                            HistoryList(category: category)
+                                .tag(category)
+                        }
                     }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    
+                }
+                .overlay(
                     NavigationBar(title: Text("History")) // actual visible nav bar
                         .underline {
                             TabHeader(categories, selection: $currentCategory, name: \.name)
@@ -46,9 +48,9 @@ struct History: View {
                         .padding(.top, geo.safeAreaInsets.top)
                         .background(Neumorphic.mainColor)
                         .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6)
-                }
-                .navigationBarHidden(true)
+                    , alignment: .topLeading) // I'm sorry for this terrible formatting
                 .background(Neumorphic.backgroundColor)
+                .navigationBarHidden(true)
                 .ignoresSafeArea()
             }
         }
