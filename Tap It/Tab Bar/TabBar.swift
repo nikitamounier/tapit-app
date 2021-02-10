@@ -46,7 +46,7 @@ struct TabBar: View {
                     .frame(maxWidth: .infinity)
                 otherTabButton(for: .history)
                     .frame(maxWidth: .infinity)
-                    .hidden()
+                    .hidden() // dummy tab button to make the other two space out without needing a Spacer who's width is dictated by a GeometryReader
                 otherTabButton(for: .profile)
                     .frame(maxWidth: .infinity)
             }
