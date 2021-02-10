@@ -68,7 +68,7 @@ private struct TabCapsule<Tab: Equatable>: View {
         } else {
             Capsule()
                 .frame(width: 20, height: 2)
-                .foregroundColor(.clear)
+                .hidden()
         }
     }
 }
