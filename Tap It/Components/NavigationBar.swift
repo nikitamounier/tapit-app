@@ -9,11 +9,11 @@ import SwiftUI
 
 struct NavigationBar<Content: View>: View {
     let title: Text
-    let undertitleContent: Content
+    let undertitleContent: AnyView?
     
     init(title: Text, @ViewBuilder undertitle: () -> Content = { EmptyView() as! Content }) {
         self.title = title
-        self.undertitleContent = undertitle()
+        self.undertitleContent = AnyView(undertitle())
     }
     
     var body: some View {
@@ -22,8 +22,10 @@ struct NavigationBar<Content: View>: View {
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding(.leading)
-            undertitleContent
-                .padding(.leading)
+            if let content = undertitleContent {
+                content
+                    .padding(.leading)
+            }
         }
     }
 }
