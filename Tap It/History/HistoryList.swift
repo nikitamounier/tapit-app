@@ -12,12 +12,12 @@ struct HistoryList: View {
     
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 15) {
+            LazyVStack(spacing: 13) {
                 ForEach(0..<100) { item in
                     HistoryCell(profilePicture: UIImage(systemName: "person.crop.square.fill") ?? .init(), name: "Nikita Mounier", socials: [], date: "27/01")
                 }
             }
-            .padding(.top, 15)
+            .padding(.top, 13)
         }
     }
 }
