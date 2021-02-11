@@ -40,7 +40,6 @@ struct TabBar: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Divider()
             HStack(spacing: 0) {
                 otherTabButton(for: .history)
                     .frame(maxWidth: .infinity)
