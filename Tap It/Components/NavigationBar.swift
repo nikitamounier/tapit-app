@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct NavigationBar: View {
+struct NavigationBar<Content: View>: View {
     let title: Text
-    var overlineContent: AnyView?
-    var underlineContent: AnyView?
+    let undertitleContent: Content
     
-    init(title: Text) {
+    init(title: Text, @ViewBuilder undertitle: () -> Content = { EmptyView() as! Content }) {
         self.title = title
+        self.undertitleContent = undertitle()
     }
     
     var body: some View {
@@ -22,29 +22,11 @@ struct NavigationBar: View {
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding(.leading)
-            if let overlineContent = overlineContent {
-                overlineContent
-                    .padding(.leading)
-            }
-            if let underlineContent = underlineContent {
-                Divider()
-                underlineContent
-                    .padding(.leading)
-            }
+            undertitleContent
+                .padding(.leading)
         }
     }
 }
-
-extension NavigationBar: Buildable {
-    func overline<Content: View>(@ViewBuilder content: () -> Content) -> Self {
-        mutating(keyPath: \.overlineContent, value: AnyView(content()))
-    }
-    
-    func underline<Content: View>(@ViewBuilder content: () -> Content) -> Self {
-        mutating(keyPath: \.underlineContent, value: AnyView(content()))
-    }
-}
-
 struct NavigationBar_Previews: PreviewProvider {
     static var previews: some View {
         EmptyView()

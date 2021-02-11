@@ -17,15 +17,14 @@ struct History: View {
     @State private var currentCategory: Category // temporary, will be in viewModel
     
     init() {
-        _currentCategory = State(wrappedValue: categories[0])
+        _currentCategory = State(initialValue: categories[0])
     }
     
     var body: some View {
         GeometryReader { geo in
             NavigationView {
                 VStack(spacing: 0) {
-                    NavigationBar(title: Text("History")) // dummy nav bar to make TabView go down
-                        .underline {
+                    NavigationBar(title: Text("History")) {
                             TabHeader(categories, selection: .constant(categories[0]), name: \.name) // no need for it to update every time since dummy
                         }
                         .padding(.top, geo.safeAreaInsets.top)
@@ -41,14 +40,13 @@ struct History: View {
                     
                 }
                 .overlay(
-                    NavigationBar(title: Text("History")) // actual visible nav bar
-                        .underline {
+                    NavigationBar(title: Text("History")) { // Actual navigation bar
                             TabHeader(categories, selection: $currentCategory, name: \.name)
                         }
                         .padding(.top, geo.safeAreaInsets.top)
                         .background(Neumorphic.mainColor)
-                        .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6)
-                    , alignment: .topLeading) // I'm sorry for this terrible formatting
+                        .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6),
+                    alignment: .topLeading) // I'm sorry for this terrible formatting
                 .background(Neumorphic.backgroundColor)
                 .navigationBarHidden(true)
                 .ignoresSafeArea()
