@@ -27,11 +27,11 @@ struct OffsetScrollView<Content: View>: View {
     init(
         axes: Axis.Set = .vertical,
         showsIndicators: Bool = true,
-        offset: Binding<CGFloat>,
+        yOffset: Binding<CGFloat>,
         onOffsetChanged: @escaping (CGPoint) -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.init(axes: axes, showsIndicators: showsIndicators, offset: .some(offset), onOffsetChanged: onOffsetChanged, content: content)
+        self.init(axes: axes, showsIndicators: showsIndicators, offset: .some(yOffset), onOffsetChanged: onOffsetChanged, content: content)
     }
     
     init(
@@ -73,11 +73,10 @@ extension OffsetScrollView {
         var body: some View {
             SwiftUI.ScrollView(axes, showsIndicators: showsIndicators) {
                 GeometryReader { geometry in
-                    Color.clear.preference(
-                        key: ScrollOffsetPreferenceKey.self,
-                        value: geometry.frame(in: .named("scrollView")).origin
-                    )
-                }.frame(width: 0, height: 0)
+                    Color.clear
+                        .preference(key: ScrollOffsetPreferenceKey.self, value: geometry.frame(in: .named("scrollView")).origin)
+                }
+                .frame(width: 0, height: 0)
                 content
             }
             .coordinateSpace(name: "scrollView")
