@@ -52,7 +52,7 @@ struct TabBar: View {
             .padding(.horizontal)
             .overlay(tapButton)
         }
-        .padding(.bottom, geo.safeAreaInsets.bottom)
+        .padding(.bottom, geo.safeAreaInsets.bottom > 0 ? geo.safeAreaInsets.bottom - 7 : 0)
         .background(Neumorphic.mainColor)
         .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: -15)
     }
