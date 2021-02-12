@@ -15,6 +15,7 @@
 		E40CDA6225C346EC0016CB7C /* InstagramIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6125C346EC0016CB7C /* InstagramIcon.swift */; };
 		E40CDA6725C373010016CB7C /* SnapchatIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6625C373010016CB7C /* SnapchatIcon.swift */; };
 		E40CDA6F25C378FE0016CB7C /* FacebookIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6E25C378FE0016CB7C /* FacebookIcon.swift */; };
+		E41EE76425D6EC0C00DAD451 /* OffsetScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41EE76325D6EC0C00DAD451 /* OffsetScrollView.swift */; };
 		E42DF81325C38D6100B58CE1 /* PhoneIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42DF81225C38D6100B58CE1 /* PhoneIcon.swift */; };
 		E43BD2E125C831FD00587951 /* HistoryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43BD2E025C831FD00587951 /* HistoryList.swift */; };
 		E44A42E925C0D10500C22FC3 /* TapGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44A42E825C0D10500C22FC3 /* TapGradient.swift */; };
@@ -62,6 +63,7 @@
 		E40CDA6125C346EC0016CB7C /* InstagramIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramIcon.swift; sourceTree = "<group>"; };
 		E40CDA6625C373010016CB7C /* SnapchatIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapchatIcon.swift; sourceTree = "<group>"; };
 		E40CDA6E25C378FE0016CB7C /* FacebookIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookIcon.swift; sourceTree = "<group>"; };
+		E41EE76325D6EC0C00DAD451 /* OffsetScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetScrollView.swift; sourceTree = "<group>"; };
 		E42DF81225C38D6100B58CE1 /* PhoneIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneIcon.swift; sourceTree = "<group>"; };
 		E43BD2E025C831FD00587951 /* HistoryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryList.swift; sourceTree = "<group>"; };
 		E44A42E825C0D10500C22FC3 /* TapGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapGradient.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 			children = (
 				E409FD6525CF0781002EEB7C /* NavigationBar.swift */,
 				E409FD6025CEFE65002EEB7C /* TabHeader.swift */,
+				E41EE76325D6EC0C00DAD451 /* OffsetScrollView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 				E47548C025D3064D0045672B /* TabButtonStyles.swift in Sources */,
 				E48F202C25CB798C00E4F9EC /* MainView.swift in Sources */,
 				E488D06F25C03CCF002DEDD8 /* Tap_It.xcdatamodeld in Sources */,
+				E41EE76425D6EC0C00DAD451 /* OffsetScrollView.swift in Sources */,
 				E408F62E25C1E084005F91A3 /* NeumorphicOuter.swift in Sources */,
 				E409FD6625CF0781002EEB7C /* NavigationBar.swift in Sources */,
 				E409FD6F25CF121F002EEB7C /* Buildable.swift in Sources */,
