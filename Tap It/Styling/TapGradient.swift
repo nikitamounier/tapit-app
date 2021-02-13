@@ -10,7 +10,7 @@ import SwiftUI
 extension Color {
     static let tapGradientStart = Color(red: 32 / 255, green: 127 / 255, blue: 253 / 255)
     
-    static let tapGgradientEnd = Color(red: 243 / 255, green: 0, blue: 246 / 255)
+    static let tapGradientEnd = Color(red: 243 / 255, green: 0, blue: 246 / 255)
 }
 
 extension LinearGradient {
@@ -23,7 +23,7 @@ extension LinearGradient {
     }
     
     init(tapGradient: GradientOptions) {
-        let colors: [Color] = [Color.tapGradientStart, Color.tapGgradientEnd]
+        let colors: [Color] = [Color.tapGradientStart, Color.tapGradientEnd]
         switch tapGradient {
         case .topLeftToBottom:
             self.init(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottom)
