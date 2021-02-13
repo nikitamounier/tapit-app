@@ -29,7 +29,7 @@ struct MainView: View {
                 TabBar(tabModel: tabModel, geo: geo)
                     .hidden() // dummy tab bar to make content go up
             }
-            .overlay(TabBar(tabModel: tabModel, geo: geo), alignment: .bottom)
+            .overlay(TabBar(tabModel: tabModel, geo: geo), alignment: .bottom) // actual tab bar
             .ignoresSafeArea()
         }
     }
