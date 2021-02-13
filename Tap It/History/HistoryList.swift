@@ -9,15 +9,16 @@ import SwiftUI
 
 struct HistoryList: View {
     let category: History.Category
+    @Binding var scrollOffset: CGFloat
     
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 13) {
+        OffsetScrollView(yOffset: $scrollOffset) {
+            LazyVStack(spacing: 14) {
                 ForEach(0..<100) { item in
                     HistoryCell(profilePicture: UIImage(systemName: "person.crop.square.fill") ?? .init(), name: "Nikita Mounier", socials: [], date: "27/01")
                 }
             }
-            .padding(.top, 13)
+            .padding(.vertical, 14)
         }
     }
 }
