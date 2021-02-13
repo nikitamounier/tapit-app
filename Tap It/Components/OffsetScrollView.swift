@@ -28,7 +28,7 @@ struct OffsetScrollView<Content: View>: View {
         axes: Axis.Set = .vertical,
         showsIndicators: Bool = true,
         yOffset: Binding<CGFloat>,
-        onOffsetChanged: @escaping (CGPoint) -> Void,
+        onOffsetChanged: @escaping (CGPoint) -> Void = { _ in },
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(axes: axes, showsIndicators: showsIndicators, offset: .some(yOffset), onOffsetChanged: onOffsetChanged, content: content)
@@ -37,7 +37,7 @@ struct OffsetScrollView<Content: View>: View {
     init(
         axes: Axis.Set = .vertical,
         showsIndicators: Bool = true,
-        onOffsetChanged: @escaping (CGPoint) -> Void,
+        onOffsetChanged: @escaping (CGPoint) -> Void = { _ in },
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(axes: axes, showsIndicators: showsIndicators, offset: nil, onOffsetChanged: onOffsetChanged, content: content)
@@ -72,12 +72,14 @@ extension OffsetScrollView {
         
         var body: some View {
             SwiftUI.ScrollView(axes, showsIndicators: showsIndicators) {
-                GeometryReader { geometry in
-                    Color.clear
-                        .preference(key: ScrollOffsetPreferenceKey.self, value: geometry.frame(in: .named("scrollView")).origin)
+                VStack(spacing: 0) { // so that GeometryReader doesn't take extra space
+                    GeometryReader { geometry in
+                        Color.clear
+                            .preference(key: ScrollOffsetPreferenceKey.self, value: geometry.frame(in: .named("scrollView")).origin)
+                    }
+                    .frame(width: 0, height: 0)
+                    content
                 }
-                .frame(width: 0, height: 0)
-                content
             }
             .coordinateSpace(name: "scrollView")
             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { point in
@@ -85,11 +87,5 @@ extension OffsetScrollView {
                 offsetChanged(point)
             }
         }
-    }
-}
-
-struct ScrollView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyView()
     }
 }
