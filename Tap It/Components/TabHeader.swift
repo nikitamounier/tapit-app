@@ -75,6 +75,32 @@ private struct TabCapsule<Tab: Equatable>: View {
 
 struct TabHeader_Previews: PreviewProvider {
     static var previews: some View {
-        EmptyView()
+        TestHeader()
+    }
+}
+
+private struct TestHeader: View {
+    private enum TestEnum: String, CaseIterable {
+        case socials = "Socials"
+        case presets = "Presets"
+    }
+    
+    private struct TabCategory: Hashable {
+        var name: String
+    }
+    private let userConfiguratedCategories: [TabCategory] = [.init(name: "Dog"), .init(name: "Cat"), .init(name: "Lizard"), .init(name: "Iguana")]
+    
+    @State private var currentEnumSelection: TestEnum = .socials
+    @State private var currentStructSelection: TabCategory
+    
+    init() {
+        _currentStructSelection = State(initialValue: userConfiguratedCategories[0])
+    }
+    
+    var body: some View {
+        VStack {
+            TabHeader(TestEnum.allCases, selection: $currentEnumSelection, name: \.rawValue)
+            TabHeader(userConfiguratedCategories, selection: $currentStructSelection, name: \.name)
+        }
     }
 }
