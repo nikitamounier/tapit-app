@@ -15,9 +15,20 @@ struct History: View {
     let categories: [Category] = [.init(name: "All"), .init(name: "Favourites"), .init(name: "Friends"), .init(name: "Work"), .init(name: "Golf"), .init(name: "Wine Tasting")] // mock categories - would come from Core Data
     
     @State private var currentCategory: Category // temporary, will be in viewModel
+    @State private var scrollOffset: CGFloat = .zero
     
     init() {
         _currentCategory = State(initialValue: categories[0])
+    }
+    
+    var tabView: some View {
+        TabView(selection: $currentCategory) {
+            ForEach(categories, id: \.self) { category in
+                HistoryList(category: category, scrollOffset: $scrollOffset)
+                    .tag(category)
+            }
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
     var body: some View {
@@ -30,14 +41,7 @@ struct History: View {
                         .padding(.top, geo.safeAreaInsets.top)
                         .hidden()
                     
-                    TabView(selection: $currentCategory) {
-                        ForEach(categories, id: \.self) { category in
-                            HistoryList(category: category)
-                                .tag(category)
-                        }
-                    }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    
+                    tabView
                 }
                 .overlay(
                     NavigationBar(title: Text("History")) { // Actual navigation bar
