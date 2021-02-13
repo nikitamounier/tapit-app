@@ -18,9 +18,10 @@ struct HistoryCell: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 25, style: .continuous)
             .fill(Neumorphic.mainColor)
-            .frame(width: UIScreen.main.bounds.width  *  0.9, height: dynamicHeight)
             .neumorphicOuter()
             .overlay(ProfilePreview(profilePicture: profilePicture, name: name, socials: socials, date: date))
+            .frame(height: dynamicHeight)
+            .padding(.horizontal)
     }
 }
 
