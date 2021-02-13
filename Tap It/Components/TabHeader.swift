@@ -27,24 +27,29 @@ struct TabHeader<Tabs>: View where Tabs: RandomAccessCollection, Tabs.Element: H
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 20) {
-                ForEach(tabs, id: \.self) { tab in
-                    VStack(alignment: .leading, spacing: 5) {
-                        Button {
-                            withAnimation {
-                                currentTab = tab
+            ScrollViewReader { proxy in
+                HStack(spacing: 20) {
+                    ForEach(tabs, id: \.self) { tab in
+                        VStack(alignment: .leading, spacing: 5) {
+                            Button(action: { setTab(to: tab) }) {
+                                Text(tabNames[tab] ?? "")
+                                    .foregroundColor(currentTab == tab ? .blue : .gray)
                             }
-                        } label: {
-                            Text(tabNames[tab] ?? "")
-                                .foregroundColor(currentTab == tab ? .blue : .gray)
+                            TabCapsule(for: tab, current: currentTab, animation: animation)
                         }
-                        TabCapsule(for: tab, current: currentTab, animation: animation)
+                        .contentShape(Rectangle())
+                        .id(tab)
                     }
-                    .contentShape(Rectangle())
                 }
             }
         }
         .animation(.linear(duration: 0.1))
+    }
+    
+    private func setTab(to tab: Tabs.Element) {
+        withAnimation {
+            currentTab = tab
+        }
     }
 }
 
