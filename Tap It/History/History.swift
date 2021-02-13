@@ -12,7 +12,7 @@ struct History: View {
     struct Category: Hashable, Equatable { // temporary - until I've made my Core Data models
         var name: String
     }
-    let categories: [Category] = [.init(name: "All"), .init(name: "Favourites"), .init(name: "Friends"), .init(name: "Work"), .init(name: "Golf"), .init(name: "Wine Tasting")] // mock categories - would come from Core Data
+    let categories: [Category] = [.init(name: "All"), .init(name: "Favourites"), .init(name: "Friends"), .init(name: "Work"), .init(name: "Golf"), .init(name: "Wine Tasting"), .init(name: "Football"), .init(name: "Tennis")] // mock categories - would come from Core Data
     
     @State private var currentCategory: Category // temporary, will be in viewModel
     @State private var scrollOffset: CGFloat = .zero
