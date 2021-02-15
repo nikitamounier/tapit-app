@@ -16,7 +16,7 @@ struct MainView: View {
     }
     
     var body: some View {
-        GeometryReader { geo in
+        ScrollView([]) { // So that tab bar doesn't move up with keyboard
             VStack(spacing: 0) {
                 TabView(selection: $tabModel.selectedTab) { // just a tab controller without bar - still using it for its supposed caching abilities
                     History()
@@ -26,12 +26,12 @@ struct MainView: View {
                     Text("Profile view") // temporary, as still haven't made Profile view yet
                         .tag(Tab.profile)
                 }
-                TabBar(tabModel: tabModel, geo: geo)
+                TabBar(tabModel: tabModel)
                     .hidden() // dummy tab bar to make content go up
             }
-            .overlay(TabBar(tabModel: tabModel, geo: geo), alignment: .bottom) // actual tab bar
-            .ignoresSafeArea()
+            .overlay(TabBar(tabModel: tabModel), alignment: .bottom) // actual tab bar
         }
+        .ignoresSafeArea()
     }
 }
 
