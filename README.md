@@ -7,6 +7,8 @@ Tap It enables two people to seamlessly share their social media information (e.
 Tap It uses:
 
    *  [SwiftUI](https://developer.apple.com/documentation/swiftui)
+   
+   *  [Recombine](https://github.com/ReSwift/Recombine)
   
    *  [Combine](https://developer.apple.com/documentation/combine)
   
@@ -14,12 +16,10 @@ Tap It uses:
   
    *  [Core Location](https://developer.apple.com/documentation/corelocation) and [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) ([iBeacon](https://developer.apple.com/documentation/corelocation/clbeacon))
   
-   *  [Core Data](https://developer.apple.com/documentation/coredata)
-  
 
 ## Motivation
 
-When meeting someone, it takes a nail-bitingly long time to share each other's social media details. Finding the person's account, requesting them, them accepting, then vice versa; in a day and age where everyone has an account on at least two or more platforms, this takes a laughibly long time.
+When meeting someone, it takes a nail-bitingly long time to share each other's social media details. Finding the person's account, requesting them, them accepting, then vice versa; in a day and age where everyone has an account on at least two or more platforms, this takes a laughably long time.
 
 Tap It aims to drastically streamline this process, to both parties simply pressing "share" and then placing one phone on top of the other.
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,7 @@
 		E409FD6125CEFE65002EEB7C /* TabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E409FD6025CEFE65002EEB7C /* TabHeader.swift */; };
 		E409FD6625CF0781002EEB7C /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E409FD6525CF0781002EEB7C /* NavigationBar.swift */; };
 		E409FD6F25CF121F002EEB7C /* Buildable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E409FD6E25CF121F002EEB7C /* Buildable.swift */; };
+		E40B4A7225DC5FD90012FD65 /* Recombine in Frameworks */ = {isa = PBXBuildFile; productRef = E40B4A7125DC5FD90012FD65 /* Recombine */; };
 		E40CDA6225C346EC0016CB7C /* InstagramIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6125C346EC0016CB7C /* InstagramIcon.swift */; };
 		E40CDA6725C373010016CB7C /* SnapchatIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6625C373010016CB7C /* SnapchatIcon.swift */; };
 		E40CDA6F25C378FE0016CB7C /* FacebookIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40CDA6E25C378FE0016CB7C /* FacebookIcon.swift */; };
@@ -34,6 +35,7 @@
 		E488D09B25C06873002DEDD8 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D09A25C06873002DEDD8 /* HistoryCell.swift */; };
 		E48F202C25CB798C00E4F9EC /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48F202B25CB798C00E4F9EC /* MainView.swift */; };
 		E48F203525CB7BDD00E4F9EC /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48F203425CB7BDD00E4F9EC /* TabBar.swift */; };
+		E4B9D60F25D72A2500826BF3 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B9D60E25D72A2500826BF3 /* SearchBar.swift */; };
 		E4CA35C925C2CDB600255C75 /* TwitterIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4CA35C825C2CDB600255C75 /* TwitterIcon.swift */; };
 /* End PBXBuildFile section */
 
@@ -89,6 +91,7 @@
 		E488D09A25C06873002DEDD8 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
 		E48F202B25CB798C00E4F9EC /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		E48F203425CB7BDD00E4F9EC /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
+		E4B9D60E25D72A2500826BF3 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		E4CA35C825C2CDB600255C75 /* TwitterIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterIcon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -97,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E40B4A7225DC5FD90012FD65 /* Recombine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,6 +138,7 @@
 				E409FD6525CF0781002EEB7C /* NavigationBar.swift */,
 				E409FD6025CEFE65002EEB7C /* TabHeader.swift */,
 				E41EE76325D6EC0C00DAD451 /* OffsetScrollView.swift */,
+				E4B9D60E25D72A2500826BF3 /* SearchBar.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -185,10 +190,10 @@
 				E471B34B25CC2E460074C401 /* Tab Bar */,
 				E488D09925C06855002DEDD8 /* History */,
 				E409FD5C25CEF084002EEB7C /* Components */,
-				E4CA35C725C2CD9400255C75 /* Social Icons */,
-				E408F62425C1DE76005F91A3 /* Styling */,
 				E488D06B25C03CCF002DEDD8 /* Persistence.swift */,
 				E409FD6D25CF120A002EEB7C /* Helpers */,
+				E408F62425C1DE76005F91A3 /* Styling */,
+				E4CA35C725C2CD9400255C75 /* Social Icons */,
 				E488D06625C03CCF002DEDD8 /* Assets.xcassets */,
 				E488D07025C03CCF002DEDD8 /* Info.plist */,
 				E488D06D25C03CCF002DEDD8 /* Tap_It.xcdatamodeld */,
@@ -263,6 +268,7 @@
 			);
 			name = "Tap It";
 			packageProductDependencies = (
+				E40B4A7125DC5FD90012FD65 /* Recombine */,
 			);
 			productName = "Tap It";
 			productReference = E488D05F25C03CCF002DEDD8 /* Tap It.app */;
@@ -336,6 +342,7 @@
 			);
 			mainGroup = E488D05625C03CCF002DEDD8;
 			packageReferences = (
+				E40B4A7025DC5FD90012FD65 /* XCRemoteSwiftPackageReference "Recombine" */,
 			);
 			productRefGroup = E488D06025C03CCF002DEDD8 /* Products */;
 			projectDirPath = "";
@@ -386,6 +393,7 @@
 				E488D06F25C03CCF002DEDD8 /* Tap_It.xcdatamodeld in Sources */,
 				E41EE76425D6EC0C00DAD451 /* OffsetScrollView.swift in Sources */,
 				E408F62E25C1E084005F91A3 /* NeumorphicOuter.swift in Sources */,
+				E4B9D60F25D72A2500826BF3 /* SearchBar.swift in Sources */,
 				E409FD6625CF0781002EEB7C /* NavigationBar.swift in Sources */,
 				E409FD6F25CF121F002EEB7C /* Buildable.swift in Sources */,
 				E42DF81325C38D6100B58CE1 /* PhoneIcon.swift in Sources */,
@@ -722,6 +730,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E40B4A7025DC5FD90012FD65 /* XCRemoteSwiftPackageReference "Recombine" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReSwift/Recombine.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E40B4A7125DC5FD90012FD65 /* Recombine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E40B4A7025DC5FD90012FD65 /* XCRemoteSwiftPackageReference "Recombine" */;
+			productName = Recombine;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		E488D06D25C03CCF002DEDD8 /* Tap_It.xcdatamodeld */ = {

@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CombineExpectations",
+        "repositoryURL": "https://github.com/groue/CombineExpectations",
+        "state": {
+          "branch": null,
+          "revision": "5c36f3199960776fc055196a93ca04bfc00e1857",
+          "version": "0.7.0"
+        }
+      },
+      {
+        "package": "Recombine",
+        "repositoryURL": "https://github.com/ReSwift/Recombine.git",
+        "state": {
+          "branch": null,
+          "revision": "b76faa07c291b8fa96e279bfbbe3b193d8abd9f5",
+          "version": "1.1.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
