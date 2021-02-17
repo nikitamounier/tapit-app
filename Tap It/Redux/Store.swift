@@ -12,5 +12,5 @@ typealias Store = BaseStore<Redux.State, Redux.Action.Raw, Redux.Action.Refined>
 typealias SubStore<SubState: Equatable, SubAction> = LensedStore<Redux.State, SubState, Redux.Action.Raw, Redux.Action.Refined, SubAction>
 
 extension Redux {
-    static let store = Store(state: .init(), reducer: Reducer.main, middleware: middleware, publishOn: DispatchQueue.main)
+    static let store = Store(state: .init(placeholder: ""), reducer: Reducer.main, middleware: middleware, publishOn: DispatchQueue.main)
 }
