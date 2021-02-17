@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NavigationBar<Content: View>: View {
     let title: Text
-    let undertitleContent: AnyView?
+    let undertitleContent: AnyView
     
     init(title: Text, @ViewBuilder undertitle: () -> Content = { EmptyView() as! Content }) {
         self.title = title
