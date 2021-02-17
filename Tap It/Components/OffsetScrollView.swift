@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// Thanks to swiftwithmajid's article for this - https://swiftwithmajid.com/2020/09/24/mastering-scrollview-in-swiftui/
+// Thanks to Swiftwithmajid's article for this - https://swiftwithmajid.com/2020/09/24/mastering-scrollview-in-swiftui/
 
 // MARK: - Preference Key
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
