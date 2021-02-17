@@ -15,25 +15,13 @@ struct TapTabButtonStyle: ButtonStyle {
     }
 }
 
-struct OtherTabButtonStyle: ButtonStyle {
-    let tab: Tab
-    let selectedTab: Tab
+struct IsPressedButtonStyle: ButtonStyle {
+    @Binding var isPressed: Bool
     
     func makeBody(configuration: Configuration) -> some View {
-        if configuration.isPressed || selectedTab == tab {
-            return Image(systemName: "\(tab.rawValue).fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 25, height: 25)
-                .padding()
-                .contentShape(Rectangle())
-        } else {
-            return Image(systemName: "\(tab.rawValue)")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 25, height: 25)
-                .padding()
-                .contentShape(Rectangle())
-        }
+        return configuration.label
+            .onChange(of: configuration.isPressed) { value in
+                isPressed = value
+            }
     }
 }
