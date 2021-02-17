@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct TabBar: View {
-    @ObservedObject var tabModel: TabBarViewModel
-    let geo: GeometryProxy
+    @Binding var selectedTab: Tab
+    @State private var isPressingTab: [Tab: Bool] = [.history: false, .profile: false]
+    
+    let generator = UIImpactFeedbackGenerator(style: .light)
     
     var tapLogo: some View {
         Image(systemName: "hand.raised.fill") // temporary until I make my own logo
@@ -20,7 +22,10 @@ struct TabBar: View {
     }
     
     var tapButton: some View {
-        Button(action: { tabModel.switchTab(to: .tap) }) {
+        Button {
+            generator.impactOccurred()
+            switchTab(to: .tap)
+        } label: {
             Circle()
                 .fill(LinearGradient(tapGradient: .topLeftToBottom))
                 .scaledToFit()
@@ -32,10 +37,15 @@ struct TabBar: View {
     }
     
     func otherTabButton(for tab: Tab) -> some View {
-        Button(action: { tabModel.switchTab(to: tab) }) {
-            EmptyView() // since it's buttonStyle which decides which view should be drawn
+        Button(action: { switchTab(to: tab) }) {
+            Image(systemName: selectedTab == tab || (isPressingTab[tab] ?? false) ? "\(tab.rawValue).fill" : tab.rawValue)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 25, height: 25)
+                .padding()
+                .contentShape(Rectangle())
         }
-        .buttonStyle(OtherTabButtonStyle(tab: tab, selectedTab: tabModel.selectedTab))
+        .buttonStyle(IsPressedButtonStyle(isPressed: tabBinding(for: tab)))
     }
     
     var body: some View {
@@ -52,11 +62,26 @@ struct TabBar: View {
             .padding(.horizontal)
             .overlay(tapButton)
         }
-        .padding(.bottom, geo.safeAreaInsets.bottom > 0 ? geo.safeAreaInsets.bottom - 7 : 0)
+        .padding(.bottom, bottomPadding)
         .background(Neumorphic.mainColor)
         .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: -15)
     }
     
+    private func switchTab(to tab: Tab) {
+        selectedTab = tab
+    }
+    
+    private func tabBinding(for tab: Tab) -> Binding<Bool> {
+        return Binding(get: { (isPressingTab[tab] ?? false) }, set: { isPressingTab[tab] = $0 })
+    }
+    
+    private var bottomPadding: CGFloat {
+        if let inset = UIApplication.shared.windows.first?.safeAreaInsets.bottom {
+            return inset - 7
+        } else {
+            return 0
+        }
+    }
 }
 
 //struct TabView_Previews: PreviewProvider {

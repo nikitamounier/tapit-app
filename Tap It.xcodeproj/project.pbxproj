@@ -26,7 +26,7 @@
 		E43BD2E125C831FD00587951 /* HistoryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43BD2E025C831FD00587951 /* HistoryList.swift */; };
 		E44A42E925C0D10500C22FC3 /* TapGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E44A42E825C0D10500C22FC3 /* TapGradient.swift */; };
 		E470346525C238C500E2FC8C /* ProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E470346425C238C500E2FC8C /* ProfilePreview.swift */; };
-		E471B34D25CC2E540074C401 /* TabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E471B34C25CC2E540074C401 /* TabBarViewModel.swift */; };
+		E471B34D25CC2E540074C401 /* TabEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = E471B34C25CC2E540074C401 /* TabEnum.swift */; };
 		E474188D25C4CCAB005961BE /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = E474188C25C4CCAB005961BE /* History.swift */; };
 		E47548C025D3064D0045672B /* TabButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47548BF25D3064D0045672B /* TabButtonStyles.swift */; };
 		E488D06325C03CCF002DEDD8 /* Tap_ItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488D06225C03CCF002DEDD8 /* Tap_ItApp.swift */; };
@@ -80,7 +80,7 @@
 		E43BD2E025C831FD00587951 /* HistoryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryList.swift; sourceTree = "<group>"; };
 		E44A42E825C0D10500C22FC3 /* TapGradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapGradient.swift; sourceTree = "<group>"; };
 		E470346425C238C500E2FC8C /* ProfilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePreview.swift; sourceTree = "<group>"; };
-		E471B34C25CC2E540074C401 /* TabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewModel.swift; sourceTree = "<group>"; };
+		E471B34C25CC2E540074C401 /* TabEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabEnum.swift; sourceTree = "<group>"; };
 		E474188C25C4CCAB005961BE /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		E47548BF25D3064D0045672B /* TabButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabButtonStyles.swift; sourceTree = "<group>"; };
 		E488D05F25C03CCF002DEDD8 /* Tap It.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tap It.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,6 +149,7 @@
 				E409FD6025CEFE65002EEB7C /* TabHeader.swift */,
 				E41EE76325D6EC0C00DAD451 /* OffsetScrollView.swift */,
 				E4B9D60E25D72A2500826BF3 /* SearchBar.swift */,
+				E4CA35C725C2CD9400255C75 /* Social Icons */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -157,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				E409FD6E25CF121F002EEB7C /* Buildable.swift */,
+				E488D06B25C03CCF002DEDD8 /* Persistence.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -173,10 +175,21 @@
 			path = Redux;
 			sourceTree = "<group>";
 		};
+		E40B4AA025DC9CA80012FD65 /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				E488D06425C03CCF002DEDD8 /* ContentView.swift */,
+				E48F202B25CB798C00E4F9EC /* MainView.swift */,
+				E471B34B25CC2E460074C401 /* Tab Bar */,
+				E488D09925C06855002DEDD8 /* History */,
+			);
+			path = Interface;
+			sourceTree = "<group>";
+		};
 		E471B34B25CC2E460074C401 /* Tab Bar */ = {
 			isa = PBXGroup;
 			children = (
-				E471B34C25CC2E540074C401 /* TabBarViewModel.swift */,
+				E471B34C25CC2E540074C401 /* TabEnum.swift */,
 				E48F203425CB7BDD00E4F9EC /* TabBar.swift */,
 			);
 			path = "Tab Bar";
@@ -206,17 +219,12 @@
 		E488D06125C03CCF002DEDD8 /* Tap It */ = {
 			isa = PBXGroup;
 			children = (
-				E40B4A7625DC61080012FD65 /* Redux */,
 				E488D06225C03CCF002DEDD8 /* Tap_ItApp.swift */,
-				E488D06425C03CCF002DEDD8 /* ContentView.swift */,
-				E48F202B25CB798C00E4F9EC /* MainView.swift */,
-				E471B34B25CC2E460074C401 /* Tab Bar */,
-				E488D09925C06855002DEDD8 /* History */,
+				E40B4A7625DC61080012FD65 /* Redux */,
+				E40B4AA025DC9CA80012FD65 /* Interface */,
 				E409FD5C25CEF084002EEB7C /* Components */,
-				E488D06B25C03CCF002DEDD8 /* Persistence.swift */,
-				E409FD6D25CF120A002EEB7C /* Helpers */,
 				E408F62425C1DE76005F91A3 /* Styling */,
-				E4CA35C725C2CD9400255C75 /* Social Icons */,
+				E409FD6D25CF120A002EEB7C /* Helpers */,
 				E488D06625C03CCF002DEDD8 /* Assets.xcassets */,
 				E488D07025C03CCF002DEDD8 /* Info.plist */,
 				E488D06D25C03CCF002DEDD8 /* Tap_It.xcdatamodeld */,
@@ -409,7 +417,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E471B34D25CC2E540074C401 /* TabBarViewModel.swift in Sources */,
+				E471B34D25CC2E540074C401 /* TabEnum.swift in Sources */,
 				E4CA35C925C2CDB600255C75 /* TwitterIcon.swift in Sources */,
 				E47548C025D3064D0045672B /* TabButtonStyles.swift in Sources */,
 				E40B4A8025DC61C50012FD65 /* State.swift in Sources */,
