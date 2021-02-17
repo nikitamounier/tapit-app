@@ -9,11 +9,13 @@ import SwiftUI
 
 // Thanks to swiftwithmajid's article for this - https://swiftwithmajid.com/2020/09/24/mastering-scrollview-in-swiftui/
 
+// MARK: - Preference Key
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGPoint = .zero
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {}
 }
 
+// MARK: - OffsetScrollView (wrapper)
 /// ScrollView with onOffsetChanged callback
 struct OffsetScrollView<Content: View>: View {
     private let axes: Axis.Set
@@ -62,6 +64,7 @@ struct OffsetScrollView<Content: View>: View {
     }
 }
 
+// MARK: - OffsetScrollView
 extension OffsetScrollView {
     private struct ScrollView: View {
         let axes: Axis.Set
