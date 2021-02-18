@@ -185,6 +185,8 @@
 				E48F202B25CB798C00E4F9EC /* MainView.swift */,
 				E471B34B25CC2E460074C401 /* Tab Bar */,
 				E488D09925C06855002DEDD8 /* History */,
+				E409FD5C25CEF084002EEB7C /* Components */,
+				E408F62425C1DE76005F91A3 /* Styling */,
 			);
 			path = Interface;
 			sourceTree = "<group>";
@@ -225,8 +227,6 @@
 				E488D06225C03CCF002DEDD8 /* Tap_ItApp.swift */,
 				E40B4A7625DC61080012FD65 /* Redux */,
 				E40B4AA025DC9CA80012FD65 /* Interface */,
-				E409FD5C25CEF084002EEB7C /* Components */,
-				E408F62425C1DE76005F91A3 /* Styling */,
 				E409FD6D25CF120A002EEB7C /* Helpers */,
 				E488D06625C03CCF002DEDD8 /* Assets.xcassets */,
 				E488D07025C03CCF002DEDD8 /* Info.plist */,
