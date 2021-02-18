@@ -9,26 +9,36 @@ import SwiftUI
 
 @main
 struct Tap_ItApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     let store = Redux.store
     
-    @Environment(\.scenePhase) private var scenePhase
-
+    init() {
+        appDelegate.store = store
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
         }
-        .onChange(of: scenePhase) { phase in
-            switch phase {
-            case .background: // where would dispatch 'background' raw action, aka save state to FileManager
-                break
-            case .inactive:
-                break
-            case .active: // where would dispatch 'active' raw action, aka load state from disk if not already loaded
-                break
-            @unknown default:
-                break
-            }
+    }
+}
+
+extension Tap_ItApp {
+    class AppDelegate: UIResponder, UIApplicationDelegate {
+        var store: Store?
+        
+        func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+            guard let store = store else { return true }
+            store.dispatch(raw: .loadState)
+            return true
+        }
+        
+        func applicationWillTerminate(_ application: UIApplication) {
+            guard let store = store else { return }
+            store.dispatch(raw: .save(store.state))
+            
         }
     }
 }

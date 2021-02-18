@@ -8,15 +8,23 @@
 extension Redux {
     enum Action {
         enum Refined {
-            case tabAction(TabAction)
+            case setState(State)
+            case none
             
+            case tabAction(TabAction)
+            case tappedProfilesAction(TappedProfilesAction)
+            
+            enum TappedProfilesAction {
+                
+            }
             enum TabAction {
                 case setTab(to: Tab)
             }
         }
         
         enum Raw {
-            
+            case loadState
+            case save(State)
         }
     }
 }

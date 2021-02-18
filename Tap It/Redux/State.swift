@@ -5,14 +5,20 @@
 //  Created by Nikita Mounier on 16/02/2021.
 //
 
+import Foundation
+
 enum Redux {}
 
 extension Redux {
     struct State: Codable, Equatable {
-        var tabSelection = TabSelection(currentTab: .history)
-        var placeholder: String
+        var tabSelection: TabState = .init(currentTab: .history)
+        var tappedProfiles: TappedProfilesState = .init(profiles: [:])
         
-        struct TabSelection: Equatable {
+        struct TappedProfilesState: Codable, Equatable {
+            var profiles: [UUID: String] // for now, haven't made models yet
+        }
+        
+        struct TabState: Equatable {
             var currentTab: Tab
         }
     }
@@ -20,6 +26,6 @@ extension Redux {
 
 extension Redux.State {
     enum CodingKeys: String, CodingKey {
-        case placeholder
+        case tappedProfiles
     }
 }
