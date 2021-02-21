@@ -7,21 +7,24 @@
 
 extension Redux {
     enum Action {
+        // MARK: - Refined Actions
         enum Refined {
             case setState(State)
-            case none
             
             case tabAction(TabAction)
-            case tappedProfilesAction(TappedProfilesAction)
-            
-            enum TappedProfilesAction {
-                
-            }
             enum TabAction {
                 case setTab(to: Tab)
             }
+            
+            case tappedProfilesAction(TappedProfilesAction)
+            enum TappedProfilesAction {
+                
+            }
+            
+            case none
         }
         
+        //MARK: - Raw Actions
         enum Raw {
             case loadState
             case save(State)
