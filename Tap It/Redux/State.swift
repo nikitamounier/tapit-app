@@ -12,10 +12,10 @@ enum Redux {}
 extension Redux {
     struct State: Codable, Equatable {
         var tabSelection: TabState = .init(currentTab: .history)
-        var tappedProfiles: TappedProfilesState = .init(profiles: [:])
+        var tappedProfiles: TappedProfilesState = .init(profiles: [])
         
         struct TappedProfilesState: Codable, Equatable {
-            var profiles: [UUID: String] // for now, haven't made models yet
+            var profiles: Set<String> // for now, haven't made models yet
         }
         
         struct TabState: Equatable {
