@@ -22,17 +22,21 @@ extension Redux {
                     }
                 }
                 .eraseToAnyPublisher()
-        case let .save(appState):
-            return Just(appState)
-                .encode(encoder: JSONEncoder())
-                .flatMap { FileManager.default.save(data: $0, to: "appState.json", in: .applicationSupportDirectory) }
-                .flatMap {
-                    state.map { _ in
-                        return .none
-                    }
+        case .saveState:
+            return state.flatMap { appState in
+                Just(appState)
+            }
+            .encode(encoder: JSONEncoder())
+            .flatMap { FileManager.default.save(data: $0, to: "appState.json", in: .applicationSupportDirectory) }
+            .flatMap { _ in
+                state.map { _ in
+                    return .none
                 }
-                .replaceError(with: .none)
-                .eraseToAnyPublisher()
+            }
+            .catch { error in
+                Just(.none)
+            }
+            .eraseToAnyPublisher()
         }
     }
 }
