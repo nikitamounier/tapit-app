@@ -11,7 +11,7 @@ import SwiftUI
 extension FileManager {
     func load(from name: String, in directory: SearchPathDirectory) -> AnyPublisher<Data, Error> {
         return Deferred {
-            Future { promise in
+            return Future { promise in
                 do {
                     let documentsURL = try self.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                     let fileURL = documentsURL.appendingPathComponent(name)
@@ -25,15 +25,15 @@ extension FileManager {
         .eraseToAnyPublisher()
     }
     
-    func save(data: Data, to name: String, in directory: SearchPathDirectory) -> AnyPublisher<Void, Error> {
+    func save(data: Data, to name: String, in directory: SearchPathDirectory) -> AnyPublisher<URL, Error> {
         return Deferred {
-            Future { promise in
+            return Future { promise in
                 do {
                     let documentsURL = try self.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                     let fileURL = documentsURL.appendingPathComponent(name)
                     
-                    try data.write(to: fileURL)
-                    promise(.success(()))
+                    try data.write(to: fileURL, options: .atomic)
+                    promise(.success(fileURL))
                 } catch {
                     print("Error reading to disk: \(error)") // temporary
                     promise(.failure(error))
