@@ -22,10 +22,10 @@ struct MainView: View {
         ScrollView([]) { // So that tab bar doesn't move up with keyboard
             VStack(spacing: 0) {
                 TabView(selection: tabBinding) { // just a tab controller without bar - still using it for its supposed caching abilities
-                    History()
+                    HistoryScreen()
                         .environmentObject(store.lensing(state: \.tappedProfiles, actions: { .tappedProfilesAction($0) }))
                         .tag(Tab.history)
-                    Text("Tap view") // temporary, as still haven't made Tap view yet
+                    TapScreen() // temporary, as still haven't made Tap view yet
                         .tag(Tab.tap)
                     Text("Profile view") // temporary, as still haven't made Profile view yet
                         .tag(Tab.profile)
