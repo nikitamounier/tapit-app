@@ -27,18 +27,16 @@ struct Tap_ItApp: App {
 
 extension Tap_ItApp {
     class AppDelegate: UIResponder, UIApplicationDelegate {
-        var store: Store?
+        var store: Store! // Since will be injected on initialisation of app – for performance, so as to not have to unwrap it when launching and terminating
         
         func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-            guard let store = store else { return true }
             store.dispatch(raw: .loadState)
             return true
         }
         
         func applicationWillTerminate(_ application: UIApplication) {
-            guard let store = store else { return }
-            store.dispatch(raw: .save(store.state))
-            
+            store.dispatch(raw: .saveState)
         }
     }
 }
+
