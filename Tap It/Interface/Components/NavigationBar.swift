@@ -24,7 +24,7 @@ struct NavigationBar<Content: View>: View {
                 .padding(.leading)
             if let content = undertitleContent {
                 content
-                    .padding(.leading)
+                    .padding([])
             }
         }
     }
