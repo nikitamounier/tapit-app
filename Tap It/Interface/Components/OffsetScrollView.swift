@@ -17,11 +17,12 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 
 // MARK: - OffsetScrollView (wrapper)
 /// ScrollView with onOffsetChanged callback
-struct OffsetScrollView<Content: View>: View {
+struct OffsetScrollView<Content, Location>: View where Content: View, Location: Hashable {
     private let axes: Axis.Set
     private let showsIndicators: Bool
     private let offsetChanged: (CGPoint) -> Void
     private let content: Content
+    let location: Location
     
     private var offset: Binding<CGFloat>?
     @State private var privateOffset: CGFloat = .zero
@@ -31,18 +32,20 @@ struct OffsetScrollView<Content: View>: View {
         showsIndicators: Bool = true,
         yOffset: Binding<CGFloat>,
         onOffsetChanged: @escaping (CGPoint) -> Void = { _ in },
+        in location: Location,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.init(axes: axes, showsIndicators: showsIndicators, offset: .some(yOffset), onOffsetChanged: onOffsetChanged, content: content)
+        self.init(axes: axes, showsIndicators: showsIndicators, offset: .some(yOffset), onOffsetChanged: onOffsetChanged, in: location, content: content)
     }
     
     init(
         axes: Axis.Set = .vertical,
         showsIndicators: Bool = true,
         onOffsetChanged: @escaping (CGPoint) -> Void = { _ in },
+        in location: Location,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        self.init(axes: axes, showsIndicators: showsIndicators, offset: nil, onOffsetChanged: onOffsetChanged, content: content)
+        self.init(axes: axes, showsIndicators: showsIndicators, offset: nil, onOffsetChanged: onOffsetChanged, in: location, content: content)
     }
     
     private init(
@@ -50,17 +53,19 @@ struct OffsetScrollView<Content: View>: View {
         showsIndicators: Bool,
         offset: Binding<CGFloat>?,
         onOffsetChanged: @escaping (CGPoint) -> Void,
+        in location: Location,
         @ViewBuilder content: () -> Content
     ) {
         self.axes = axes
         self.showsIndicators = showsIndicators
         self.offset = offset
         self.offsetChanged = onOffsetChanged
+        self.location = location
         self.content = content()
     }
     
     var body: some View {
-        ScrollView(axes: axes, showsIndicators: showsIndicators, offset: offset ?? $privateOffset, offsetChanged: offsetChanged, content: content)
+        ScrollView(axes: axes, showsIndicators: showsIndicators, offset: offset ?? $privateOffset, offsetChanged: offsetChanged, location: location, content: content)
     }
 }
 
@@ -71,6 +76,7 @@ extension OffsetScrollView {
         let showsIndicators: Bool
         @Binding var offset: CGFloat
         let offsetChanged: (CGPoint) -> Void
+        let location: Location
         let content: Content
         
         var body: some View {
@@ -78,13 +84,13 @@ extension OffsetScrollView {
                 VStack(spacing: 0) { // so that GeometryReader doesn't take extra space
                     GeometryReader { geometry in
                         Color.clear
-                            .preference(key: ScrollOffsetPreferenceKey.self, value: geometry.frame(in: .named("scrollView")).origin)
+                            .preference(key: ScrollOffsetPreferenceKey.self, value: geometry.frame(in: .named("scrollView\(location.hashValue)")).origin)
                     }
                     .frame(width: 0, height: 0)
                     content
                 }
             }
-            .coordinateSpace(name: "scrollView")
+            .coordinateSpace(name: "scrollView\(location.hashValue)")
             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { point in
                 offset = point.y
                 offsetChanged(point)
