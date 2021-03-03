@@ -39,26 +39,19 @@ struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.
             ScrollViewReader { proxy in
                 HStack(spacing: 0) {
                     ForEach(tabs, id: \.self) { tab in
-                        VStack(alignment: .leading, spacing: 5) {
-                            Button(action: { setTab(to: tab) }) {
+                        Button(action: { setTab(to: tab) }) {
+                            VStack(alignment: .leading, spacing: 5) {
                                 Text(tabNames[tab] ?? "")
                                     .foregroundColor(currentTab == tab ? .blue : .gray)
+                                TabCapsule(for: tab, current: currentTab, animation: animation, in: location)
                             }
-                            TabCapsule(for: tab, current: currentTab, animation: animation, in: location)
                         }
-                        .contentShape(Rectangle())
                         .padding(.leading)
                         .id(tab)
-                        .onPreferenceChange(TabCapsuleXPositionPreferenceKey.self) { position in
-                            if position != nil {
-                                withAnimation(.linear(duration: 0.1)) {
-                                    proxy.scrollTo(tab)
-                                }
-                            }
-                        }
+                        .onPreferenceChange(TabCapsuleXPositionPreferenceKey.self) { scrollToTab(tab, position: $0, in: proxy) }
                     }
-                    .coordinateSpace(name: "capsuleBar\(location.hashValue)")
                 }
+                .coordinateSpace(name: "capsuleBar\(location.hashValue)")
             }
         }
         .animation(.linear(duration: 0.1))
@@ -67,6 +60,14 @@ struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.
     private func setTab(to tab: Tabs.Element) {
         withAnimation {
             currentTab = tab
+        }
+    }
+    
+    private func scrollToTab(_ tab: Tabs.Element, position: CGFloat?, in proxy: ScrollViewProxy) {
+        if position != nil {
+            withAnimation(.linear(duration: 0.1)) {
+                proxy.scrollTo(tab)
+            }
         }
     }
 }
@@ -103,7 +104,7 @@ extension TabHeader {
             } else {
                 Capsule()
                     .frame(width: 20, height: 2)
-                    .hidden()
+                    .foregroundColor(.clear)
             }
         }
     }
