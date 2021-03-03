@@ -9,31 +9,41 @@ import Recombine
 
 extension Redux {
     enum Reducer {
+        // MARK: - Main Reducer
         static let main = MutatingReducer<State, Action.Refined> { state, action in
             switch action {
             case let .setState(appState):
                 state = appState
                 
-            case let .tabAction(modification):
-                state.tabSelection = tabReducer(state: state.tabSelection, action: modification) // pure reducer, because lightweight type
-                
-            case let .tappedProfilesAction(modification):
-                tappedProfilesReducer(state: &state.tappedProfiles, action: modification) // inout reducer - wouldn't want to replace dictionary every time
+            case let .tabAction(tabModification):
+                state.tabSelection = tabReducer(state: state.tabSelection, action: tabModification) // pure reducer, because lightweight type
+            
+            case let .tappedProfilesAction(profilesModification):
+                tappedProfilesReducer(state: &state.tappedProfiles, action: profilesModification) // inout reducer - doesn't replace dictionary every time
             
             case .none:
                 break
             }
         }
         
-        private static let tabReducer = PureReducer<State.TabState, Action.Refined.TabAction> { _, tabAction in
+        // MARK: - Tab Reducer
+        private static let tabReducer = PureReducer<State.TabState, Action.Refined.TabAction> { _, tabAction -> State.TabState in
             switch tabAction {
             case let .setTab(to: tab):
                 return State.TabState(currentTab: tab)
             }
         }
         
+        // MARK: - Tapped Profiles Reducer
         private static let tappedProfilesReducer = MutatingReducer<State.TappedProfilesState, Action.Refined.TappedProfilesAction> { state, profilesAction in
-            
+            switch profilesAction {
+            case let .add(profile):
+                state.profiles.updateValue(profile, forKey: profile.id)
+            case let .remove(id):
+                state.profiles[id] = nil
+            case let .removeMultiple(ids):
+                ids.forEach { id in state.profiles[id] = nil }
+            }
         }
     }
 }
