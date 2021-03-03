@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct HistoryList: View {
-    let category: History.Category
+    let category: HistoryScreen.Category
     @Binding var scrollOffset: CGFloat
     
     var body: some View {
-        OffsetScrollView(yOffset: $scrollOffset) {
+        OffsetScrollView(yOffset: $scrollOffset, in: "historyScreen") {
             LazyVStack(spacing: 14) {
                 ForEach(0..<100) { item in
                     HistoryCell(profilePicture: UIImage(systemName: "person.crop.square.fill") ?? .init(), name: "Nikita Mounier", socials: [], date: "27/01")
