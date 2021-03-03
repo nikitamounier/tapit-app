@@ -13,7 +13,9 @@ struct ProfilePreview: View {
     let socials: [String] // for now
     let date: String
     
-    let numberOfIcons = Int.random(in: 1...4)
+    let tempSocials = Image.SocialIcon.allCases
+        .shuffled()
+        .prefix(Int.random(in: 2...4))
     
     var body: some View {
         GeometryReader { geo in
@@ -48,23 +50,13 @@ struct ProfilePreview: View {
             
             HStack(alignment: .center) {
                 HStack {
-                    switch numberOfIcons { // to test ui without building whole model, since can't store views in an array
-                    case 1:
-                        InstagramIcon(cornerRadiusScale: 0.3)
-                    case 2:
-                        SnapchatIcon(cornerRadiusScale: 0.3)
-                        PhoneIcon(cornerRadiusScale: 0.3)
-                    case 3:
-                        PhoneIcon(cornerRadiusScale: 0.3)
-                        TwitterIcon(cornerRadiusScale: 0.3)
-                        InstagramIcon(cornerRadiusScale: 0.3)
-                    case 4:
-                        InstagramIcon(cornerRadiusScale: 0.3)
-                        SnapchatIcon(cornerRadiusScale: 0.3)
-                        TwitterIcon(cornerRadiusScale: 0.3)
-                        PhoneIcon(cornerRadiusScale: 0.3)
-                    default:
-                        InstagramIcon(cornerRadiusScale: 0.3)
+                    ForEach(tempSocials, id: \.rawValue) { social in
+                        Button(action: {}) {
+                            Image(social: social)
+                                .resizable()
+                                .scaledToFit()
+                                .cornerRadius(10)
+                        }
                     }
                     Spacer()
                 }
@@ -73,7 +65,7 @@ struct ProfilePreview: View {
                     .frame(width: geo.size.width / 10, height: geo.size.height / 10)
                     .padding(.trailing)
             }
-            .frame(height: geo.size.height / 3.5)
+            .frame(height: geo.size.height / 3)
         }
     }
 }
