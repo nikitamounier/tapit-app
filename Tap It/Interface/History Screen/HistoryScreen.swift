@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct History: View {
+struct HistoryScreen: View {
     
     struct Category: Hashable, Equatable { // temporary - until I've made my Core Data models
         var name: String
@@ -36,7 +36,7 @@ struct History: View {
             NavigationView {
                 VStack(spacing: 0) {
                     NavigationBar(title: Text("History")) {
-                            TabHeader(categories, selection: .constant(categories[0]), name: \.name) // no need for it to update every time since dummy
+                        TabHeader(categories, selection: .constant(categories[0]), name: \.name, in: "_") // no need for it to update every time since dummy
                         }
                         .padding(.top, geo.safeAreaInsets.top)
                         .hidden()
@@ -45,12 +45,13 @@ struct History: View {
                 }
                 .overlay(
                     NavigationBar(title: Text("History")) { // Actual navigation bar
-                            TabHeader(categories, selection: $currentCategory, name: \.name)
+                        TabHeader(categories, selection: $currentCategory, name: \.name, in: "historyScreen")
                         }
                         .padding(.top, geo.safeAreaInsets.top)
                         .background(Neumorphic.mainColor)
                         .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6),
-                    alignment: .topLeading) // I'm sorry for this terrible formatting
+                    alignment: .topLeading // I'm sorry for this terrible formatting
+                )
                 .background(Neumorphic.backgroundColor)
                 .navigationBarHidden(true)
                 .ignoresSafeArea()
@@ -61,7 +62,7 @@ struct History: View {
 
 struct History_Previews: PreviewProvider {
     static var previews: some View {
-        History()
+        HistoryScreen()
             .environment(\.sizeCategory, .medium)
             .previewDevice("iPhone 12")
             .preferredColorScheme(.light)
