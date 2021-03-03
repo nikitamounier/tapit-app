@@ -7,7 +7,15 @@
 
 import SwiftUI
 
-struct TabHeader<Tabs>: View where Tabs: RandomAccessCollection, Tabs.Element: Hashable {
+private struct TabCapsuleXPositionPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat? = nil
+    static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
+        value = nextValue()
+    }
+}
+
+struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.Element: Hashable, Location: Hashable {
+    let location: Location
     private let tabs: Tabs
     private var tabNames: [Tabs.Element: String] = [:]
     
@@ -15,7 +23,7 @@ struct TabHeader<Tabs>: View where Tabs: RandomAccessCollection, Tabs.Element: H
     
     @Namespace private var animation
     
-    init(_ tabs: Tabs, selection: Binding<Tabs.Element>, name: KeyPath<Tabs.Element, String>) {
+    init(_ tabs: Tabs, selection: Binding<Tabs.Element>, name: KeyPath<Tabs.Element, String>, in location: Location) {
         self.tabs = tabs
         self._currentTab = selection
         var tmp: [Tabs.Element: String] = [:]
@@ -23,23 +31,33 @@ struct TabHeader<Tabs>: View where Tabs: RandomAccessCollection, Tabs.Element: H
             tmp.updateValue(tab[keyPath: name], forKey: tab)
         }
         self.tabNames = tmp // relating each tab to its name using the power of KeyPaths
+        self.location = location
     }
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             ScrollViewReader { proxy in
-                HStack(spacing: 20) {
+                HStack(spacing: 0) {
                     ForEach(tabs, id: \.self) { tab in
                         VStack(alignment: .leading, spacing: 5) {
                             Button(action: { setTab(to: tab) }) {
                                 Text(tabNames[tab] ?? "")
                                     .foregroundColor(currentTab == tab ? .blue : .gray)
                             }
-                            TabCapsule(for: tab, current: currentTab, animation: animation)
+                            TabCapsule(for: tab, current: currentTab, animation: animation, in: location)
                         }
                         .contentShape(Rectangle())
+                        .padding(.leading)
                         .id(tab)
+                        .onPreferenceChange(TabCapsuleXPositionPreferenceKey.self) { position in
+                            if position != nil {
+                                withAnimation(.linear(duration: 0.1)) {
+                                    proxy.scrollTo(tab)
+                                }
+                            }
+                        }
                     }
+                    .coordinateSpace(name: "capsuleBar\(location.hashValue)")
                 }
             }
         }
@@ -52,28 +70,41 @@ struct TabHeader<Tabs>: View where Tabs: RandomAccessCollection, Tabs.Element: H
         }
     }
 }
-
-private struct TabCapsule<Tab: Equatable>: View {
-    let tab: Tab
-    let currentTab: Tab
-    let animation: Namespace.ID
-    
-    init(for tab: Tab, current: Tab, animation: Namespace.ID) {
-        self.tab = tab
-        self.currentTab = current
-        self.animation = animation
-    }
-    
-    var body: some View {
-        if currentTab == tab {
-            Capsule()
-                .frame(width: 20, height: 2)
-                .foregroundColor(.blue)
-                .matchedGeometryEffect(id: Data.init(), in: animation, properties: .position)
-        } else {
-            Capsule()
-                .frame(width: 20, height: 2)
-                .hidden()
+extension TabHeader {
+    private struct TabCapsule<Tab: Equatable>: View {
+        let tab: Tab
+        let currentTab: Tab
+        let animation: Namespace.ID
+        let location: Location
+        
+        init(for tab: Tab, current: Tab, animation: Namespace.ID, in location: Location) {
+            self.tab = tab
+            self.currentTab = current
+            self.animation = animation
+            self.location = location
+        }
+        
+        var positionReader: some View {
+            GeometryReader { geo in
+                let xPosition = geo.frame(in: .named("capsuleBar\(location.hashValue)")).origin.x
+                Color.clear
+                    .preference(key: TabCapsuleXPositionPreferenceKey.self, value: xPosition > geo.frame(in: .named("capsuleBar\(location.hashValue)")).width ? xPosition : nil)
+            }
+            .frame(width: 0, height: 0)
+        }
+        
+        var body: some View {
+            if currentTab == tab {
+                Capsule()
+                    .frame(width: 20, height: 2)
+                    .foregroundColor(.blue)
+                    .background(positionReader)
+                    .matchedGeometryEffect(id: location, in: animation, properties: .position)
+            } else {
+                Capsule()
+                    .frame(width: 20, height: 2)
+                    .hidden()
+            }
         }
     }
 }
@@ -104,8 +135,8 @@ private struct TestHeader: View {
     
     var body: some View {
         VStack {
-            TabHeader(TestEnum.allCases, selection: $currentEnumSelection, name: \.rawValue)
-            TabHeader(userConfiguratedCategories, selection: $currentStructSelection, name: \.name)
+            TabHeader(TestEnum.allCases, selection: $currentEnumSelection, name: \.rawValue, in: "test")
+            TabHeader(userConfiguratedCategories, selection: $currentStructSelection, name: \.name, in: "test")
         }
     }
 }
