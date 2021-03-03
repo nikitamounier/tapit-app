@@ -5,6 +5,8 @@
 //  Created by Nikita Mounier on 16/02/2021.
 //
 
+import Foundation
+
 extension Redux {
     enum Action {
         // MARK: - Refined Actions
@@ -18,7 +20,10 @@ extension Redux {
             
             case tappedProfilesAction(TappedProfilesAction)
             enum TappedProfilesAction {
+                case add(TappedProfile)
+                case remove(UUID)
                 
+                case removeMultiple(Set<UUID>)
             }
             
             case none
@@ -27,7 +32,7 @@ extension Redux {
         //MARK: - Raw Actions
         enum Raw {
             case loadState
-            case save(State)
+            case saveState
         }
     }
 }
