@@ -17,6 +17,8 @@ struct HistoryScreen: View {
     @State private var currentCategory: Category // temporary, will be in viewModel
     @State private var scrollOffset: CGFloat = .zero
     
+    @Namespace private var historyAnimation
+    
     init() {
         _currentCategory = State(initialValue: categories[0])
     }
@@ -36,7 +38,7 @@ struct HistoryScreen: View {
             NavigationView {
                 VStack(spacing: 0) {
                     NavigationBar(title: Text("History")) {
-                        TabHeader(categories, selection: .constant(categories[0]), name: \.name, in: "_") // no need for it to update every time since dummy
+                        TabHeader(categories, selection: .constant(categories[0]), name: \.name, namespace: historyAnimation, in: "_") // no need for it to update every time since dummy
                         }
                         .padding(.top, geo.safeAreaInsets.top)
                         .hidden()
@@ -45,7 +47,7 @@ struct HistoryScreen: View {
                 }
                 .overlay(
                     NavigationBar(title: Text("History")) { // Actual navigation bar
-                        TabHeader(categories, selection: $currentCategory, name: \.name, in: "historyScreen")
+                        TabHeader(categories, selection: $currentCategory, name: \.name, namespace: historyAnimation, in: "historyScreen")
                         }
                         .padding(.top, geo.safeAreaInsets.top)
                         .background(Neumorphic.mainColor)
