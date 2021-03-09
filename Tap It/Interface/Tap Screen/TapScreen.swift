@@ -19,10 +19,10 @@ struct TapScreen: View {
     
     var tabView: some View {
         TabView(selection: $currentCategory) {
-            //SocialsScreen()
-                //.tag(TapCategories.socials)
-            //PresetsScreen()
-                //.tag(TapCategories.presets)
+//            SocialsScreen()
+//                .tag(TapCategories.socials)
+//            PresetsScreen()
+//                .tag(TapCategories.presets)
             Text("Socials")
                 .tag(TapCategories.socials)
             Text("Presets")
@@ -35,7 +35,7 @@ struct TapScreen: View {
             NavigationView {
                 VStack(spacing: 0) {
                     NavigationBar(title: Text("Tap It")) {
-                        TabHeader(TapCategories.allCases, selection: .constant(.socials), name: \.rawValue, namespace: tapAnimation, in: "")
+                        TabHeader(TapCategories.allCases, selection: .constant(.socials), name: \.rawValue, namespace: tapAnimation, in: "..")
                     }
                     .padding(.top, geo.safeAreaInsets.top)
                     .hidden()
