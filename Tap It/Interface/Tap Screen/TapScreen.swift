@@ -15,11 +15,14 @@ struct TapScreen: View {
     }
     
     @State private var currentCategory: TapCategories = .socials
+    @Namespace private var tapAnimation
     
     var tabView: some View {
         TabView(selection: $currentCategory) {
             //SocialsScreen()
+                //.tag(TapCategories.socials)
             //PresetsScreen()
+                //.tag(TapCategories.presets)
             Text("Socials")
                 .tag(TapCategories.socials)
             Text("Presets")
@@ -32,7 +35,7 @@ struct TapScreen: View {
             NavigationView {
                 VStack(spacing: 0) {
                     NavigationBar(title: Text("Tap It")) {
-                        TabHeader(TapCategories.allCases, selection: .constant(.socials), name: \.rawValue, in: "")
+                        TabHeader(TapCategories.allCases, selection: .constant(.socials), name: \.rawValue, namespace: tapAnimation, in: "")
                     }
                     .padding(.top, geo.safeAreaInsets.top)
                     .hidden()
@@ -41,7 +44,7 @@ struct TapScreen: View {
                 }
                 .overlay(
                     NavigationBar(title: Text("Tap It")) {
-                        TabHeader(TapCategories.allCases, selection: $currentCategory, name: \.rawValue, in: "tapScreen")
+                        TabHeader(TapCategories.allCases, selection: $currentCategory, name: \.rawValue, namespace: tapAnimation, in: "tapScreen")
                     }
                     .padding(.top, geo.safeAreaInsets.top)
                     .background(Neumorphic.mainColor)
