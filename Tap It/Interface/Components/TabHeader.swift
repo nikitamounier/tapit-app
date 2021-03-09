@@ -21,9 +21,9 @@ struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.
     
     @Binding var currentTab: Tabs.Element
     
-    @Namespace private var animation
+    private let animation: Namespace.ID
     
-    init(_ tabs: Tabs, selection: Binding<Tabs.Element>, name: KeyPath<Tabs.Element, String>, in location: Location) {
+    init(_ tabs: Tabs, selection: Binding<Tabs.Element>, name: KeyPath<Tabs.Element, String>, namespace: Namespace.ID, in location: Location) {
         self.tabs = tabs
         self._currentTab = selection
         var tmp: [Tabs.Element: String] = [:]
@@ -31,13 +31,14 @@ struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.
             tmp.updateValue(tab[keyPath: name], forKey: tab)
         }
         self.tabNames = tmp // relating each tab to its name using the power of KeyPaths
+        self.animation = namespace
         self.location = location
     }
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             ScrollViewReader { proxy in
-                HStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
                     ForEach(tabs, id: \.self) { tab in
                         Button(action: { setTab(to: tab) }) {
                             VStack(alignment: .leading, spacing: 5) {
@@ -49,6 +50,7 @@ struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.
                         .padding(.leading)
                         .id(tab)
                         .onPreferenceChange(TabCapsuleXPositionPreferenceKey.self) { scrollToTab(tab, position: $0, in: proxy) }
+                        
                     }
                 }
                 .coordinateSpace(name: "capsuleBar\(location.hashValue)")
@@ -58,14 +60,14 @@ struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.
     }
     
     private func setTab(to tab: Tabs.Element) {
-        withAnimation {
+        withAnimation(.linear(duration: 0.1)) {
             currentTab = tab
         }
     }
     
     private func scrollToTab(_ tab: Tabs.Element, position: CGFloat?, in proxy: ScrollViewProxy) {
         if position != nil {
-            withAnimation(.linear(duration: 0.1)) {
+            withAnimation {
                 proxy.scrollTo(tab)
             }
         }
@@ -100,11 +102,11 @@ extension TabHeader {
                     .frame(width: 20, height: 2)
                     .foregroundColor(.blue)
                     .background(positionReader)
-                    .matchedGeometryEffect(id: location, in: animation, properties: .position)
+                    .matchedGeometryEffect(id: location, in: animation, isSource: currentTab == tab ? true : false)
             } else {
                 Capsule()
                     .frame(width: 20, height: 2)
-                    .foregroundColor(.clear)
+                    .hidden()
             }
         }
     }
@@ -129,6 +131,7 @@ private struct TestHeader: View {
     
     @State private var currentEnumSelection: TestEnum = .socials
     @State private var currentStructSelection: TabCategory
+    @Namespace private var animation
     
     init() {
         _currentStructSelection = State(initialValue: userConfiguratedCategories[0])
@@ -136,8 +139,8 @@ private struct TestHeader: View {
     
     var body: some View {
         VStack {
-            TabHeader(TestEnum.allCases, selection: $currentEnumSelection, name: \.rawValue, in: "test")
-            TabHeader(userConfiguratedCategories, selection: $currentStructSelection, name: \.name, in: "test")
+            TabHeader(TestEnum.allCases, selection: $currentEnumSelection, name: \.rawValue, namespace: animation, in: "test")
+            TabHeader(userConfiguratedCategories, selection: $currentStructSelection, name: \.name, namespace: animation, in: "test")
         }
     }
 }
