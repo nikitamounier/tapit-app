@@ -30,7 +30,7 @@ extension Redux {
         private static let tabReducer = PureReducer<State.TabState, Action.Refined.TabAction> { _, tabAction -> State.TabState in
             switch tabAction {
             case let .setTab(to: tab):
-                return State.TabState(currentTab: tab)
+                return .init(currentTab: tab)
             }
         }
         
