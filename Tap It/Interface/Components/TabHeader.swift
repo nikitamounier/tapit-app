@@ -50,7 +50,6 @@ struct TabHeader<Tabs, Location>: View where Tabs: RandomAccessCollection, Tabs.
                         .padding(.leading)
                         .id(tab)
                         .onPreferenceChange(TabCapsuleXPositionPreferenceKey.self) { scrollToTab(tab, position: $0, in: proxy) }
-                        
                     }
                 }
                 .coordinateSpace(name: "capsuleBar\(location.hashValue)")
@@ -89,9 +88,10 @@ extension TabHeader {
         
         var positionReader: some View {
             GeometryReader { geo in
-                let xPosition = geo.frame(in: .named("capsuleBar\(location.hashValue)")).origin.x
+                let frame = geo.frame(in: .named("capsuleBar\(location.hashValue)"))
+                let xPosition = frame.origin.x
                 Color.clear
-                    .preference(key: TabCapsuleXPositionPreferenceKey.self, value: xPosition > geo.frame(in: .named("capsuleBar\(location.hashValue)")).width ? xPosition : nil)
+                    .preference(key: TabCapsuleXPositionPreferenceKey.self, value: xPosition > frame.width ? xPosition : nil)
             }
             .frame(width: 0, height: 0)
         }
