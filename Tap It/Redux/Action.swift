@@ -10,7 +10,7 @@ import Foundation
 extension Redux {
     enum Action {
         // MARK: - Refined Actions
-        enum Refined {
+        enum Refined: AutoTree {
             case setState(State)
             
             case tabAction(TabAction)

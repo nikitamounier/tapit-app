@@ -9,17 +9,19 @@ import Foundation
 
 enum Redux {}
 
+protocol AutoTree {}
+
 extension Redux {
-    struct State: Codable, Equatable {
-        var tabSelection: TabState = .init(currentTab: .history)
-        var tappedProfiles: TappedProfilesState = .init(profiles: [:])
+    struct State: Codable, Equatable, AutoTree {
+        var tabSelection: TabState = .init()
+        var tappedProfiles: TappedProfilesState = .init()
         
         struct TappedProfilesState: Codable, Equatable {
-            var profiles: [UUID: TappedProfile]
+            var profiles: [UUID: TappedProfile] = [:]
         }
         
         struct TabState: Equatable {
-            var currentTab: Tab
+            var currentTab: Tab = .history
         }
     }
 }
