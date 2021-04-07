@@ -16,7 +16,7 @@ extension Redux {
                 state = appState
                 
             case let .tabAction(tabModification):
-                state.tabSelection = tabReducer(state: state.tabSelection, action: tabModification) // pure reducer, because lightweight type
+                state.tabSelection = tabReducer(state: state.tabSelection, action: tabModification) // pure reducer, because  lightweight type
             
             case let .tappedProfilesAction(profilesModification):
                 tappedProfilesReducer(state: &state.tappedProfiles, action: profilesModification) // inout reducer - doesn't replace dictionary every time
@@ -40,7 +40,7 @@ extension Redux {
             case let .add(profile):
                 state.profiles.updateValue(profile, forKey: profile.id)
             case let .remove(id):
-                state.profiles[id] = nil
+                state.profiles.removeValue(forKey: id)
             case let .removeMultiple(ids):
                 ids.forEach { id in state.profiles[id] = nil }
             }
