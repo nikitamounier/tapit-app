@@ -15,6 +15,7 @@ Tap It uses:
    *  [Network Framework](https://developer.apple.com/documentation/network) ([P2PShareKit](https://github.com/dobster/P2PShareKit))
   
    *  [Core Location](https://developer.apple.com/documentation/corelocation) and [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) ([iBeacon](https://developer.apple.com/documentation/corelocation/clbeacon))
+   * [Sourcery](https://github.com/krzysztofzablocki/Sourcery) ([AutoTree](https://github.com/nikitamounier/tapit-app/blob/main/Templates/AutoTree.stencil) template)
   
 
 ## Motivation
