@@ -1,0 +1,47 @@
+import Foundation
+
+{% macro generateVariables variables %}
+    {% for variable in variables%}
+    {% if variable.isMutable %}var {% else %}let {% endif %}{{ variable.name }}: {{ variable.typeName }}{% if variable.isStatic %} {
+        {{ variable.defaultValue }}
+    }{% endif %}{% if variable.type.kind == "enum "%} = {% if variable.defaultValue %}{{ variable.defaultValue}}{% else %}.default{% endif %}{% else %} = {% if variable.defaultValue %}{{ variable.defaultValue}}{% else %}.init(){% endif %}{% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro generatedCases cases %}
+    {% for case in cases %}
+    case {{ case.name }}{% if case.hasAssociatedValue %}({% for val in case.associatedValues %}{% if val.localName %}{{ val.localName }}: {% endif %}{{ val.typeName }}{% if val.defaultValue %}= {{ val.defaultValue}}{% endif %}{% endfor %}){% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro generateFromTree type %}
+{{ type.kind }} {{ type.localName }}{% if type.inheritedTypes.count > 0 %}: {{ type.inheritedTypes|join:", "}}{% endif %} {
+    {% if type.kind == "struct" or type.kind == "class" %}
+        {% call generateVariables type.variables %}
+        {% for subType in type.containedTypes %}
+        {% if subType|!annotated: "skipPropertyGeneration" %}
+    var {{ subType.localName|lowerFirstLetter }}: {{ subType.localName }} = .init()
+        {% endif %}
+        {% call generateFromTree subType%}
+        {% endfor %}
+    {% elif type.kind == "enum" %}
+        {% call generatedCases type.cases %}
+        {% for subType in type.containedTypes %}
+    case {{ subType.localName|lowerFirstLetter }}({{ subType.localName }})
+        {% call generateFromTree subType%}
+        {% endfor %}
+    {% endif %} 
+    
+
+}
+{% endmacro %}
+
+{% for type in types.implementing.AutoTree %}
+    {% if type|annotated:"extension" %}
+extension {{ type.annotations["extension"] }} {
+    {% call generateFromTree type %}
+}
+    {% else %}
+    {% call generateFromTree type %}
+    {% endif %}
+{% endfor %}
