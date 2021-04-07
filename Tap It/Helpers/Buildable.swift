@@ -13,7 +13,8 @@ extension Buildable {
     /// - Parameters:
     ///   - keyPath: `WriteableKeyPath` to the property which shall be modified
     ///   - value: The value which will be set to the property
-    ///z
+    ///
+    /// This function is used for value types.
     /// Say you have a person type, like so:
     ///
     ///     struct Person {
