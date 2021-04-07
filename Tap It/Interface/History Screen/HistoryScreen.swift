@@ -33,32 +33,11 @@ struct HistoryScreen: View {
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
+    var navBarContent: some View {
+        TabHeader(categories, selection: $currentCategory, name: \.name, namespace: historyAnimation, in: "historyScreen")
+    }
     var body: some View {
-        GeometryReader { geo in
-            NavigationView {
-                VStack(spacing: 0) {
-                    NavigationBar(title: Text("History")) {
-                        TabHeader(categories, selection: .constant(categories[0]), name: \.name, namespace: historyAnimation, in: "_") // no need for it to update every time since dummy
-                        }
-                        .padding(.top, geo.safeAreaInsets.top)
-                        .hidden()
-                    
-                    tabView
-                }
-                .overlay(
-                    NavigationBar(title: Text("History")) { // Actual navigation bar
-                        TabHeader(categories, selection: $currentCategory, name: \.name, namespace: historyAnimation, in: "historyScreen")
-                        }
-                        .padding(.top, geo.safeAreaInsets.top)
-                        .background(Neumorphic.mainColor)
-                        .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6),
-                    alignment: .topLeading // I'm sorry for this terrible formatting
-                )
-                .background(Neumorphic.backgroundColor)
-                .navigationBarHidden(true)
-                .ignoresSafeArea()
-            }
-        }
+        ScreenController(title: Text("History"), navigationBarContent: navBarContent, mainContent: tabView)
     }
 }
 
