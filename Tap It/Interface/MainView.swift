@@ -14,6 +14,7 @@ struct MainView: View {
         store.binding(state: \.tabSelection.currentTab, actions: { .tabAction(.setTab(to: $0)) })
     }
     
+    
     init() {
         UITabBar.appearance().isHidden = true // hide default tab bar to make custom one
     }
@@ -25,9 +26,9 @@ struct MainView: View {
                     HistoryScreen()
                         .environmentObject(store.lensing(state: \.tappedProfiles, actions: { .tappedProfilesAction($0) }))
                         .tag(Tab.history)
-                    TapScreen() // temporary, as still haven't made Tap view yet
+                    TapScreen()
                         .tag(Tab.tap)
-                    Text("Profile view") // temporary, as still haven't made Profile view yet
+                    ProfileScreen()
                         .tag(Tab.profile)
                 }
                 TabBar(selectedTab: .constant(.history)) // no need for it to update since dummy
