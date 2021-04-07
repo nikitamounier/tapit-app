@@ -10,8 +10,8 @@ import SwiftUI
 
 extension FileManager {
     func load(from name: String, in directory: SearchPathDirectory) -> AnyPublisher<Data, Error> {
-        return Deferred {
-            return Future { promise in
+        Deferred {
+            Future { promise in
                 do {
                     let documentsURL = try self.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                     let fileURL = documentsURL.appendingPathComponent(name)
@@ -26,8 +26,8 @@ extension FileManager {
     }
     
     func save(data: Data, to name: String, in directory: SearchPathDirectory) -> AnyPublisher<URL, Error> {
-        return Deferred {
-            return Future { promise in
+        Deferred {
+            Future { promise in
                 do {
                     let documentsURL = try self.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                     let fileURL = documentsURL.appendingPathComponent(name)
