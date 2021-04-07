@@ -10,7 +10,7 @@ import Foundation
 extension Redux {
     enum Action {
         // MARK: - Refined Actions
-        enum Refined: AutoTree {
+        enum Refined {
             case setState(State)
             
             case tabAction(TabAction)
@@ -22,7 +22,6 @@ extension Redux {
             enum TappedProfilesAction {
                 case add(TappedProfile)
                 case remove(UUID)
-                
                 case removeMultiple(Set<UUID>)
             }
             
