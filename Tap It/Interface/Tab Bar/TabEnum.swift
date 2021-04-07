@@ -9,4 +9,6 @@ enum Tab: String, Codable {
     case history = "rectangle.stack.person.crop"
     case tap = "" // since using custom image in the future
     case profile = "person.crop.circle"
+    
+    static let `default`: Tab = .tap
 }
