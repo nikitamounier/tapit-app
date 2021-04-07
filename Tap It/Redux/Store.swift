@@ -5,8 +5,10 @@
 //  Created by Nikita Mounier on 16/02/2021.
 //
 
-import Foundation
+import Combine
 import Recombine
+import SwiftUI
+
 
 typealias Store = BaseStore<Redux.State, Redux.Action.Raw, Redux.Action.Refined>
 typealias SubStore<SubState: Equatable, SubAction> = LensedStore<Redux.State, SubState, Redux.Action.Raw, Redux.Action.Refined, SubAction>
