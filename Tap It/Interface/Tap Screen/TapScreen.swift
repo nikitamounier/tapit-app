@@ -17,45 +17,38 @@ struct TapScreen: View {
     @State private var currentCategory: TapCategories = .socials
     @Namespace private var tapAnimation
     
-    var tabView: some View {
-        TabView(selection: $currentCategory) {
-//            SocialsScreen()
-//                .tag(TapCategories.socials)
-//            PresetsScreen()
-//                .tag(TapCategories.presets)
-            Text("Socials")
-                .tag(TapCategories.socials)
-            Text("Presets")
-                .tag(TapCategories.presets)
-        }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-    }
-    var body: some View {
-        GeometryReader { geo in
-            NavigationView {
-                VStack(spacing: 0) {
-                    NavigationBar(title: Text("Tap It")) {
-                        TabHeader(TapCategories.allCases, selection: .constant(.socials), name: \.rawValue, namespace: tapAnimation, in: "..")
-                    }
-                    .padding(.top, geo.safeAreaInsets.top)
-                    .hidden()
-                    
-               tabView
-                }
-                .overlay(
-                    NavigationBar(title: Text("Tap It")) {
-                        TabHeader(TapCategories.allCases, selection: $currentCategory, name: \.rawValue, namespace: tapAnimation, in: "tapScreen")
-                    }
-                    .padding(.top, geo.safeAreaInsets.top)
-                    .background(Neumorphic.mainColor)
-                    .shadow(color: Color(white: 0, opacity: 0.15), radius: 15, y: 6),
-                alignment: .topLeading
-                )
-                .background(Neumorphic.mainColor)
-                .navigationBarHidden(true)
-                .ignoresSafeArea()
+    @State private var showShareButton = false
+    
+    var shareButton: some View {
+        Group {
+            if showShareButton {
+                ShareButton(action: {})
+                    .transition(.move(edge: .bottom))
+                    .padding(.bottom)
+                    .padding(.bottom)
+                    .animation(.spring())
             }
         }
+    }
+    
+    var navBarContent: some View {
+        VStack(alignment: .leading) {
+            Text("Select below, click share, and tap.")
+                .footnoteStyle()
+                .padding(.leading)
+            TabHeader(TapCategories.allCases, selection: $currentCategory, name: \.rawValue, namespace: tapAnimation, in: "tapScreen")
+        }
+    }
+    
+    var mainContent: some View {
+        SocialAndPresetsScreen(currentCategory: $currentCategory)
+            .onTapGesture {
+                showShareButton.toggle()
+            }
+    }
+    
+    var body: some View {
+        ScreenController(title: Text("Tap It"), navigationBarContent: navBarContent, mainContent: mainContent)
     }
 }
 
