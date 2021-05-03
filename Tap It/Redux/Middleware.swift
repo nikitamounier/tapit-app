@@ -16,27 +16,15 @@ extension Redux {
             return FileManager.default.load(from: "appState.json", in: .applicationSupportDirectory)
                 .decode(type: State.self, decoder: JSONDecoder())
                 .replaceError(with: State())
-                .flatMap { appState in
-                    state.map { _ in
-                        return .setState(appState)
-                    }
-                }
+                .map { .setState($0) }
                 .eraseToAnyPublisher()
         case .saveState:
-            return state.flatMap { appState in
-                Just(appState)
-            }
-            .encode(encoder: JSONEncoder())
-            .flatMap { FileManager.default.save(data: $0, to: "appState.json", in: .applicationSupportDirectory) }
-            .flatMap { _ in
-                state.map { _ in
-                    return .none
-                }
-            }
-            .catch { error in
-                Just(.none)
-            }
-            .eraseToAnyPublisher()
+            return state
+                .encode(encoder: JSONEncoder())
+                .flatMap { FileManager.default.save(data: $0, to: "appState.json", in: .applicationSupportDirectory) }
+                .map { _ in .none }
+                .replaceError(with: .none)
+                .eraseToAnyPublisher()
         }
     }
 }

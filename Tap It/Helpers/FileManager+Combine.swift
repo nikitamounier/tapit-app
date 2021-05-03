@@ -15,7 +15,8 @@ extension FileManager {
                 do {
                     let documentsURL = try self.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                     let fileURL = documentsURL.appendingPathComponent(name)
-                    promise(.success(try Data(contentsOf: fileURL)))
+                    let data = try Data(contentsOf: fileURL)
+                    promise(.success(data))
                 } catch {
                     print("Error loading from disk: \(error)") // temporary
                     promise(.failure(error))

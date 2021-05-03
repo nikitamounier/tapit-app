@@ -42,7 +42,7 @@ extension Redux {
             case let .remove(id):
                 state.profiles.removeValue(forKey: id)
             case let .removeMultiple(ids):
-                ids.forEach { id in state.profiles[id] = nil }
+                ids.forEach { state.profiles.removeValue(forKey: $0) }
             }
         }
     }
