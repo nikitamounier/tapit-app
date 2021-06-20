@@ -8,14 +8,15 @@ Tap It uses:
 
    *  [SwiftUI](https://developer.apple.com/documentation/swiftui)
    
-   *  [Recombine](https://github.com/ReSwift/Recombine)
+   *  [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) by [Pointfree](https://www.pointfree.co)
   
    *  [Combine](https://developer.apple.com/documentation/combine)
   
-   *  [Network Framework](https://developer.apple.com/documentation/network) ([P2PShareKit](https://github.com/dobster/P2PShareKit))
+   *  [Network Framework](https://developer.apple.com/documentation/network)
   
    *  [Core Location](https://developer.apple.com/documentation/corelocation) and [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) ([iBeacon](https://developer.apple.com/documentation/corelocation/clbeacon))
-   * [Sourcery](https://github.com/krzysztofzablocki/Sourcery) ([AutoTree template](https://github.com/nikitamounier/tapit-app/blob/main/Templates/AutoTree.stencil))
+   
+   * [Sourcery Pro](https://merowing.info/sourcery-pro/)
   
 
 ## Motivation
@@ -26,7 +27,7 @@ Tap It aims to drastically streamline this process, to both parties simply press
 
 ## Current Progress
 
-Work was started beginning of September (made a new main branch and deleted master). After many ups and downs, the data-sharing code has been figured out. Now onto the UI!
+Tap It now has the structure to become hyper-modularized, allowing for better testing, build times, and dependancy management. Development will go feature by feature, with the core business logic built before the thin, lightweight views laid on top.
 
 ## Author
 
@@ -35,5 +36,3 @@ Nikita Mounier, nikita.mounier@gmail.com
 ## Copyright
 
 This project does not have a license, hence default copyright laws apply, meaning that I retain all rights to my source code and no one may reproduce, distribute, or create derivative works from my work.
-
-
