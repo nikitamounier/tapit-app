@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Nikita Mounier on 20/06/2021.
 //
@@ -14,4 +14,12 @@ public struct UserProfile: Codable, Identifiable {
     public var profileImage: ProfileImage
 
     public var socials: [Social]
+    
+    
+    public init(id: UUID, name: String, profileImage: ProfileImage, socials: [Social]) {
+        self.id = id
+        self.name = name
+        self.profileImage = profileImage
+        self.socials = socials
+    }
 }

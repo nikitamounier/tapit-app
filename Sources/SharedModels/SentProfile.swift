@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Nikita Mounier on 20/06/2021.
 //
@@ -26,8 +26,18 @@ public struct SentProfile: Codable, Identifiable {
     public var id: UUID {
         profile.id
     }
+    
+    public init(profile: UserProfile, sendDate: Date, expirationInterval: Days) {
+        self.profile = profile
+        self.sendDate = sendDate
+        self.expirationInterval = expirationInterval
+    }
 }
 
 public struct Days: Codable {
     public let amount: Int
+    
+    public init(amount: Int) {
+        self.amount = amount
+    }
 }
