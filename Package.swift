@@ -13,6 +13,9 @@ let package = Package(
         .library(
             name: "AppFeature",
             targets: ["AppFeature"]),
+        .library(
+            name: "SharedModels",
+            targets: ["SharedModels"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "0.19.0")),
@@ -28,6 +31,17 @@ let package = Package(
             dependencies: [
                 "AppFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "SharedModels",
+            dependencies: [
+                
+            ]),
+        .testTarget(
+            name: "SharedModelsTests",
+            dependencies: [
+                "SharedModels",
             ]
         ),
     ]
