@@ -5,7 +5,7 @@
 //  Created by Nikita Mounier on 20/06/2021.
 //
 
-import UIKit
+import Foundation
 
 public struct UserProfile: Codable, Identifiable {
     public let id: UUID
@@ -14,7 +14,6 @@ public struct UserProfile: Codable, Identifiable {
     public var profileImage: ProfileImage
 
     public var socials: [Social]
-    
     
     public init(id: UUID, name: String, profileImage: ProfileImage, socials: [Social]) {
         self.id = id
