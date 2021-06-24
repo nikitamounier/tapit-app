@@ -14,6 +14,9 @@ let package = Package(
             name: "AppFeature",
             targets: ["AppFeature"]),
         .library(
+            name: "ComposableP2P",
+            targets: ["ComposableP2P"]),
+        .library(
             name: "SharedModels",
             targets: ["SharedModels"]),
     ],
@@ -30,6 +33,18 @@ let package = Package(
             name: "AppFeatureTests",
             dependencies: [
                 "AppFeature",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "ComposableP2P",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]),
+        .testTarget(
+            name: "ComposableP2PTests",
+            dependencies: [
+                "ComposableP2P",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),

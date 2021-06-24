@@ -15,7 +15,9 @@ public struct SentProfile: Codable, Identifiable {
     public let expirationInterval: Days
     
     public var isExpired: Bool {
-        Calendar.current.dateComponents([.day], from: sendDate, to: Date()).day ?? 0 > expirationInterval.amount ? true : false
+        (Calendar.current.dateComponents([.day], from: sendDate, to: Date()).day ?? 0) > expirationInterval.amount ?
+            true :
+            false
     }
     
     @inline(__always)
