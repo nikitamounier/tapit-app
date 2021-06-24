@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct EmailAddress: RawRepresentable, Codable {
+public struct EmailAddress: RawRepresentable, Codable, Equatable {
     public let rawValue: String
     
     public init?(rawValue: String) {

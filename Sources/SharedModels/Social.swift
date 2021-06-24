@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MapKit
 
 public enum Social {
     case instagram(URLComponents)
@@ -17,7 +18,7 @@ public enum Social {
     case weChat(URLComponents)
     case gitHub(URLComponents)
     case linkedIn(URLComponents)
-    case address(Coordinate)
+    case address(CLLocationCoordinate2D)
     case email(EmailAddress)
     case phone(String)
 }
@@ -106,7 +107,7 @@ extension Social: Codable {
             self = .linkedIn(associatedValues0)
         case "address":
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.AddressKeys.self, forKey: .associatedValues)
-            let associatedValues0 = try subContainer.decode(Coordinate.self, forKey: .associatedValue0)
+            let associatedValues0 = try subContainer.decode(CLLocationCoordinate2D.self, forKey: .associatedValue0)
             self = .address(associatedValues0)
         case "email":
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.EmailKeys.self, forKey: .associatedValues)
@@ -175,3 +176,5 @@ extension Social: Codable {
         }
     }
 }
+
+extension Social: Equatable {}

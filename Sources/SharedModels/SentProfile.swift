@@ -8,7 +8,7 @@
 import Foundation
 
 @dynamicMemberLookup
-public struct SentProfile: Codable, Identifiable {
+public struct SentProfile: Codable, Identifiable, Equatable {
     public let profile: UserProfile
     
     public let sendDate: Date
@@ -36,10 +36,10 @@ public struct SentProfile: Codable, Identifiable {
     }
 }
 
-public struct Days: Codable {
+public struct Days: Codable, Equatable {
     public let amount: Int
     
-    public init(amount: Int) {
+    public init(_ amount: Int) {
         self.amount = amount
     }
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-public struct ProfileImage {
+public struct ProfileImage: Equatable {
     public var image: UIImage
     
     public init(_ image: UIImage) {
@@ -54,4 +54,10 @@ extension KeyedDecodingContainer {
           )
         }
       }
+}
+
+extension UIImage: Equatable {
+    public static func ==(lhs: UIImage, rhs: UIImage) -> Bool {
+        return lhs.isEqual(rhs)
+    }
 }
