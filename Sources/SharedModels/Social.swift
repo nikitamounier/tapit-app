@@ -1,12 +1,6 @@
-//
-//  File.swift
-//
-//
-//  Created by Nikita Mounier on 20/06/2021.
-//
-
 import Foundation
 import MapKit
+import PhoneNumberKit
 
 public enum Social {
     case instagram(URLComponents)
@@ -20,14 +14,14 @@ public enum Social {
     case linkedIn(URLComponents)
     case address(CLLocationCoordinate2D)
     case email(EmailAddress)
-    case phone(String)
+    case phone(PhoneNumber)
 }
 
 extension Social: Codable {
     enum CodingKeys: String, CodingKey {
         case type
         case associatedValues
-        
+
         enum InstagramKeys: String, CodingKey {
             case associatedValue0
         }
@@ -49,7 +43,7 @@ extension Social: Codable {
         enum WeChatKeys: String, CodingKey {
             case associatedValue0
         }
-        enum GitHubKeys: String, CodingKey {
+        enum GithubKeys: String, CodingKey {
             case associatedValue0
         }
         enum LinkedInKeys: String, CodingKey {
@@ -65,7 +59,7 @@ extension Social: Codable {
             case associatedValue0
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch try container.decode(String.self, forKey: .type) {
@@ -98,7 +92,7 @@ extension Social: Codable {
             let associatedValues0 = try subContainer.decode(URLComponents.self, forKey: .associatedValue0)
             self = .weChat(associatedValues0)
         case "github":
-            let subContainer = try container.nestedContainer(keyedBy: CodingKeys.GitHubKeys.self, forKey: .associatedValues)
+            let subContainer = try container.nestedContainer(keyedBy: CodingKeys.GithubKeys.self, forKey: .associatedValues)
             let associatedValues0 = try subContainer.decode(URLComponents.self, forKey: .associatedValue0)
             self = .github(associatedValues0)
         case "linkedIn":
@@ -115,13 +109,13 @@ extension Social: Codable {
             self = .email(associatedValues0)
         case "phone":
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.PhoneKeys.self, forKey: .associatedValues)
-            let associatedValues0 = try subContainer.decode(String.self, forKey: .associatedValue0)
+            let associatedValues0 = try subContainer.decode(PhoneNumber.self, forKey: .associatedValue0)
             self = .phone(associatedValues0)
         default:
             throw DecodingError.keyNotFound(CodingKeys.type, .init(codingPath: container.codingPath, debugDescription: "Unknown key"))
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
@@ -155,7 +149,7 @@ extension Social: Codable {
             try subContainer.encode(associatedValue0, forKey: .associatedValue0)
         case let .github(associatedValue0):
             try container.encode("github", forKey: .type)
-            var subContainer = container.nestedContainer(keyedBy: CodingKeys.GitHubKeys.self, forKey: .associatedValues)
+            var subContainer = container.nestedContainer(keyedBy: CodingKeys.GithubKeys.self, forKey: .associatedValues)
             try subContainer.encode(associatedValue0, forKey: .associatedValue0)
         case let .linkedIn(associatedValue0):
             try container.encode("linkedIn", forKey: .type)
@@ -176,6 +170,7 @@ extension Social: Codable {
         }
     }
 }
+
 
 extension Social: Equatable {}
 
@@ -270,7 +265,11 @@ extension Social {
     
     static let mockEmail: Social = .email(.init(rawValue: "tapit_app@gmail.com")!)
     
-    static let mockPhone: Social = .phone("+44 7700 900718")
+    static let mockPhone: Social = {
+        let manager = PhoneNumberKit()
+        let phoneNumber = try! manager.parse("+44 7700 900477")
+        return .phone(phoneNumber)
+    }()
 }
 
 extension Array where Element == Social {

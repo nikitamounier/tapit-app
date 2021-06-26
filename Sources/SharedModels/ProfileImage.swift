@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Nikita Mounier on 21/06/2021.
-//
-
 import UIKit
 
 public struct ProfileImage: Equatable {

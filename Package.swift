@@ -15,8 +15,8 @@ let package = Package(
             targets: ["AppFeature"]
         ),
         .library(
-            name: "PhoneNumberValidationClient",
-            targets: ["PhoneNumberValidationClient"]
+            name: "ComposablePhoneNumberValidation",
+            targets: ["ComposablePhoneNumberValidation"]
         ),
         .library(
             name: "SharedModels",
@@ -42,22 +42,23 @@ let package = Package(
             ]
         ),
         .target(
-            name: "PhoneNumberValidationClient",
+            name: "ComposablePhoneNumberValidation",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
             ]
         ),
         .testTarget(
-            name: "PhoneNumberValidationClientTests",
+            name: "ComposablePhoneNumberValidationTests",
             dependencies: [
-                "PhoneNumberValidationClient"
+                "ComposablePhoneNumberValidation"
             ]
         ),
         .target(
             name: "SharedModels",
             dependencies: [
                 .product(name: "Overture", package: "Overture"),
+                .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
             ]
         ),
         .testTarget(
