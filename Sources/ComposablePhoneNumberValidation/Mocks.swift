@@ -1,7 +1,7 @@
 import Combine
 import ComposableArchitecture
 
-extension PhoneNumberValidationClient {
+public extension PhoneNumberValidationClient {
     static let noop = Self(
         create: { _ in .none },
         parse: { _,_,_,_  in .none },
@@ -10,7 +10,7 @@ extension PhoneNumberValidationClient {
 }
 
 #if DEBUG
-extension PhoneNumberValidationClient {
+public extension PhoneNumberValidationClient {
     static let failing = Self(
         create: { _ in .failing("\(Self.self).create is unimplemented") },
         parse: { _,_,_,_ in .failing("\(Self.self).parse is unimplemented") },

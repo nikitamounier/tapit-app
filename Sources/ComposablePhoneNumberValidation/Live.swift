@@ -3,7 +3,7 @@ import ComposableArchitecture
 import Dispatch
 import PhoneNumberKit
 
-extension PhoneNumberValidationClient {
+public extension PhoneNumberValidationClient {
     static let live = Self(
         create: { id in
             .fireAndForget {
