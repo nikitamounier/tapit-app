@@ -23,15 +23,9 @@ func assertCodable<T: Codable & Equatable>(
     
 final class CodableTests: XCTestCase {
     let image = UIImage(systemName: "applelogo")!
-    let socials: [Social] = [
-        .instagram(.init()),
-        .address(.init(latitude: 12.456, longitude: 23.654)),
-        .gitHub(.init()),
-        .phone("12345678")
-    ]
+    let socials: [Social] = .mock
     
     func testSocialCodable() throws {
-        let socials = socials
         try XCTAssertTrue(assertCodable(socials))
     }
     
@@ -41,8 +35,12 @@ final class CodableTests: XCTestCase {
     }
     
     func testProfileImageCodable() throws {
-        let profileImage = ProfileImage(image)
-        try XCTAssertTrue(assertCodable(profileImage))
+        let testImage = UIImage(systemName: "applelogo")!
+        
+        let encoded = try JSONEncoder().encode(ProfileImage(testImage))
+        let decoded = try JSONDecoder().decode(ProfileImage.self, from: encoded)
+        
+        XCTAssertTrue(decoded.image.pngData() == testImage.pngData())
     }
     
     func testEmailAddressCodable() throws {

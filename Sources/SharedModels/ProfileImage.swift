@@ -13,6 +13,10 @@ public struct ProfileImage: Equatable {
     public init(_ image: UIImage) {
         self.image = image
     }
+    
+    public static func == (lhs: ProfileImage, rhs: ProfileImage) -> Bool {
+        return lhs.image.pngData() == rhs.image.pngData()
+    }
 }
 
 extension ProfileImage: Codable {
@@ -54,10 +58,4 @@ extension KeyedDecodingContainer {
           )
         }
       }
-}
-
-extension UIImage: Equatable {
-    public static func ==(lhs: UIImage, rhs: UIImage) -> Bool {
-        return lhs.isEqual(rhs)
-    }
 }

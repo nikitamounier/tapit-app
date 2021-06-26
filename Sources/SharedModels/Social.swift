@@ -16,7 +16,7 @@ public enum Social {
     case reddit(URLComponents)
     case tikTok(URLComponents)
     case weChat(URLComponents)
-    case gitHub(URLComponents)
+    case github(URLComponents)
     case linkedIn(URLComponents)
     case address(CLLocationCoordinate2D)
     case email(EmailAddress)
@@ -27,7 +27,7 @@ extension Social: Codable {
     enum CodingKeys: String, CodingKey {
         case type
         case associatedValues
-
+        
         enum InstagramKeys: String, CodingKey {
             case associatedValue0
         }
@@ -65,7 +65,7 @@ extension Social: Codable {
             case associatedValue0
         }
     }
-
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch try container.decode(String.self, forKey: .type) {
@@ -97,10 +97,10 @@ extension Social: Codable {
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.WeChatKeys.self, forKey: .associatedValues)
             let associatedValues0 = try subContainer.decode(URLComponents.self, forKey: .associatedValue0)
             self = .weChat(associatedValues0)
-        case "gitHub":
+        case "github":
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.GitHubKeys.self, forKey: .associatedValues)
             let associatedValues0 = try subContainer.decode(URLComponents.self, forKey: .associatedValue0)
-            self = .gitHub(associatedValues0)
+            self = .github(associatedValues0)
         case "linkedIn":
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.LinkedInKeys.self, forKey: .associatedValues)
             let associatedValues0 = try subContainer.decode(URLComponents.self, forKey: .associatedValue0)
@@ -121,7 +121,7 @@ extension Social: Codable {
             throw DecodingError.keyNotFound(CodingKeys.type, .init(codingPath: container.codingPath, debugDescription: "Unknown key"))
         }
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
@@ -153,8 +153,8 @@ extension Social: Codable {
             try container.encode("weChat", forKey: .type)
             var subContainer = container.nestedContainer(keyedBy: CodingKeys.WeChatKeys.self, forKey: .associatedValues)
             try subContainer.encode(associatedValue0, forKey: .associatedValue0)
-        case let .gitHub(associatedValue0):
-            try container.encode("gitHub", forKey: .type)
+        case let .github(associatedValue0):
+            try container.encode("github", forKey: .type)
             var subContainer = container.nestedContainer(keyedBy: CodingKeys.GitHubKeys.self, forKey: .associatedValues)
             try subContainer.encode(associatedValue0, forKey: .associatedValue0)
         case let .linkedIn(associatedValue0):
@@ -178,3 +178,117 @@ extension Social: Codable {
 }
 
 extension Social: Equatable {}
+
+#if DEBUG
+
+import Overture
+
+extension Social {
+    static let mockInstagram: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "instagram.com"
+            $0.path = "/tapit_app/"
+        }
+        return .instagram(url)
+    }()
+    
+    static let mockSnapchat: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "snapchat.com"
+            $0.path = "/add/tapit_app"
+        }
+        return .snapchat(url)
+    }()
+    
+    static let mockTwitter: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "twitter.com"
+            $0.path = "/clattner_llvm"
+        }
+        return .twitter(url)
+    }()
+    
+    static let mockFacebook: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "facebook.com"
+            $0.path = "/tapit_app"
+        }
+        return .twitter(url)
+    }()
+    
+    static let mockReddit: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "reddit.com"
+            $0.path = "/user/tapit_app"
+        }
+        return .twitter(url)
+    }()
+    
+    static let mockTikTok: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "tiktok.com"
+            $0.path = "/@tapit_app"
+        }
+        return .twitter(url)
+    }()
+    
+    // TODO: - Figure out WeChat ID
+    static let mockWeChat: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "wechat.com"
+            $0.path = "/tapit_app"
+        }
+        return .twitter(url)
+    }()
+    
+    static let mockGithub: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "github.com"
+            $0.path = "/lattner"
+        }
+        return .github(url)
+    }()
+    
+    static let mockLinkedIn: Social = {
+        let url = update(URLComponents()) {
+            $0.scheme = "https"
+            $0.host = "linkedin.com"
+            $0.path = "/in/chris-lattner-5664498a"
+        }
+        return .github(url)
+    }()
+    
+    static let mockAddress: Social = .address(.init(latitude: 37.3330, longitude: 122.0090))
+    
+    static let mockEmail: Social = .email(.init(rawValue: "tapit_app@gmail.com")!)
+    
+    static let mockPhone: Social = .phone("+44 7700 900718")
+}
+
+extension Array where Element == Social {
+    static let mock: [Social] = [
+        .mockInstagram,
+        .mockSnapchat,
+        .mockTwitter,
+        .mockFacebook,
+        .mockReddit,
+        .mockTikTok,
+        .mockWeChat,
+        .mockGithub,
+        .mockLinkedIn,
+        .mockAddress,
+        .mockEmail,
+        .mockPhone,
+    ]
+    
+}
+
+#endif
