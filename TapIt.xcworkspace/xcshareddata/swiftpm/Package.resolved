@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "PhoneNumberKit",
+        "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit",
+        "state": {
+          "branch": null,
+          "revision": "1ef0431b971f69c48ca5eb4cdba07f2c5da54c35",
+          "version": "3.3.3"
+        }
+      },
+      {
         "package": "swift-case-paths",
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
@@ -26,6 +35,15 @@
           "branch": null,
           "revision": "e1c0a52897eb361d09f761b2bdb25f212926fb1c",
           "version": "0.19.0"
+        }
+      },
+      {
+        "package": "Overture",
+        "repositoryURL": "https://github.com/pointfreeco/swift-overture",
+        "state": {
+          "branch": null,
+          "revision": "7977acd7597f413717058acc1e080731249a1d7e",
+          "version": "0.5.0"
         }
       },
       {
