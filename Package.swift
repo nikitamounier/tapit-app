@@ -19,8 +19,13 @@ let package = Package(
             targets: ["ComposablePhoneNumberValidation"]
         ),
         .library(
+            name: "FileClient",
+            targets: ["FileClient"]
+        ),
+        .library(
             name: "SharedModels",
-            targets: ["SharedModels"]),
+            targets: ["SharedModels"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "0.19.0")),
@@ -52,6 +57,12 @@ let package = Package(
             name: "ComposablePhoneNumberValidationTests",
             dependencies: [
                 "ComposablePhoneNumberValidation"
+            ]
+        ),
+        .target(
+            name: "FileClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
         .target(
