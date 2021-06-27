@@ -10,7 +10,7 @@ extension FileClient {
         load: { fileName in
             .catching {
                 try Data(
-                    contentsOf:documentDirectory
+                    contentsOf: documentDirectory
                         .appendingPathComponent(fileName)
                         .appendingPathExtension("json")
                 )

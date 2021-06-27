@@ -15,6 +15,10 @@ let package = Package(
             targets: ["AppFeature"]
         ),
         .library(
+            name: "BeaconClient",
+            targets: ["BeaconClient"]
+        ),
+        .library(
             name: "ComposablePhoneNumberValidation",
             targets: ["ComposablePhoneNumberValidation"]
         ),
@@ -44,6 +48,18 @@ let package = Package(
             dependencies: [
                 "AppFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "BeaconClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .testTarget(
+            name: "BeaconClientTests",
+            dependencies: [
+                "BeaconClient"
             ]
         ),
         .target(

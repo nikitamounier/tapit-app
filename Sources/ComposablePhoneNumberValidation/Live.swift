@@ -9,7 +9,6 @@ public extension PhoneNumberValidationClient {
             .fireAndForget {
                 phoneNumberManagers[id] = PhoneNumberKit()
             }
-            .subscribe(on: validationQueue)
             .eraseToEffect()
         },
         parse: { id, string, region, ignoreType in
@@ -21,18 +20,15 @@ public extension PhoneNumberValidationClient {
                     callback(.failure(error as! PhoneNumberError))
                 }
             }
-            .subscribe(on: validationQueue)
             .eraseToEffect()
         },
         end: { id in
             .fireAndForget {
                 phoneNumberManagers[id] = nil
             }
-            .subscribe(on: validationQueue)
             .eraseToEffect()
         }
     )
 }
 
 private var phoneNumberManagers: [AnyHashable: PhoneNumberKit] = [:]
-private let validationQueue = DispatchQueue(label: "phoneNumberValidationQueue")
