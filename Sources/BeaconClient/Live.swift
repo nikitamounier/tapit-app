@@ -5,6 +5,13 @@ import CoreLocation
 import OSLog
 
 public extension BeaconClient {
+    static var live = Self(
+        detector: .live,
+        advertiser: .live
+    )
+}
+
+public extension DetectorClient {
     static var live: Self {
         let logger = Logger(subsystem: "", category: "BeaconClient")
         
@@ -58,7 +65,16 @@ public extension BeaconClient {
                     
                     detectorDependencies[id] = nil
                 }
-            },
+            }
+        )
+    }
+}
+
+public extension AdvertiserClient {
+    static var live: Self {
+        let logger = Logger(subsystem: "", category: "BeaconClient")
+        
+        return Self(
             createBeaconAdvertiser: { id, beaconUUID, major, minor, identifier in
                 .run { subscriber in
                     logger.log(level: .debug, "Creating beacon advertiser")
@@ -121,9 +137,9 @@ private struct AdvertiserDependencies {
 }
 
 private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
-    let subscriber: Effect<BeaconClient.BeaconAction.DetectorAction, Never>.Subscriber
+    let subscriber: Effect<DetectorClient.Action, Never>.Subscriber
     
-    init(_ subscriber: Effect<BeaconClient.BeaconAction.DetectorAction, Never>.Subscriber) {
+    init(_ subscriber: Effect<DetectorClient.Action, Never>.Subscriber) {
         self.subscriber = subscriber
     }
     
@@ -145,9 +161,9 @@ private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
 }
 
 private final class AdvertiserDelegate: NSObject, CBPeripheralManagerDelegate {
-    let subscriber: Effect<BeaconClient.BeaconAction.AdvertiserAction, Never>.Subscriber
+    let subscriber: Effect<AdvertiserClient.Action, Never>.Subscriber
     
-    init(_ subscriber: Effect<BeaconClient.BeaconAction.AdvertiserAction, Never>.Subscriber) {
+    init(_ subscriber: Effect<AdvertiserClient.Action, Never>.Subscriber) {
         self.subscriber = subscriber
     }
     
