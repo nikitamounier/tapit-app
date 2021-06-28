@@ -3,11 +3,6 @@ import CoreBluetooth
 import CoreLocation
 
 public struct BeaconClient {
-    public enum BeaconAction {
-        case detector(DetectorClient.Action)
-        case advertiser(AdvertiserClient.Action)
-    }
-    
     public var detector: DetectorClient
     public var advertiser: AdvertiserClient
     
@@ -15,6 +10,11 @@ public struct BeaconClient {
         self.detector = detector
         self.advertiser = advertiser
     }
+}
+
+public enum BeaconAction {
+    case detector(DetectorClient.Action)
+    case advertiser(AdvertiserClient.Action)
 }
 
 public struct DetectorClient {
