@@ -4,15 +4,14 @@ import CoreBluetooth
 import CoreLocation
 import OSLog
 
-extension BeaconClient {
+public extension BeaconClient {
     static var live: Self {
         let logger = Logger(subsystem: "", category: "BeaconClient")
         
         return Self(
             createBeaconDetector: { id, beaconUUID, identifier in
-                logger.log(level: .debug, "Creating beacon detector")
-                
-                return .run { subscriber in
+                .run { subscriber in
+                    logger.log(level: .debug, "Creating beacon detector")
                     let locationManager = CLLocationManager()
                     let delegate = DetectorDelegate(subscriber)
                     let detectingRegion = CLBeaconRegion(uuid: beaconUUID, identifier: identifier)
@@ -27,6 +26,10 @@ extension BeaconClient {
                     
                     return AnyCancellable {
                         logger.log(level: .debug, "Deinitializing beacon detector")
+                        detectorDependencies[id]?.locationManager.stopMonitoring(for: detectingRegion)
+                        detectorDependencies[id]?.locationManager.stopRangingBeacons(
+                            satisfying: detectingRegion.beaconIdentityConstraint
+                        )
                         detectorDependencies[id] = nil
                     }
                 }
@@ -78,6 +81,7 @@ extension BeaconClient {
                     
                     return AnyCancellable {
                         logger.log(level: .debug, "Deinitializing beacon advertiser")
+                        advertiserDependencies[id]?.peripheralManager.stopAdvertising()
                         advertiserDependencies[id] = nil
                     }
                 }

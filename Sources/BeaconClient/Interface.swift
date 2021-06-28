@@ -1,7 +1,6 @@
 import ComposableArchitecture
 import CoreBluetooth
 import CoreLocation
-import Foundation
 
 public struct BeaconClient {
     public enum BeaconAction {

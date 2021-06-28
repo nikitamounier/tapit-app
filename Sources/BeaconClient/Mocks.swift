@@ -1,6 +1,4 @@
 import ComposableArchitecture
-import CoreBluetooth
-import CoreLocation
 
 public extension BeaconClient {
     static let noop = Self(
