@@ -13,7 +13,7 @@ public extension BeaconClient {
 
 public extension DetectorClient {
     static var live: Self {
-        let logger = Logger(subsystem: "", category: "BeaconClient")
+        let logger = Logger(subsystem: "Beacon", category: "DetectorClient")
         
         return Self(
             createBeaconDetector: { id, beaconUUID, identifier in
@@ -72,7 +72,7 @@ public extension DetectorClient {
 
 public extension AdvertiserClient {
     static var live: Self {
-        let logger = Logger(subsystem: "", category: "BeaconClient")
+        let logger = Logger(subsystem: "Beacon", category: "AdvertiserClient")
         
         return Self(
             createBeaconAdvertiser: { id, beaconUUID, major, minor, identifier in
@@ -143,20 +143,20 @@ private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
         self.subscriber = subscriber
     }
     
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        subscriber.send(.didChangeAuthorization(manager.authorizationStatus))
+    func locationManagerauthorizationChanged(_ manager: CLLocationManager) {
+        subscriber.send(.authorizationChanged(manager.authorizationStatus))
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        subscriber.send(.didFail(error))
+    func locationManager(_ manager: CLLocationManager, failedWithError error: Error) {
+        subscriber.send(.failed(error))
     }
     
-    func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
-        subscriber.send(.didRange(beacons: beacons))
+    func locationManager(_ manager: CLLocationManager, ranged beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
+        subscriber.send(.ranged(beacons: beacons))
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
-        subscriber.send(.didFailRanging(error))
+    func locationManager(_ manager: CLLocationManager, failedRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
+        subscriber.send(.failedRanging(error))
     }
 }
 
@@ -167,8 +167,8 @@ private final class AdvertiserDelegate: NSObject, CBPeripheralManagerDelegate {
         self.subscriber = subscriber
     }
     
-    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        subscriber.send(.didUpdateState(peripheral.state))
+    func peripheralManagerstateUpdated(_ peripheral: CBPeripheralManager) {
+        subscriber.send(.stateUpdated(peripheral.state))
     }
     
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {

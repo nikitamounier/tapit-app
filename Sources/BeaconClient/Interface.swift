@@ -19,10 +19,10 @@ public enum BeaconAction {
 
 public struct DetectorClient {
     public enum Action {
-        case didChangeAuthorization(CLAuthorizationStatus)
-        case didFail(Error)
-        case didRange(beacons: [CLBeacon])
-        case didFailRanging(Error)
+        case authorizationChanged(CLAuthorizationStatus)
+        case failed(Error)
+        case ranged(beacons: [CLBeacon])
+        case failedRanging(Error)
     }
     
     public var createBeaconDetector: (_ id: AnyHashable,
@@ -47,7 +47,7 @@ public struct DetectorClient {
 
 public struct AdvertiserClient {
     public enum Action {
-        case didUpdateState(CBManagerState)
+        case stateUpdated(CBManagerState)
         case didNotStartAdvertising(Error)
     }
     
