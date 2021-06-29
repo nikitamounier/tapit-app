@@ -27,6 +27,10 @@ let package = Package(
             targets: ["FileClient"]
         ),
         .library(
+            name: "P2PClient",
+            targets: ["P2PClient"]
+        ),
+        .library(
             name: "SharedModels",
             targets: ["SharedModels"]
         ),
@@ -56,12 +60,6 @@ let package = Package(
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
-        .testTarget(
-            name: "BeaconClientTests",
-            dependencies: [
-                "BeaconClient"
-            ]
-        ),
         .target(
             name: "ComposablePhoneNumberValidation",
             dependencies: [
@@ -77,6 +75,12 @@ let package = Package(
         ),
         .target(
             name: "FileClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "P2PClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
