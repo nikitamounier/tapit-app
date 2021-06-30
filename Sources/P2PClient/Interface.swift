@@ -17,24 +17,24 @@ public struct P2PClient {
     }
 }
 
-public enum P2PAction {
-    case browser(BrowserClient.Action)
-    case listener(ListenerClient.Action)
-    case connection(ConnectionClient.Action)
+public enum P2PEvent {
+    case browser(BrowserClient.Event)
+    case listener(ListenerClient.Event)
+    case connection(ConnectionClient.Event)
 }
 
 public struct BrowserClient {
-    public enum Action {
+    public enum Event {
         case stateUpdated(NWBrowser.State)
         case browseResultsChanged(Set<NWBrowser.Result.Change>)
     }
     
-    public var create: (_ id: AnyHashable, _ bonjourService: String) -> Effect<Action, Never>
+    public var create: (_ id: AnyHashable, _ bonjourService: String) -> Effect<Event, Never>
     public var startBrowsing: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Never, Never>
     public var stopBrowsing: (_ id: AnyHashable) -> Effect<Never, Never>
     
     public init(
-        create: @escaping (AnyHashable, String) -> Effect<Action, Never>,
+        create: @escaping (AnyHashable, String) -> Effect<Event, Never>,
         startBrowsing: @escaping (AnyHashable, DispatchQueue) -> Effect<Never, Never>,
         stopBrowsing: @escaping (AnyHashable) -> Effect<Never, Never>
     ) {
@@ -45,7 +45,7 @@ public struct BrowserClient {
 }
 
 public struct ListenerClient {
-    public enum Action {
+    public enum Event {
         case failedToCreate
         case stateUpdated(NWListener.State)
         case foundNewConnection(NWConnection)
@@ -55,12 +55,12 @@ public struct ListenerClient {
                         _ bonjourService: String,
                         _ presharedKey: String,
                         _ identity: String,
-                        _ myPeerID: String) -> Effect<Action, Never>
+                        _ myPeerID: String) -> Effect<Event, Never>
     public var startListening: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Never, Never>
     public var stopListening: (_ id: AnyHashable) -> Effect<Never, Never>
     
     public init(
-        create: @escaping (AnyHashable, String, String, String, String) -> Effect<Action, Never>,
+        create: @escaping (AnyHashable, String, String, String, String) -> Effect<Event, Never>,
         startListening: @escaping (AnyHashable, DispatchQueue) -> Effect<Never, Never>,
         stopListening: @escaping (AnyHashable) -> Effect<Never, Never>
     ) {
@@ -71,28 +71,28 @@ public struct ListenerClient {
 }
 
 public struct ConnectionClient {
-    public enum Action {
-        public enum StateAction {
+    public enum Event {
+        public enum StateEvent {
             case stateUpdated(NWConnection.State)
         }
         
-        public enum MessageAction {
+        public enum MessageEvent {
             case receivedMessage(type: UInt32, data: Data)
             case receivedMessageError
         }
         
-        case connectionState(StateAction)
-        case message(MessageAction)
+        case connectionState(StateEvent)
+        case message(MessageEvent)
     }
     
-    public var create: (_ id: AnyHashable, _ connection: NWConnection) -> Effect<Action.StateAction, Never>
-    public var startConnection: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Action.MessageAction, Never>
+    public var create: (_ id: AnyHashable, _ connection: NWConnection) -> Effect<Event.StateEvent, Never>
+    public var startConnection: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Event.MessageEvent, Never>
     public var stopConnection: (_ id: AnyHashable) -> Effect<Never, Never>
     public var sendMessage: (_ id: AnyHashable, _ type: MessageType, _ content: Data) -> Effect<Never, Never>
     
     public init(
-        create: @escaping (AnyHashable, NWConnection) -> Effect<Action.StateAction, Never>,
-        startConnection: @escaping (AnyHashable, DispatchQueue) -> Effect<Action.MessageAction, Never>,
+        create: @escaping (AnyHashable, NWConnection) -> Effect<Event.StateEvent, Never>,
+        startConnection: @escaping (AnyHashable, DispatchQueue) -> Effect<Event.MessageEvent, Never>,
         stopConnection: @escaping (AnyHashable) -> Effect<Never, Never>,
         sendMessage: @escaping (AnyHashable, MessageType, Data) -> Effect<Never, Never>
     ) {

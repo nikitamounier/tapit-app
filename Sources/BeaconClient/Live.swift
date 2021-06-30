@@ -137,9 +137,9 @@ private struct AdvertiserDependencies {
 }
 
 private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
-    let subscriber: Effect<DetectorClient.Action, Never>.Subscriber
+    let subscriber: Effect<DetectorClient.Event, Never>.Subscriber
     
-    init(_ subscriber: Effect<DetectorClient.Action, Never>.Subscriber) {
+    init(_ subscriber: Effect<DetectorClient.Event, Never>.Subscriber) {
         self.subscriber = subscriber
     }
     
@@ -147,27 +147,28 @@ private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
         subscriber.send(.authorizationChanged(manager.authorizationStatus))
     }
     
-    func locationManager(_ manager: CLLocationManager, failedWithError error: Error) {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         subscriber.send(.failed(error))
     }
     
-    func locationManager(_ manager: CLLocationManager, ranged beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
+    func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
         subscriber.send(.ranged(beacons: beacons))
     }
     
-    func locationManager(_ manager: CLLocationManager, failedRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
+    func locationManager(_ manager: CLLocationManager, didFailRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
         subscriber.send(.failedRanging(error))
     }
 }
 
 private final class AdvertiserDelegate: NSObject, CBPeripheralManagerDelegate {
-    let subscriber: Effect<AdvertiserClient.Action, Never>.Subscriber
     
-    init(_ subscriber: Effect<AdvertiserClient.Action, Never>.Subscriber) {
+    let subscriber: Effect<AdvertiserClient.Event, Never>.Subscriber
+    
+    init(_ subscriber: Effect<AdvertiserClient.Event, Never>.Subscriber) {
         self.subscriber = subscriber
     }
     
-    func peripheralManagerstateUpdated(_ peripheral: CBPeripheralManager) {
+    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         subscriber.send(.stateUpdated(peripheral.state))
     }
     

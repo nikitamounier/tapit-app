@@ -12,13 +12,13 @@ public struct BeaconClient {
     }
 }
 
-public enum BeaconAction {
-    case detector(DetectorClient.Action)
-    case advertiser(AdvertiserClient.Action)
+public enum BeaconEvent {
+    case detector(DetectorClient.Event)
+    case advertiser(AdvertiserClient.Event)
 }
 
 public struct DetectorClient {
-    public enum Action {
+    public enum Event {
         case authorizationChanged(CLAuthorizationStatus)
         case failed(Error)
         case ranged(beacons: [CLBeacon])
@@ -27,7 +27,7 @@ public struct DetectorClient {
     
     public var createBeaconDetector: (_ id: AnyHashable,
                                       _ beaconsUUID: UUID,
-                                      _ identifier: String) -> Effect<Action, Never>
+                                      _ identifier: String) -> Effect<Event, Never>
     
     public var startDetectingBeacons: (_ id: AnyHashable) -> Effect<Never, Never>
     
@@ -35,7 +35,7 @@ public struct DetectorClient {
     
     
     public init(
-        createBeaconDetector: @escaping (AnyHashable, UUID, String) -> Effect<Action, Never>,
+        createBeaconDetector: @escaping (AnyHashable, UUID, String) -> Effect<Event, Never>,
         startDetectingBeacons: @escaping (AnyHashable) -> Effect<Never, Never>,
         stopDetectingBeacons: @escaping (AnyHashable) -> Effect<Never, Never>
     ) {
@@ -46,7 +46,7 @@ public struct DetectorClient {
 }
 
 public struct AdvertiserClient {
-    public enum Action {
+    public enum Event {
         case stateUpdated(CBManagerState)
         case didNotStartAdvertising(Error)
     }
@@ -55,14 +55,14 @@ public struct AdvertiserClient {
                                         _ beaconsUUID: UUID,
                                         _ major: UInt16,
                                         _ minor: UInt16,
-                                        _ identifier: String) -> Effect<Action, Never>
+                                        _ identifier: String) -> Effect<Event, Never>
     
     public var startAdvertisingBeacon: (_ id: AnyHashable) -> Effect<Never, Never>
     
     public var stopAdvertisingBeacon: (_ id: AnyHashable) -> Effect<Never, Never>
     
     public init(
-        createBeaconAdvertiser: @escaping (AnyHashable, UUID, UInt16, UInt16, String) -> Effect<Action, Never>,
+        createBeaconAdvertiser: @escaping (AnyHashable, UUID, UInt16, UInt16, String) -> Effect<Event, Never>,
         startAdvertisingBeacon: @escaping (AnyHashable) -> Effect<Never, Never>,
         stopAdvertisingBeacon: @escaping (AnyHashable) -> Effect<Never, Never>
     ) {

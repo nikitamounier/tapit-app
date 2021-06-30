@@ -27,8 +27,16 @@ let package = Package(
             targets: ["FileClient"]
         ),
         .library(
+            name: "GeneralMocks",
+            targets: ["GeneralMocks"]
+        ),
+        .library(
             name: "P2PClient",
             targets: ["P2PClient"]
+        ),
+        .library(
+            name: "ProximitySensorClient",
+            targets: ["ProximitySensorClient"]
         ),
         .library(
             name: "SharedModels",
@@ -44,7 +52,8 @@ let package = Package(
         .target(
             name: "AppFeature",
             dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                "SharedModels"
             ]
         ),
         .testTarget(
@@ -80,7 +89,17 @@ let package = Package(
             ]
         ),
         .target(
+            name: "GeneralMocks",
+            dependencies: []
+        ),
+        .target(
             name: "P2PClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "ProximitySensorClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
