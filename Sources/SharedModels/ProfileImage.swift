@@ -7,7 +7,7 @@ public struct ProfileImage: Equatable {
         self.image = image
     }
     
-    public static func == (lhs: ProfileImage, rhs: ProfileImage) -> Bool {
+    public static func ==(lhs: ProfileImage, rhs: ProfileImage) -> Bool {
         return lhs.image.pngData() == rhs.image.pngData()
     }
 }
@@ -15,40 +15,38 @@ public struct ProfileImage: Equatable {
 extension ProfileImage: Codable {
     enum CodingKeys: CodingKey {
         case image
+        case imageScale
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.image = try container.decode(UIImage.self, forKey: .image)
+        let scale = try container.decode(CGFloat.self, forKey: .imageScale)
+        let imageData = try container.decode(UIImage.self, forKey: .image)
+        
+        self.image = UIImage(data: imageData, scale: scale)!
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.image, forKey: .image)
+        try container.encode(self.image.scale, forKey: .imageScale)
     }
 }
 
 extension KeyedEncodingContainer {
     mutating func encode(_ value: UIImage, forKey key: KeyedEncodingContainer.Key) throws {
         guard let data = value.pngData() else {
-          throw EncodingError.invalidValue(
-            value,
-            EncodingError.Context(codingPath: [key], debugDescription: "Failed convert UIImage to data")
-          )
+            throw EncodingError.invalidValue(
+                value,
+                EncodingError.Context(codingPath: [key], debugDescription: "Failed convert UIImage to data")
+            )
         }
         try encode(data, forKey: key)
-      }
+    }
 }
 
 extension KeyedDecodingContainer {
-    func decode(_ type: UIImage.Type, forKey key: KeyedDecodingContainer.Key) throws -> UIImage {
-        let imageData = try decode(Data.self, forKey: key)
-        if let image = UIImage(data: imageData) {
-          return image
-        } else {
-          throw DecodingError.dataCorrupted(
-            DecodingError.Context(codingPath: [key], debugDescription: "Failed load UIImage from decoded data")
-          )
-        }
-      }
+    func decode(_ type: UIImage.Type, forKey key: KeyedDecodingContainer.Key) throws -> Data {
+        return try decode(Data.self, forKey: key)
+    }
 }

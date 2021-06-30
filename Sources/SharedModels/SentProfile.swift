@@ -13,13 +13,13 @@ public struct SentProfile: Codable, Identifiable, Equatable {
             false
     }
     
+    public var id: UUID {
+        profile.id
+    }
+    
     @inline(__always)
     public subscript<T>(dynamicMember keyPath: KeyPath<UserProfile, T>) -> T {
         profile[keyPath: keyPath]
-    }
-    
-    public var id: UUID {
-        profile.id
     }
     
     public init(profile: UserProfile, sendDate: Date, expirationInterval: Days) {
