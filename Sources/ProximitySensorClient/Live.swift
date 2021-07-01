@@ -9,7 +9,7 @@ public extension ProximitySensorClient {
                 .filter { _ in UIDevice.current.proximityState == true }
                 .map { _ in .inProximity }
                 .eraseToEffect()
-        }(),
+        },
         stop: .fireAndForget {
             UIDevice.current.isProximityMonitoringEnabled = false
         }

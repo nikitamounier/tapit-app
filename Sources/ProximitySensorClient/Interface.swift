@@ -5,12 +5,12 @@ public struct ProximitySensorClient {
         case inProximity
     }
     
-    public var start: Effect<ProximityEvent, Never>
+    public var start: () -> Effect<ProximityEvent, Never>
     public var stop: Effect<Never, Never>
     
     
     public init(
-        start: Effect<ProximitySensorClient.ProximityEvent, Never>,
+        start: @escaping () -> Effect<ProximitySensorClient.ProximityEvent, Never>,
         stop: Effect<Never, Never>
     ) {
         self.start = start
