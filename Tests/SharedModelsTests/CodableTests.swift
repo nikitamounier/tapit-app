@@ -12,13 +12,14 @@ extension JSONEncoder {
 
 func assertCodable<T: Codable & Equatable>(
     _ value: T,
+    isEqual: (T, T) -> Bool = { $0 == $1 },
     decoder: JSONDecoder = .init(),
     encoder: JSONEncoder = .init(outputFormatting: [.prettyPrinted, .sortedKeys])
 ) throws -> Bool {
     let encoded = try encoder.encode(value)
     let decoded = try decoder.decode(T.self, from: encoded)
     
-    return value == decoded
+    return isEqual(value, decoded)
 }
     
 final class CodableTests: XCTestCase {
@@ -30,17 +31,14 @@ final class CodableTests: XCTestCase {
     }
     
     func testCoordinateCodable() throws {
-        let coordinates = CLLocationCoordinate2D(latitude: 37.3330, longitude: 122.0090)
+        let coordinates: CLLocationCoordinate2D = .mock
         try XCTAssertTrue(assertCodable(coordinates))
     }
     
     func testProfileImageCodable() throws {
-        let testImage = UIImage(systemName: "applelogo")!
-        
-        let encoded = try JSONEncoder().encode(ProfileImage(testImage))
-        let decoded = try JSONDecoder().decode(ProfileImage.self, from: encoded)
-        
-        XCTAssertTrue(decoded.image.pngData() == testImage.pngData())
+        let profileImage = ProfileImage(image)
+        try XCTAssertTrue(assertCodable(profileImage))
+    
     }
     
     func testEmailAddressCodable() throws {
