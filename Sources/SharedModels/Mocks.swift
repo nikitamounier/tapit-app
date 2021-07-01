@@ -1,9 +1,19 @@
 import Foundation
+import GeneralMocks
 import MapKit
 import Overture
 import PhoneNumberKit
 
-extension Social {
+public extension EmailAddress {
+    static let mock = Self(rawValue: "support@tapit.com")!
+}
+
+
+public extension CLLocationCoordinate2D {
+    static let mock = Self(latitude: 37.3330, longitude: 122.0090)
+}
+
+public extension Social {
     static let mockInstagram: Social = {
         let url = update(URLComponents()) {
             $0.scheme = "https"
@@ -97,7 +107,7 @@ extension Social {
     }()
 }
 
-extension Array where Element == Social {
+public extension Array where Element == Social {
     static let mock: [Social] = [
         .mockInstagram,
         .mockSnapchat,
@@ -115,19 +125,26 @@ extension Array where Element == Social {
     
 }
 
-extension EmailAddress {
-    static let mock = Self(rawValue: "support@tapit.com")!
-}
-
-
-extension CLLocationCoordinate2D {
-    static let mock = Self(latitude: 37.3330, longitude: 122.0090)
-}
-
-extension ProfileImage {
+public extension ProfileImage {
     static let mock = Self(UIImage(systemName: "applelogo")!)
 }
 
-extension UserProfile {
-    static let mock = Self(id: <#T##UUID#>, name: <#T##String#>, profileImage: <#T##ProfileImage#>, socials: <#T##[Social]#>)
+public extension UserProfile {
+    static let mock = Self(id: .deadbeef, name: "John Appleseed", profileImage: .mock, socials: .mock)
+}
+
+public extension SentProfile {
+    enum Expiration {
+        case expired
+        case notExpired
+    }
+    
+    static func mock(_ expiration: Expiration) -> Self {
+        switch expiration {
+        case .expired:
+            return Self(profile: .mock, sendDate: .oneWeekAgo, expirationInterval: Days(3))
+        case .notExpired:
+            return Self(profile: .mock, sendDate: .oneWeekAgo, expirationInterval: Days(10))
+        }
+    }
 }

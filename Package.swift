@@ -109,6 +109,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Overture", package: "Overture"),
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
+                "GeneralMocks"
             ]
         ),
         .testTarget(
