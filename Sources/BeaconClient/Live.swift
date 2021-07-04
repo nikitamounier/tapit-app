@@ -143,7 +143,7 @@ private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
         self.subscriber = subscriber
     }
     
-    func locationManagerauthorizationChanged(_ manager: CLLocationManager) {
+    func locationManagerAuthorizationChanged(_ manager: CLLocationManager) {
         subscriber.send(.authorizationChanged(manager.authorizationStatus))
     }
     
