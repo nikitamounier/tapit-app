@@ -29,12 +29,21 @@
         }
       },
       {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections",
+        "state": {
+          "branch": null,
+          "revision": "d45e63421d3dff834949ac69d3c37691e994bd69",
+          "version": "0.0.3"
+        }
+      },
+      {
         "package": "swift-composable-architecture",
         "repositoryURL": "https://github.com/pointfreeco/swift-composable-architecture",
         "state": {
           "branch": null,
-          "revision": "e1c0a52897eb361d09f761b2bdb25f212926fb1c",
-          "version": "0.19.0"
+          "revision": "3ca8249bd3262e9837c6cb4d352cc58e370e33fc",
+          "version": "0.20.0"
         }
       },
       {
