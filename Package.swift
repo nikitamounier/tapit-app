@@ -23,6 +23,10 @@ let package = Package(
             targets: ["ComposablePhoneNumberValidation"]
         ),
         .library(
+            name: "FeedbackGeneratorClient",
+            targets: ["FeedbackGeneratorClient"]
+        ),
+        .library(
             name: "FileClient",
             targets: ["FileClient"]
         ),
@@ -84,6 +88,12 @@ let package = Package(
             name: "ComposablePhoneNumberValidationTests",
             dependencies: [
                 "ComposablePhoneNumberValidation"
+            ]
+        ),
+        .target(
+            name: "FeedbackGeneratorClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
         .target(
