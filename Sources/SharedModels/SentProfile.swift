@@ -2,7 +2,7 @@ import Foundation
 
 @dynamicMemberLookup
 public struct SentProfile: Codable, Identifiable, Equatable {
-    public let profile: UserProfile
+    public var profile: UserProfile
     
     public let sendDate: Date
     public let expirationInterval: Days
@@ -18,8 +18,13 @@ public struct SentProfile: Codable, Identifiable, Equatable {
     }
     
     @inline(__always)
-    public subscript<T>(dynamicMember keyPath: KeyPath<UserProfile, T>) -> T {
-        profile[keyPath: keyPath]
+    public subscript<T>(dynamicMember keyPath: WritableKeyPath<UserProfile, T>) -> T {
+        get {
+            profile[keyPath: keyPath]
+        }
+        set {
+            profile[keyPath: keyPath] = newValue
+        }
     }
     
     public init(profile: UserProfile, sendDate: Date, expirationInterval: Days) {
