@@ -3,6 +3,7 @@ import ComposableArchitecture
 public struct ProximitySensorClient {
     public enum ProximityEvent {
         case inProximity
+        case notInProximity
     }
     
     public var start: () -> Effect<ProximityEvent, Never>

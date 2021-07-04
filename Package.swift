@@ -31,6 +31,10 @@ let package = Package(
             targets: ["GeneralMocks"]
         ),
         .library(
+            name: "OrientationClient",
+            targets: ["OrientationClient"]
+        ),
+        .library(
             name: "P2PClient",
             targets: ["P2PClient"]
         ),
@@ -91,6 +95,12 @@ let package = Package(
         .target(
             name: "GeneralMocks",
             dependencies: []
+        ),
+        .target(
+            name: "OrientationClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
         ),
         .target(
             name: "P2PClient",

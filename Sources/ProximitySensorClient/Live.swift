@@ -6,8 +6,7 @@ public extension ProximitySensorClient {
         start: {
             UIDevice.current.isProximityMonitoringEnabled = true
             return NotificationCenter.default.publisher(for: UIDevice.proximityStateDidChangeNotification)
-                .filter { _ in UIDevice.current.proximityState == true }
-                .map { _ in .inProximity }
+                .map { _ in UIDevice.current.proximityState ? .inProximity : .notInProximity }
                 .eraseToEffect()
         },
         stop: .fireAndForget {
