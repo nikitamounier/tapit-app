@@ -1,6 +1,6 @@
 import Foundation
 import MapKit
-import PhoneNumberKit
+@_exported import PhoneNumberKit
 
 public enum Social {
     case instagram(URLComponents)
