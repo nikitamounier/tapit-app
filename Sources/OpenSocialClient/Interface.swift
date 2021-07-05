@@ -3,25 +3,25 @@ import SharedModels
 import UIKit
 
 public struct OpenSocialClient {
-    public enum OpenEvent {
+    public enum OpenEvent: Equatable {
         case success
     }
     
-    public enum OpenError: Error {
+    public enum OpenError: Error, Equatable {
         public enum URLComponentsError {
             case failedConvertingComponentsToURL
             case failedOpeningURL
         }
         
-        public enum MapsError {
+        public enum MapsError: Equatable {
             case failedOpeningMaps
         }
         
-        public enum EmailError {
+        public enum EmailError: Equatable {
             case failedConvertingEmailToURL
         }
         
-        public enum PhoneError {
+        public enum PhoneError: Equatable {
             case failedHavingContactsAuthorization
             case failedConvertingPhoneToURL
             case failedOpeningPhoneURL
@@ -33,8 +33,8 @@ public struct OpenSocialClient {
         case phone(PhoneError)
     }
     
-    public enum Option {
-        public enum PhoneOption {
+    public enum Option: Equatable {
+        public enum PhoneOption: Equatable {
             case addContact(name: String, image: UIImage)
             case call
         }

@@ -83,10 +83,9 @@ public extension OpenSocialClient {
                     
                     switch phoneOption {
                     case let .addContact(name, image):
-                        switch CNContactStore.authorizationStatus(for: .contacts) {
-                        case .notDetermined, .restricted, .denied:
-                            promise(.failure(.phone(.failedHavingContactsAuthorization)))
-                        case .authorized:
+                        let store = CNContactStore()
+                        
+                        func showContactController() {
                             let contact = CNMutableContact()
                             let nameComponents = name.components(separatedBy: .whitespaces)
                             
@@ -105,12 +104,24 @@ public extension OpenSocialClient {
                             
                             contact.imageData = image.pngData()
                             
-                            let store = CNContactStore()
-                            
                             let controller = CNContactViewController(forNewContact: contact)
                             controller.contactStore = store
                             
                             controller.present()
+                            promise(.success(.success))
+                        }
+                        
+                        switch CNContactStore.authorizationStatus(for: .contacts) {
+                        case .notDetermined, .restricted, .denied:
+                            store.requestAccess(for: .contacts) { access, error in
+                                guard access else {
+                                    promise(.failure(.phone(.failedHavingContactsAuthorization)))
+                                    return
+                                }
+                                showContactController()
+                            }
+                        case .authorized:
+                            showContactController()
                             
                         @unknown default:
                             promise(.failure(.phone(.failedHavingContactsAuthorization)))
