@@ -7,7 +7,6 @@ let package = Package(
     name: "TapIt",
     platforms: [
         .iOS(.v14),
-        .macOS(.v11)
     ],
     products: [
         .library(
@@ -17,6 +16,10 @@ let package = Package(
         .library(
             name: "BeaconClient",
             targets: ["BeaconClient"]
+        ),
+        .library(
+            name: "CombineHelpers",
+            targets: ["CombineHelpers"]
         ),
         .library(
             name: "ComposablePhoneNumberValidation",
@@ -55,6 +58,10 @@ let package = Package(
             targets: ["ProximitySensorClient"]
         ),
         .library(
+            name: "SentProfileFeature",
+            targets: ["SentProfileFeature"]
+        ),
+        .library(
             name: "SharedModels",
             targets: ["SharedModels"]
         ),
@@ -85,6 +92,10 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
+        ),
+        .target(
+            name: "CombineHelpers",
+            dependencies: []
         ),
         .target(
             name: "ComposablePhoneNumberValidation",
@@ -152,8 +163,10 @@ let package = Package(
         .target(
             name: "SentProfileFeature",
             dependencies: [
+                "CombineHelpers",
+                "FeedbackGeneratorClient",
+                "OpenSocialClient",
                 "SharedModels",
-                "FeedbackGenerator",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
