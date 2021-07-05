@@ -35,6 +35,14 @@ let package = Package(
             targets: ["GeneralMocks"]
         ),
         .library(
+            name: "HistoryFeature",
+            targets: ["HistoryFeature"]
+        ),
+        .library(
+            name: "OpenSocialClient",
+            targets: ["OpenSocialClient"]
+        ),
+        .library(
             name: "OrientationClient",
             targets: ["OrientationClient"]
         ),
@@ -108,6 +116,22 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "HistoryFeature",
+            dependencies: [
+                "SharedModels",
+                "FeedbackGeneratorClient",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "OrderedCollections", package: "swift-collections")
+            ]
+        ),
+        .target(
+            name: "OpenSocialClient",
+            dependencies: [
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
             name: "OrientationClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -126,11 +150,19 @@ let package = Package(
             ]
         ),
         .target(
+            name: "SentProfileFeature",
+            dependencies: [
+                "SharedModels",
+                "FeedbackGenerator",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
             name: "SharedModels",
             dependencies: [
+                "GeneralMocks",
                 .product(name: "Overture", package: "Overture"),
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
-                "GeneralMocks"
             ]
         ),
         .testTarget(
