@@ -132,19 +132,3 @@ public extension ProfileImage {
 public extension UserProfile {
     static let mock = Self(id: .deadbeef, name: "John Appleseed", profileImage: .mock, socials: .mock)
 }
-
-public extension SentProfile {
-    enum Expiration {
-        case expired
-        case notExpired
-    }
-    
-    static func mock(_ expiration: Expiration) -> Self {
-        switch expiration {
-        case .expired:
-            return Self(profile: .mock, sendDate: .oneWeekAgo, expirationInterval: Days(3))
-        case .notExpired:
-            return Self(profile: .mock, sendDate: .oneWeekAgo, expirationInterval: Days(10))
-        }
-    }
-}
