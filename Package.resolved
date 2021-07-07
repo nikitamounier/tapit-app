@@ -24,17 +24,17 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "e77b3a9f7f850c302818046f1f65786b6c1cf791",
-          "version": "0.3.0"
+          "revision": "a313f0cc10e07bb5ce7e2ff5da600cce7efa8e8a",
+          "version": "0.2.0"
         }
       },
       {
         "package": "swift-composable-architecture",
-        "repositoryURL": "https://github.com/nikitamounier/swift-composable-architecture.git",
+        "repositoryURL": "https://github.com/pointfreeco/swift-composable-architecture",
         "state": {
-          "branch": "tap-it",
-          "revision": "e6b6587c94575ac9c1dba805d95fe6b5222c3538",
-          "version": null
+          "branch": null,
+          "revision": "e1c0a52897eb361d09f761b2bdb25f212926fb1c",
+          "version": "0.19.0"
         }
       },
       {

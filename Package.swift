@@ -67,8 +67,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "0.19.0")),
-        .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "0.0.3")),
+        .package(url: "https://github.com/nikitamounier/swift-composable-architecture.git", .branch("tap-it")),
         .package(name: "Overture", url: "https://github.com/pointfreeco/swift-overture", .upToNextMajor(from: "0.5.0")),
         .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.3")),
     ],
@@ -129,10 +128,11 @@ let package = Package(
         .target(
             name: "HistoryFeature",
             dependencies: [
-                "SharedModels",
                 "FeedbackGeneratorClient",
+                "OpenSocialClient",
+                "SentProfileFeature",
+                "SharedModels",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "OrderedCollections", package: "swift-collections")
             ]
         ),
         .target(
