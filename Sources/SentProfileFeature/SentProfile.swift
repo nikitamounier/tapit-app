@@ -2,7 +2,7 @@ import ComposableArchitecture
 import SharedModels
 
 @dynamicMemberLookup
-public struct SentProfile: Codable, Identifiable, Hashable, Equatable {
+public struct SentProfile: Codable, Identifiable, Equatable {
     public var profile: UserProfile
     
     public let sendDate: Date
@@ -34,12 +34,6 @@ public struct SentProfile: Codable, Identifiable, Hashable, Equatable {
         self.profile = profile
         self.sendDate = sendDate
         self.expirationInterval = expirationInterval
-    }
-}
-
-extension SentProfile {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
     }
 }
 

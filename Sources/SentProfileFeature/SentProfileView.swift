@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import FeedbackGeneratorClient
 import OpenSocialClient
+import SharedModels
 
 public enum SentProfileAction: Equatable {
     case alert(AlertAction)
@@ -15,6 +16,16 @@ public struct SentProfileEnvironment {
     public var feedbackGenerator: FeedbackGeneratorClient
     public var openSocial: OpenSocialClient
     public var openAppSettings: () -> Void
+    
+    public init(
+        feedbackGenerator: FeedbackGeneratorClient,
+        openSocial: OpenSocialClient,
+        openAppSettings: @escaping () -> Void
+    ) {
+        self.feedbackGenerator = feedbackGenerator
+        self.openSocial = openSocial
+        self.openAppSettings = openAppSettings
+    }
 }
 
 public let sentProfileReducer = Reducer<SentProfile, SentProfileAction, SentProfileEnvironment>.combine(
