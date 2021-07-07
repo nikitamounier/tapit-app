@@ -82,6 +82,10 @@ public extension OpenSocialClient {
                     }
                     
                     switch phoneOption {
+                    case .showUserContact:
+                        let store = CNContactStore()
+                        break
+                        
                     case let .addContact(name, image):
                         let store = CNContactStore()
                         

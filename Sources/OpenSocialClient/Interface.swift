@@ -35,6 +35,7 @@ public struct OpenSocialClient {
     
     public enum Option: Equatable {
         public enum PhoneOption: Equatable {
+            case showUserContact
             case addContact(name: String, image: UIImage)
             case call
         }
