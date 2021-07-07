@@ -4,6 +4,15 @@ import ComposableArchitecture
 import OpenSocialClient
 
 public enum AlertAction: Equatable {
+    case cancelButtonTapped
+    case confirmButtonTapped(effect: Effect<SentProfileAction, Never>?)
+    
+    case failedToOpenURL
+    case failedToOpenAddress
+    case failedToOpenEmailAddress
+    case didNotHaveAuthorization
+    case failedToOpenPhone
+    
     public static func == (lhs: AlertAction, rhs: AlertAction) -> Bool {
         switch (lhs, rhs) {
         case (.cancelButtonTapped, .cancelButtonTapped):
@@ -14,15 +23,6 @@ public enum AlertAction: Equatable {
             return false
         }
     }
-    
-    case cancelButtonTapped
-    case confirmButtonTapped(effect: Effect<SentProfileAction, Never>?)
-    
-    case failedToOpenURL
-    case failedToOpenAddress
-    case failedToOpenEmailAddress
-    case didNotHaveAuthorization
-    case failedToOpenPhone
 }
 
 public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileAction, SentProfileEnvironment> { alert, action, env in

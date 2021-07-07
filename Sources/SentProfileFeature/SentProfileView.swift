@@ -1,13 +1,6 @@
 import ComposableArchitecture
 import FeedbackGeneratorClient
 import OpenSocialClient
-import SharedModels
-
-public struct SentProfileState: Equatable {
-    public var profile: SentProfile
-    public var profileCategories: [ProfilesCategory]
-    public var openSocialFailedAlert: AlertState<AlertAction>?
-}
 
 public enum SentProfileAction: Equatable {
     case alert(AlertAction)
@@ -24,17 +17,17 @@ public struct SentProfileEnvironment {
     public var openAppSettings: () -> Void
 }
 
-public let sentProfileReducer = Reducer<SentProfileState, SentProfileAction, SentProfileEnvironment>.combine(
+public let sentProfileReducer = Reducer<SentProfile, SentProfileAction, SentProfileEnvironment>.combine(
     openSocialReducer.pullback(
-        state: \.openSocialFailedAlert,
+        state: \.openSocialFailed,
         action: /SentProfileAction.self,
         environment: { $0 }
     ),
     
-    Reducer { state, action, env in
+    Reducer { profile, action, env in
         switch action {
         case let .setName(name):
-            state.profile.name = name
+            profile.name = name
             return .none
             
         case let .addToCategories(categories):
