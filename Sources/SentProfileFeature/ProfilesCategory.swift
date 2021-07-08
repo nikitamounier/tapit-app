@@ -1,6 +1,58 @@
+@dynamicMemberLookup
 public enum ProfilesCategory: Hashable, Equatable {
     case all
     case custom(name: String, profileIDs: Set<SentProfile.ID>)
+
+    @inline(__always)
+    public subscript<Value>(dynamicMember keyPath: KeyPath<Set<SentProfile.ID>, Value>) -> Value? {
+        guard case .custom(name: _, profileIDs: let profileIDs) = self else { return nil }
+        return profileIDs[keyPath: keyPath]
+    }
+    
+    // Since in-place mutation of enum associated value doesn't exist yet
+    @discardableResult
+    public mutating func add(_ id: SentProfile.ID) -> Bool {
+        guard case .custom(let name, var profileIDs) = self else { return false }
+        withUnsafeMutablePointer(to: &self) { ptr in
+            ptr.deinitialize(count: 1)
+            profileIDs.insert(id)
+            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+        }
+        return true
+    }
+    
+    @discardableResult
+    public mutating func addMany<IDs>(_ ids: IDs) -> Bool where IDs: Sequence, IDs.Element == SentProfile.ID {
+        guard case .custom(let name, var profileIDs) = self else { return false }
+        withUnsafeMutablePointer(to: &self) { ptr in
+            ptr.deinitialize(count: 1)
+            profileIDs.formUnion(ids)
+            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+        }
+        return true
+    }
+    
+    @discardableResult
+    public mutating func remove(_ id: SentProfile.ID) -> Bool {
+        guard case .custom(let name, var profileIDs) = self else { return false }
+        withUnsafeMutablePointer(to: &self) { ptr in
+            ptr.deinitialize(count: 1)
+            profileIDs.remove(id)
+            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+        }
+        return true
+    }
+    
+    @discardableResult
+    public mutating func removeMany<IDs>(_ ids: IDs) -> Bool where IDs: Sequence, IDs.Element == SentProfile.ID {
+        guard case .custom(let name, var profileIDs) = self else { return false }
+        withUnsafeMutablePointer(to: &self) { ptr in
+            ptr.deinitialize(count: 1)
+            profileIDs.formUnion(ids)
+            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+        }
+        return true
+    }
 }
 
 extension ProfilesCategory: Codable {

@@ -141,10 +141,10 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
     case .setName:
         return .none
         
-    case .addToCategories:
+    case .addToCategory:
         return .none
         
-    case .removeFromCategories:
+    case .removeFromCategory:
         return .none
         
     case .removeSentProfile:

@@ -7,8 +7,8 @@ public enum SentProfileAction: Equatable {
     case alert(AlertAction)
     case setName(to: String)
     case open(Social, OpenSocialClient.Option?)
-    case addToCategories([ProfilesCategory])
-    case removeFromCategories([ProfilesCategory])
+    case addToCategory(ProfilesCategory)
+    case removeFromCategory(ProfilesCategory)
     case removeSentProfile
 }
 
@@ -41,16 +41,10 @@ public let sentProfileReducer = Reducer<SentProfile, SentProfileAction, SentProf
             profile.name = name
             return .none
             
-        case let .addToCategories(categories):
-            categories.forEach { category in
-                
-            }
+        case .addToCategory:
             return .none
             
-        case let .removeFromCategories(categories):
-            categories.forEach { category in
-                
-            }
+        case .removeFromCategory:
             return .none
             
         case .removeSentProfile:
