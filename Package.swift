@@ -65,6 +65,10 @@ let package = Package(
             name: "SharedModels",
             targets: ["SharedModels"]
         ),
+        .library(
+            name: "SwiftHelpers",
+            targets: ["SwiftHelpers"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/nikitamounier/swift-composable-architecture.git", .branch("tap-it")),
@@ -132,6 +136,7 @@ let package = Package(
                 "OpenSocialClient",
                 "SentProfileFeature",
                 "SharedModels",
+                "SwiftHelpers",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
@@ -183,6 +188,10 @@ let package = Package(
             dependencies: [
                 "SharedModels",
             ]
+        ),
+        .target(
+            name: "SwiftHelpers",
+            dependencies: []
         ),
     ]
 )
