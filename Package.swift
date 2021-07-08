@@ -193,5 +193,11 @@ let package = Package(
             name: "SwiftHelpers",
             dependencies: []
         ),
+        .testTarget(
+            name: "SwiftHelpersTests",
+            dependencies: [
+                "SwiftHelpers",
+            ]
+        ),
     ]
 )
