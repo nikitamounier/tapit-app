@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E4612FDB26977117004B8F2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4612FDA26977117004B8F2A /* ContentView.swift */; };
 		E49AA45F267FBFA700D3F456 /* AppFeature in Frameworks */ = {isa = PBXBuildFile; productRef = E49AA45E267FBFA700D3F456 /* AppFeature */; };
 		E4DFE932267FBD7900F21A5B /* TapItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DFE931267FBD7900F21A5B /* TapItApp.swift */; };
 		E4DFE936267FBD7A00F21A5B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4DFE935267FBD7A00F21A5B /* Assets.xcassets */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E4612FDA26977117004B8F2A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E4DFE92E267FBD7900F21A5B /* TapIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TapIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4DFE931267FBD7900F21A5B /* TapItApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapItApp.swift; sourceTree = "<group>"; };
 		E4DFE935267FBD7A00F21A5B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				E4DFE931267FBD7900F21A5B /* TapItApp.swift */,
+				E4612FDA26977117004B8F2A /* ContentView.swift */,
 				E4DFE935267FBD7A00F21A5B /* Assets.xcassets */,
 				E4DFE93A267FBD7A00F21A5B /* Info.plist */,
 				E4DFE937267FBD7A00F21A5B /* Preview Content */,
@@ -148,6 +151,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4612FDB26977117004B8F2A /* ContentView.swift in Sources */,
 				E4DFE932267FBD7900F21A5B /* TapItApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
