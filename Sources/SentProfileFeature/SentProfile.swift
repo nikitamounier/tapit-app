@@ -10,12 +10,6 @@ public struct SentProfile: Codable, Identifiable, Equatable {
     
     public var openSocialFailed: AlertState<AlertAction>?
     
-    public var isExpired: Bool {
-        (Calendar.current.dateComponents([.day], from: sendDate, to: Date()).day ?? 0) > expirationInterval.amount ?
-            true :
-            false
-    }
-    
     public var id: UUID {
         profile.id
     }
@@ -50,4 +44,12 @@ extension SentProfile {
         self.sendDate = try container.decode(Date.self, forKey: .sendDate)
         self.expirationInterval = try container.decode(Days.self, forKey: .expirationInterval)
     }
+}
+
+public extension SentProfile {
+    static let mock = Self(
+        profile: .mock,
+        sendDate: .oneWeekAgo,
+        expirationInterval: Days(20)
+    )
 }
