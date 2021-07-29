@@ -70,7 +70,7 @@ public extension OpenSocialClient {
                     }
                     
                     let controller = MFMailComposeViewController()
-                    let delegate = Delegate(promise)
+                    let delegate: Optional = Delegate(promise)
                     controller.mailComposeDelegate = delegate
                     controller.setToRecipients([email.rawValue])
                     
