@@ -26,6 +26,10 @@ let package = Package(
             targets: ["ComposablePhoneNumberValidation"]
         ),
         .library(
+            name: "ExpirationClient",
+            targets: ["ExpirationClient"]
+        ),
+        .library(
             name: "FeedbackGeneratorClient",
             targets: ["FeedbackGeneratorClient"]
         ),
@@ -71,7 +75,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/nikitamounier/swift-composable-architecture.git", .branch("tap-it")),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.21.0")),
         .package(name: "Overture", url: "https://github.com/pointfreeco/swift-overture", .upToNextMajor(from: "0.5.0")),
         .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.3")),
     ],
@@ -79,8 +83,9 @@ let package = Package(
         .target(
             name: "AppFeature",
             dependencies: [
+                "HistoryFeature",
+                "SharedModels",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                "SharedModels"
             ]
         ),
         .testTarget(
@@ -114,6 +119,13 @@ let package = Package(
             ]
         ),
         .target(
+            name: "ExpirationClient",
+            dependencies: [
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
             name: "FeedbackGeneratorClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -133,6 +145,7 @@ let package = Package(
             name: "HistoryFeature",
             dependencies: [
                 "FeedbackGeneratorClient",
+                "ExpirationClient",
                 "OpenSocialClient",
                 "SentProfileFeature",
                 "SharedModels",

@@ -24,17 +24,35 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "e77b3a9f7f850c302818046f1f65786b6c1cf791",
-          "version": "0.3.0"
+          "revision": "ac1cf1c35b63d70bf05707ad368c9459f31513ff",
+          "version": "0.4.0"
+        }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections",
+        "state": {
+          "branch": null,
+          "revision": "3426dba9ee5c9f8e4981b0fc9d39a818d36eec28",
+          "version": "0.0.4"
         }
       },
       {
         "package": "swift-composable-architecture",
-        "repositoryURL": "https://github.com/nikitamounier/swift-composable-architecture.git",
+        "repositoryURL": "https://github.com/pointfreeco/swift-composable-architecture.git",
         "state": {
-          "branch": "tap-it",
-          "revision": "e6b6587c94575ac9c1dba805d95fe6b5222c3538",
-          "version": null
+          "branch": null,
+          "revision": "b4f5d0e3297662a6e26f024f010dc4dd457489a7",
+          "version": "0.21.0"
+        }
+      },
+      {
+        "package": "swift-identified-collections",
+        "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections",
+        "state": {
+          "branch": null,
+          "revision": "930bd6e400a30b71018385cd2853dba7b120e88e",
+          "version": "0.1.0"
         }
       },
       {
