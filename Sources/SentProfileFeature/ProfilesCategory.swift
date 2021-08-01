@@ -83,3 +83,13 @@ extension ProfilesCategory: Codable {
         }
     }
 }
+
+extension CasePath where Root == ProfilesCategory, Value == (String, Set<SentProfile.ID>) {
+    static let custom = Self(
+        embed: ProfilesCategory.custom,
+        extract: {
+            guard case let .custom(name: name, profileIDs: profileIDs) = $0 else { return nil }
+            return (name, profileIDs)
+        }
+    )
+}
