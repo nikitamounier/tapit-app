@@ -1,3 +1,5 @@
+import CasePaths
+
 @dynamicMemberLookup
 public enum ProfilesCategory: Hashable, Equatable {
     case all
@@ -9,49 +11,36 @@ public enum ProfilesCategory: Hashable, Equatable {
         return profileIDs[keyPath: keyPath]
     }
     
-    // Since in-place mutation of enum associated value doesn't exist yet
-    @discardableResult
-    public mutating func add(_ id: SentProfile.ID) -> Bool {
-        guard case .custom(let name, var profileIDs) = self else { return false }
-        withUnsafeMutablePointer(to: &self) { ptr in
-            ptr.deinitialize(count: 1)
-            profileIDs.insert(id)
-            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+    public mutating func add(
+        _ id: SentProfile.ID
+    ) -> Result<Void, Error> {
+        Result {
+            try (/Self.custom).modify(&self) { $0.1.insert(id) }
         }
-        return true
     }
     
-    @discardableResult
-    public mutating func addMany<IDs>(_ ids: IDs) -> Bool where IDs: Sequence, IDs.Element == SentProfile.ID {
-        guard case .custom(let name, var profileIDs) = self else { return false }
-        withUnsafeMutablePointer(to: &self) { ptr in
-            ptr.deinitialize(count: 1)
-            profileIDs.formUnion(ids)
-            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+    public mutating func addMany<IDs>(
+        _ ids: IDs
+    ) -> Result<Void, Error> where IDs: Sequence, IDs.Element == SentProfile.ID {
+        Result {
+            try (/Self.custom).modify(&self) { $0.1.formUnion(ids) }
         }
-        return true
     }
     
-    @discardableResult
-    public mutating func remove(_ id: SentProfile.ID) -> Bool {
-        guard case .custom(let name, var profileIDs) = self else { return false }
-        withUnsafeMutablePointer(to: &self) { ptr in
-            ptr.deinitialize(count: 1)
-            profileIDs.remove(id)
-            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+    public mutating func remove(
+        _ id: SentProfile.ID
+    ) -> Result<Void, Error> {
+        Result {
+            try (/Self.custom).modify(&self) { $0.1.remove(id) }
         }
-        return true
     }
     
-    @discardableResult
-    public mutating func removeMany<IDs>(_ ids: IDs) -> Bool where IDs: Sequence, IDs.Element == SentProfile.ID {
-        guard case .custom(let name, var profileIDs) = self else { return false }
-        withUnsafeMutablePointer(to: &self) { ptr in
-            ptr.deinitialize(count: 1)
-            profileIDs.formUnion(ids)
-            ptr.initialize(to: .custom(name: name, profileIDs: profileIDs))
+    public mutating func removeMany<IDs>(
+        _ ids: IDs
+    ) -> Result<Void, Error> where IDs: Sequence, IDs.Element == SentProfile.ID {
+        Result {
+            try (/Self.custom).modify(&self) { $0.1.subtract(ids) }
         }
-        return true
     }
 }
 
