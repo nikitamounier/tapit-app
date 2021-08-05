@@ -14,9 +14,9 @@ public struct HistoryState: Equatable {
     public var categories: [ProfilesCategory]
     
     public init(
-        profiles: IdentifiedArrayOf<SentProfile>,
-        selectedProfile: SentProfile.ID?,
-        categories: [ProfilesCategory]
+        profiles: IdentifiedArrayOf<SentProfile> = [],
+        selectedProfile: SentProfile.ID? = nil,
+        categories: [ProfilesCategory] = []
     ) {
         self.profiles = profiles
         self.selectedProfile = selectedProfile
@@ -55,7 +55,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
     sentProfileReducer
         .forEach(
             state: \.profiles,
-            action: /HistoryAction.sentProfile,
+            action: .sentProfile,
             environment: {
                 SentProfileEnvironment(
                     feedbackGenerator: $0.feedbackGenerator,
@@ -71,7 +71,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case let .setNavigation(id: id):
             state.selectedProfile = id
             return .none
-        
+            
         case let .sentProfile(id: id, action: .removeSentProfile):
             state.profiles.remove(id: id)
             return .none
@@ -126,26 +126,29 @@ public struct HistoryView: View {
     }
     
     public var body: some View {
-        List {
-            ForEachStore(
-                store.scope(
-                    state: \.profiles,
-                    action: HistoryAction.sentProfile
-                )
-            ) { sentProfileStore in
-                WithViewStore(sentProfileStore) { viewStore in
-                    NavigationLink(
-                        destination: Text(viewStore.name),
-                        tag: viewStore.id,
-                        selection: self.viewStore.binding(
-                            get: \.selectedProfile,
-                            send: HistoryAction.setNavigation
-                        )
-                    ) {
-                        Text(viewStore.name)
+        NavigationView {
+            List {
+                ForEachStore(
+                    store.scope(
+                        state: \.profiles,
+                        action: HistoryAction.sentProfile
+                    )
+                ) { sentProfileStore in
+                    WithViewStore(sentProfileStore) { viewStore in
+                        NavigationLink(
+                            destination: Text(viewStore.name),
+                            tag: viewStore.id,
+                            selection: self.viewStore.binding(
+                                get: \.selectedProfile,
+                                send: HistoryAction.setNavigation
+                            )
+                        ) {
+                            Text(viewStore.name)
+                        }
                     }
                 }
             }
+            .navigationTitle(Text("History"))
         }
     }
 }
