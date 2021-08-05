@@ -12,26 +12,41 @@ import SwiftUI
 public struct HistoryState: Equatable {
     public var profiles: IdentifiedArrayOf<SentProfile>
     public var selectedProfile: SentProfile.ID?
+    public var viewingOrder: ViewingOrder
     public var categories: NonEmptyArray<ProfilesCategory>
     public var currentCategory: ProfilesCategory.ID
+    public var showCategoryCreation: Bool
+    
+    public enum ViewingOrder: Codable {
+        case newestToOldest
+        case oldestToNewest
+        case alphabetical
+    }
     
     public init(
         profiles: IdentifiedArrayOf<SentProfile> = [],
         selectedProfile: SentProfile.ID? = nil,
+        viewingOrder: ViewingOrder = .newestToOldest,
         categories: NonEmptyArray<ProfilesCategory> = .init(.all),
-        currentCategory: ProfilesCategory.ID = "all"
+        currentCategory: ProfilesCategory.ID = "all",
+        showCategoryCreation: Bool = false
     ) {
         self.profiles = profiles
         self.selectedProfile = selectedProfile
+        self.viewingOrder = viewingOrder
         self.categories = categories
         self.currentCategory = currentCategory
+        self.showCategoryCreation = showCategoryCreation
     }
 }
 
 public enum HistoryAction: Equatable {
     case setNavigation(id: SentProfile.ID?)
+    case createCategoryButtonTapped
     case createCategory(name: String, profileIDs: Set<SentProfile.ID>)
     case removeCategory(index: Int)
+    case moveCategory(from: Int, to: Int)
+    case changeViewingOrder(to: HistoryState.ViewingOrder)
     
     case sentProfile(id: SentProfile.ID, action: SentProfileAction)
 }
@@ -56,19 +71,17 @@ public struct HistoryEnvironment {
 }
 
 public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironment>.combine(
-    sentProfileReducer
-        .forEach(
-            state: \.profiles,
-            action: .sentProfile,
-            environment: {
-                SentProfileEnvironment(
-                    feedbackGenerator: $0.feedbackGenerator,
-                    openSocial: $0.openSocial,
-                    openAppSettings: $0.openAppSettings
-                )
-            }
-        )
-    ,
+    sentProfileReducer.forEach(
+        state: \.profiles,
+        action: .sentProfile,
+        environment: {
+            SentProfileEnvironment(
+                feedbackGenerator: $0.feedbackGenerator,
+                openSocial: $0.openSocial,
+                openAppSettings: $0.openAppSettings
+            )
+        }
+    ),
     
     Reducer { state, action, env in
         switch action {
@@ -97,6 +110,10 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case .sentProfile:
             return .none
             
+        case .createCategoryButtonTapped:
+            state.showCategoryCreation = true
+            return .none
+            
         case let .createCategory(name: name, profileIDs: profileIDs):
             state.categories.append(.custom(name: name, profileIDs: profileIDs))
             return .none
@@ -104,6 +121,14 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case let .removeCategory(index: index):
             guard index != 0 else { return .none }
             state.categories.remove(at: index)
+            return .none
+            
+        case let .moveCategory(from: sourceIndex, to: destinationIndex):
+            state.categories.move(fromOffsets: IndexSet(integer: sourceIndex), toOffset: destinationIndex)
+            return .none
+            
+        case let .changeViewingOrder(to: order):
+            state.viewingOrder = order
             return .none
         }
     }
