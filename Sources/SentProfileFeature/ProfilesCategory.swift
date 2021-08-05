@@ -1,7 +1,7 @@
 import CasePaths
 
 @dynamicMemberLookup
-public enum ProfilesCategory: Hashable, Equatable {
+public enum ProfilesCategory: Hashable, Equatable, Identifiable {
     case all
     case custom(name: String, profileIDs: Set<SentProfile.ID>)
 
@@ -9,6 +9,13 @@ public enum ProfilesCategory: Hashable, Equatable {
     public subscript<Value>(dynamicMember keyPath: KeyPath<Set<SentProfile.ID>, Value>) -> Value? {
         guard case .custom(name: _, profileIDs: let profileIDs) = self else { return nil }
         return profileIDs[keyPath: keyPath]
+    }
+    
+    public var id: String {
+        switch self {
+        case .all: return "all"
+        case let .custom(name: name, profileIDs: _): return name
+        }
     }
     
     public mutating func add(

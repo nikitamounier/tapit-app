@@ -78,6 +78,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.21.0")),
         .package(name: "Overture", url: "https://github.com/pointfreeco/swift-overture", .upToNextMajor(from: "0.5.0")),
         .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.3")),
+        .package(name: "swift-nonempty", url: "https://github.com/nikitamounier/swift-nonempty", .revision("5cde62a"))
     ],
     targets: [
         .target(
@@ -151,6 +152,7 @@ let package = Package(
                 "SharedModels",
                 "SwiftHelpers",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "NonEmpty", package: "swift-nonempty"),
             ]
         ),
         .target(

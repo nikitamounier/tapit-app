@@ -2,6 +2,7 @@ import ComposableArchitecture
 import FeedbackGeneratorClient
 import ExpirationClient
 import IdentifiedCollections
+import NonEmpty
 import OpenSocialClient
 import SentProfileFeature
 import SharedModels
@@ -11,16 +12,19 @@ import SwiftUI
 public struct HistoryState: Equatable {
     public var profiles: IdentifiedArrayOf<SentProfile>
     public var selectedProfile: SentProfile.ID?
-    public var categories: [ProfilesCategory]
+    public var categories: NonEmptyArray<ProfilesCategory>
+    public var currentCategory: ProfilesCategory.ID
     
     public init(
         profiles: IdentifiedArrayOf<SentProfile> = [],
         selectedProfile: SentProfile.ID? = nil,
-        categories: [ProfilesCategory] = []
+        categories: NonEmptyArray<ProfilesCategory> = .init(.all),
+        currentCategory: ProfilesCategory.ID = "all"
     ) {
         self.profiles = profiles
         self.selectedProfile = selectedProfile
         self.categories = categories
+        self.currentCategory = currentCategory
     }
 }
 
@@ -98,6 +102,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             return .none
             
         case let .removeCategory(index: index):
+            guard index != 0 else { return .none }
             state.categories.remove(at: index)
             return .none
         }
@@ -108,7 +113,7 @@ public struct HistoryView: View {
     struct ViewState: Equatable {
         var profiles: IdentifiedArrayOf<SentProfile>
         var selectedProfile: SentProfile.ID?
-        var categories: [ProfilesCategory]
+        var categories: NonEmptyArray<ProfilesCategory>
         
         init(state: HistoryState) {
             self.profiles = state.profiles
@@ -153,6 +158,7 @@ public struct HistoryView: View {
     }
 }
 
+@available(iOSApplicationExtension, unavailable)
 struct HistoryView_Previews: PreviewProvider {
     static var previews: some View {
         HistoryView(
@@ -160,7 +166,7 @@ struct HistoryView_Previews: PreviewProvider {
                 initialState: HistoryState(
                     profiles: .init(uniqueElements: Array(repeating: SentProfile(profile: UserProfile(id: .init(), name: "John Appleseed", profileImage: .mock, socials: .mock), sendDate: .oneWeekAgo, expirationInterval: Days(10)), count: 100)),
                     selectedProfile: nil,
-                    categories: []),
+                    categories: .init(.all)),
                 reducer: historyReducer,
                 environment: HistoryEnvironment(
                     feedbackGenerator: .live,
