@@ -151,13 +151,3 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
         return .none
     }
 }
-
-extension CasePath where Root == SentProfileAction, Value == AlertAction {
-    internal static let `self` = Self(
-        embed: SentProfileAction.alert,
-        extract: {
-            guard case let .alert(action) = $0 else { return nil }
-            return action
-        }
-    )
-}

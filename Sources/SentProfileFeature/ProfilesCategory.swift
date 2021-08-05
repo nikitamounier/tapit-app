@@ -15,7 +15,7 @@ public enum ProfilesCategory: Hashable, Equatable {
         _ id: SentProfile.ID
     ) -> Result<Void, Error> {
         Result {
-            try (/Self.custom).modify(&self) { $0.1.insert(id) }
+            try (CasePath.custom).modify(&self) { $0.1.insert(id) }
         }
     }
     
@@ -23,7 +23,7 @@ public enum ProfilesCategory: Hashable, Equatable {
         _ ids: IDs
     ) -> Result<Void, Error> where IDs: Sequence, IDs.Element == SentProfile.ID {
         Result {
-            try (/Self.custom).modify(&self) { $0.1.formUnion(ids) }
+            try (CasePath.custom).modify(&self) { $0.1.formUnion(ids) }
         }
     }
     
@@ -31,7 +31,7 @@ public enum ProfilesCategory: Hashable, Equatable {
         _ id: SentProfile.ID
     ) -> Result<Void, Error> {
         Result {
-            try (/Self.custom).modify(&self) { $0.1.remove(id) }
+            try (CasePath.custom).modify(&self) { $0.1.remove(id) }
         }
     }
     
@@ -39,7 +39,7 @@ public enum ProfilesCategory: Hashable, Equatable {
         _ ids: IDs
     ) -> Result<Void, Error> where IDs: Sequence, IDs.Element == SentProfile.ID {
         Result {
-            try (/Self.custom).modify(&self) { $0.1.subtract(ids) }
+            try (CasePath.custom).modify(&self) { $0.1.subtract(ids) }
         }
     }
 }
