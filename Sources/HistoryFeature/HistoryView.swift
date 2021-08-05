@@ -4,6 +4,7 @@ import ExpirationClient
 import IdentifiedCollections
 import NonEmpty
 import OpenSocialClient
+import OrderedCollections
 import SentProfileFeature
 import SharedModels
 import SwiftHelpers
@@ -12,10 +13,16 @@ import SwiftUI
 public struct HistoryState: Equatable {
     public var profiles: IdentifiedArrayOf<SentProfile>
     public var selectedProfile: SentProfile.ID?
+    
     public var viewingOrder: ViewingOrder
+    
     public var categories: NonEmptyArray<ProfilesCategory>
     public var currentCategory: ProfilesCategory.ID
     public var showCategoryCreation: Bool
+    
+    public var isSearching: Bool
+    public var currentSearch: String
+    public var searchResults: OrderedSet<SentProfile.ID>
     
     public enum ViewingOrder: Codable {
         case newestToOldest
@@ -29,7 +36,10 @@ public struct HistoryState: Equatable {
         viewingOrder: ViewingOrder = .newestToOldest,
         categories: NonEmptyArray<ProfilesCategory> = .init(.all),
         currentCategory: ProfilesCategory.ID = "all",
-        showCategoryCreation: Bool = false
+        showCategoryCreation: Bool = false,
+        isSearching: Bool = false,
+        currentSearch: String = "",
+        searchResults: OrderedSet<SentProfile.ID> = []
     ) {
         self.profiles = profiles
         self.selectedProfile = selectedProfile
@@ -37,32 +47,45 @@ public struct HistoryState: Equatable {
         self.categories = categories
         self.currentCategory = currentCategory
         self.showCategoryCreation = showCategoryCreation
+        self.isSearching = isSearching
+        self.currentSearch = currentSearch
+        self.searchResults = searchResults
     }
 }
 
 public enum HistoryAction: Equatable {
+    case sentProfile(id: SentProfile.ID, action: SentProfileAction)
+    
     case setNavigation(id: SentProfile.ID?)
+    
     case createCategoryButtonTapped
     case createCategory(name: String, profileIDs: Set<SentProfile.ID>)
     case removeCategory(index: Int)
     case moveCategory(from: Int, to: Int)
+    
     case changeViewingOrder(to: HistoryState.ViewingOrder)
     
-    case sentProfile(id: SentProfile.ID, action: SentProfileAction)
+    case searchBarTapped
+    case searchInput(text: String)
+    case searchResponse(input: String)
+    case cancelSearchTapped
 }
 
 public struct HistoryEnvironment {
+    public var mainQueue: AnySchedulerOf<DispatchQueue>
     public var feedbackGenerator: FeedbackGeneratorClient
     public var isSentProfileExpired: ExpirationClient
     public var openSocial: OpenSocialClient
     public var openAppSettings: () -> Void
     
     public init(
+        mainQueue: AnySchedulerOf<DispatchQueue>,
         feedbackGenerator: FeedbackGeneratorClient,
         isSentProfileExpired: ExpirationClient,
         openSocial: OpenSocialClient,
         openAppSettings: @escaping () -> Void
     ) {
+        self.mainQueue = mainQueue
         self.feedbackGenerator = feedbackGenerator
         self.isSentProfileExpired = isSentProfileExpired
         self.openSocial = openSocial
@@ -84,6 +107,8 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
     ),
     
     Reducer { state, action, env in
+        struct SearchID: Hashable {}
+        
         switch action {
         case let .setNavigation(id: id):
             state.selectedProfile = id
@@ -129,6 +154,39 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             
         case let .changeViewingOrder(to: order):
             state.viewingOrder = order
+            return .none
+            
+        case .searchBarTapped:
+            state.isSearching = true
+            return .none
+            
+        case let .searchInput(text: text):
+            state.currentSearch = text
+            return Effect(value: .searchResponse(input: text))
+                .debounce(id: SearchID(), for: 1.5, scheduler: env.mainQueue)
+            
+        case let .searchResponse(input: input):
+            let predicate = { (profile: SentProfile) -> Bool in
+                return profile.name.localizedCaseInsensitiveContains(input) || profile.socials.contains { social in
+                    switch social {
+                    case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
+                        return urlComp.path.localizedCaseInsensitiveContains(input)
+                    case let .address(address):
+                        return false
+                    case let .email(email):
+                        return email.rawValue.localizedCaseInsensitiveContains(input)
+                    case let .phone(phone):
+                        return phone.numberString.localizedCaseInsensitiveContains(input)
+                    }
+                }
+            }
+            
+            state.searchResults = state.profiles.filter(predicate).ids
+            return .none
+            
+            
+        case .cancelSearchTapped:
+            state.isSearching = false
             return .none
         }
     }
@@ -188,12 +246,10 @@ struct HistoryView_Previews: PreviewProvider {
     static var previews: some View {
         HistoryView(
             store: Store(
-                initialState: HistoryState(
-                    profiles: .init(uniqueElements: Array(repeating: SentProfile(profile: UserProfile(id: .init(), name: "John Appleseed", profileImage: .mock, socials: .mock), sendDate: .oneWeekAgo, expirationInterval: Days(10)), count: 100)),
-                    selectedProfile: nil,
-                    categories: .init(.all)),
+                initialState: HistoryState(),
                 reducer: historyReducer,
                 environment: HistoryEnvironment(
+                    mainQueue: .main,
                     feedbackGenerator: .live,
                     isSentProfileExpired: .live,
                     openSocial: .live,
