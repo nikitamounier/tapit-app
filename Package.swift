@@ -76,9 +76,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.21.0")),
-        .package(name: "Overture", url: "https://github.com/pointfreeco/swift-overture", .upToNextMajor(from: "0.5.0")),
         .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.3")),
-        .package(name: "swift-nonempty", url: "https://github.com/nikitamounier/swift-nonempty", .revision("5cde62a"))
+        .package(name: "swift-nonempty", url: "https://github.com/nikitamounier/swift-nonempty", .revision("5cde62a")),
+        .package(name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude", .branch("main"))
     ],
     targets: [
         .target(
@@ -155,6 +155,13 @@ let package = Package(
                 .product(name: "NonEmpty", package: "swift-nonempty"),
             ]
         ),
+        .testTarget(
+            name: "HistoryFeatureTests",
+            dependencies: [
+                "HistoryFeature",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
         .target(
             name: "OpenSocialClient",
             dependencies: [
@@ -194,7 +201,7 @@ let package = Package(
             name: "SharedModels",
             dependencies: [
                 "GeneralMocks",
-                .product(name: "Overture", package: "Overture"),
+                .product(name: "Optics", package: "Prelude"),
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
             ]
         ),

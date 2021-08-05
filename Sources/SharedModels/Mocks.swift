@@ -1,8 +1,9 @@
 import Foundation
 import GeneralMocks
 import MapKit
-import Overture
+import Optics
 import PhoneNumberKit
+import Prelude
 
 public extension EmailAddress {
     static let mock = Self(rawValue: "support@tapit.com")!
@@ -15,84 +16,84 @@ public extension CLLocationCoordinate2D {
 
 public extension Social {
     static let mockInstagram: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "instagram.com"
-            $0.path = "/tapit_app/"
-        }
+        let url = URLComponents()
+        |> \.scheme .~ "https"
+        |> \.host .~ "instagram.com"
+        |> \.path .~ "/tapit_app/"
+        
         return .instagram(url)
     }()
     
     static let mockSnapchat: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "snapchat.com"
-            $0.path = "/add/tapit_app"
-        }
+        let url = URLComponents()
+            |> \.scheme .~ "https"
+            |> \.host .~ "snapchat.com"
+            |> \.path .~ "/add/tapit_app"
+        
         return .snapchat(url)
     }()
     
     static let mockTwitter: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "twitter.com"
-            $0.path = "/clattner_llvm"
-        }
+        let url = URLComponents()
+            |> \.scheme .~ "https"
+            |> \.host .~ "twitter.com"
+            |> \.path .~ "/clattner_llvm"
+        
         return .twitter(url)
     }()
     
     static let mockFacebook: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "facebook.com"
-            $0.path = "/tapit_app"
-        }
+        let url = URLComponents()
+            |> \.scheme .~ "https"
+            |> \.host .~ "facebook.com"
+            |> \.path .~ "/tapit_app"
+        
         return .twitter(url)
     }()
     
     static let mockReddit: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "reddit.com"
-            $0.path = "/user/tapit_app"
-        }
+        let url = URLComponents()
+            |> \.scheme .~ "https"
+            |> \.host .~ "reddit.com"
+            |> \.path .~ "/user/tapit_app"
+        
         return .twitter(url)
     }()
     
     static let mockTikTok: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "tiktok.com"
-            $0.path = "/@tapit_app"
-        }
+        let url = URLComponents()
+        |> \.scheme .~ "https"
+        |> \.host .~ "tiktok.com"
+        |> \.path .~ "/@tapit_app"
+        
         return .twitter(url)
     }()
     
     // TODO: - Figure out WeChat ID
     static let mockWeChat: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "wechat.com"
-            $0.path = "/tapit_app"
-        }
+        let url = URLComponents()
+            |> \.scheme .~ "https"
+            |> \.host .~ "wechat.com"
+            |> \.path .~ "/tapit_app"
+        
         return .twitter(url)
     }()
     
     static let mockGithub: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "github.com"
-            $0.path = "/lattner"
-        }
+        let url = URLComponents()
+            |> \.scheme .~ "https"
+            |> \.host .~ "github.com"
+            |> \.path .~ "/lattner"
+        
         return .github(url)
     }()
     
     static let mockLinkedIn: Social = {
-        let url = update(URLComponents()) {
-            $0.scheme = "https"
-            $0.host = "linkedin.com"
-            $0.path = "/in/chris-lattner-5664498a"
-        }
+        let url = URLComponents()
+            |> \.scheme .~ "https"
+            |> \.host .~ "linkedin.com"
+            |> \.path .~ "/in/chris-lattner-5664498a"
+        
         return .github(url)
     }()
     
@@ -132,3 +133,4 @@ public extension ProfileImage {
 public extension UserProfile {
     static let mock = Self(id: .deadbeef, name: "John Appleseed", profileImage: .mock, socials: .mock)
 }
+
