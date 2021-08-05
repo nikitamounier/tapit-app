@@ -5,6 +5,7 @@ import MapKit
 import SharedModels
 import UIKit
 
+@available(iOSApplicationExtension, unavailable)
 public extension OpenSocialClient {
     static let live = Self(
         open: { social, option in
@@ -150,6 +151,7 @@ public extension OpenSocialClient {
     
 }
 
+@available(iOSApplicationExtension, unavailable)
 extension UIViewController {
     func present() {
         UIApplication.shared.windows
