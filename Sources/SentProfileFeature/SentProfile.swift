@@ -6,12 +6,13 @@ public struct SentProfile: Codable, Identifiable, Equatable {
     public var profile: UserProfile
     
     public let sendDate: Date
-    public let expirationInterval: Days
+    public let expirationInterval: Days?
     
     public var openSocialFailed: AlertState<AlertAction>?
     
     public var id: UUID {
         profile.id
+        
     }
     
     @inline(__always)
@@ -24,7 +25,7 @@ public struct SentProfile: Codable, Identifiable, Equatable {
         }
     }
     
-    public init(profile: UserProfile, sendDate: Date, expirationInterval: Days) {
+    public init(profile: UserProfile, sendDate: Date, expirationInterval: Days?) {
         self.profile = profile
         self.sendDate = sendDate
         self.expirationInterval = expirationInterval
@@ -42,7 +43,7 @@ extension SentProfile {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.profile = try container.decode(UserProfile.self, forKey: .profile)
         self.sendDate = try container.decode(Date.self, forKey: .sendDate)
-        self.expirationInterval = try container.decode(Days.self, forKey: .expirationInterval)
+        self.expirationInterval = try container.decode(Optional<Days>.self, forKey: .expirationInterval)
     }
 }
 
