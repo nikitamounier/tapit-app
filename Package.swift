@@ -77,7 +77,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.21.0")),
         .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.3")),
-        .package(name: "swift-nonempty", url: "https://github.com/nikitamounier/swift-nonempty", .revision("5cde62a")),
+        .package(name: "swift-nonempty", url: "https://github.com/nikitamounier/swift-nonempty", .branch("main")),
         .package(name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude", .branch("main"))
     ],
     targets: [
@@ -162,6 +162,7 @@ let package = Package(
                 "GeneralMocks",
                 "SharedModels",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "NonEmpty", package: "swift-nonempty"),
                 .product(name: "Optics", package: "Prelude"),
             ]
         ),

@@ -5,8 +5,8 @@ import SharedModels
 public struct SentProfile: Codable, Identifiable, Equatable {
     public var profile: UserProfile
     
-    public let sendDate: Date
-    public let expirationInterval: Days?
+    public var sendDate: Date
+    public var expirationInterval: Days?
     
     public var openSocialFailed: AlertState<AlertAction>?
     

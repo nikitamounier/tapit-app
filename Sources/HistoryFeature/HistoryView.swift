@@ -5,7 +5,7 @@ import IdentifiedCollections
 import NonEmpty
 import OpenSocialClient
 import OrderedCollections
-import SentProfileFeature
+@_exported import SentProfileFeature
 import SharedModels
 import SwiftHelpers
 import SwiftUI
@@ -16,7 +16,7 @@ public struct HistoryState: Equatable {
     
     public var viewingOrder: ViewingOrder
     
-    public var categories: NonEmptyArray<ProfilesCategory>
+    public var categories: Array<ProfilesCategory>
     public var currentCategory: ProfilesCategory.ID
     public var showCategoryCreation: Bool
     
@@ -34,7 +34,7 @@ public struct HistoryState: Equatable {
         profiles: IdentifiedArrayOf<SentProfile> = [],
         selectedProfile: SentProfile.ID? = nil,
         viewingOrder: ViewingOrder = .newestToOldest,
-        categories: NonEmptyArray<ProfilesCategory> = .init(.all),
+        categories: Array<ProfilesCategory> = .init(arrayLiteral: .all),
         currentCategory: ProfilesCategory.ID = "all",
         showCategoryCreation: Bool = false,
         isSearching: Bool = false,
@@ -61,7 +61,8 @@ public enum HistoryAction: Equatable {
     case createCategoryButtonTapped
     case createCategory(name: String, profileIDs: Set<SentProfile.ID>)
     case removeCategory(index: Int)
-    case moveCategory(from: Int, to: Int)
+    case removeCategoryCreation
+    case moveCategory(from: Int, toOffset: Int)
     
     case changeViewingOrder(to: HistoryState.ViewingOrder)
     
@@ -120,7 +121,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             
         case let .sentProfile(id: id, action: .addToCategory(category)):
             state.categories
-                .firstIndex { $0 == category }
+                .firstIndex { $0.id == category.id }
                 .map { state.categories[$0].add(id) }
                 .fireAndForget()
             return .none
@@ -148,7 +149,12 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             state.categories.remove(at: index)
             return .none
             
-        case let .moveCategory(from: sourceIndex, to: destinationIndex):
+        case .removeCategoryCreation:
+            state.showCategoryCreation = false
+            return .none
+            
+        case let .moveCategory(from: sourceIndex, toOffset: destinationIndex):
+            guard sourceIndex != 0 && destinationIndex != 0 else { return .none }
             state.categories.move(fromOffsets: IndexSet(integer: sourceIndex), toOffset: destinationIndex)
             return .none
             
@@ -163,7 +169,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case let .searchInput(text: text):
             state.currentSearch = text
             return Effect(value: .searchResponse(input: text))
-                .debounce(id: SearchID(), for: 1.5, scheduler: env.mainQueue)
+                .debounce(id: SearchID(), for: 0.5, scheduler: env.mainQueue)
             
         case let .searchResponse(input: input):
             let predicate = { (profile: SentProfile) -> Bool in
@@ -187,6 +193,8 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             
         case .cancelSearchTapped:
             state.isSearching = false
+            state.currentSearch = ""
+            state.searchResults = []
             return .none
         }
     }
@@ -196,7 +204,7 @@ public struct HistoryView: View {
     struct ViewState: Equatable {
         var profiles: IdentifiedArrayOf<SentProfile>
         var selectedProfile: SentProfile.ID?
-        var categories: NonEmptyArray<ProfilesCategory>
+        var categories: Array<ProfilesCategory>
         
         init(state: HistoryState) {
             self.profiles = state.profiles
