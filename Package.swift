@@ -159,7 +159,10 @@ let package = Package(
             name: "HistoryFeatureTests",
             dependencies: [
                 "HistoryFeature",
+                "GeneralMocks",
+                "SharedModels",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Optics", package: "Prelude"),
             ]
         ),
         .target(

@@ -15,113 +15,118 @@ public extension CLLocationCoordinate2D {
 }
 
 public extension Social {
-    static let mockInstagram: Social = {
+    static func mockInstagram(name: String? = nil) -> Social {
         let url = URLComponents()
         |> \.scheme .~ "https"
         |> \.host .~ "instagram.com"
-        |> \.path .~ "/tapit_app/"
+        |> \.path .~ "/\(name ?? "tapit_app")/"
         
         return .instagram(url)
-    }()
+    }
     
-    static let mockSnapchat: Social = {
+    static func mockSnapchat(name: String? = nil) -> Social {
         let url = URLComponents()
             |> \.scheme .~ "https"
             |> \.host .~ "snapchat.com"
-            |> \.path .~ "/add/tapit_app"
+            |> \.path .~ "/add/\(name ?? "tapit_app")"
         
         return .snapchat(url)
-    }()
+    }
     
-    static let mockTwitter: Social = {
+    static func mockTwitter(name: String? = nil) -> Social {
         let url = URLComponents()
             |> \.scheme .~ "https"
             |> \.host .~ "twitter.com"
-            |> \.path .~ "/clattner_llvm"
+            |> \.path .~ "/\(name ?? "clattner_llvm")"
         
         return .twitter(url)
-    }()
+    }
     
-    static let mockFacebook: Social = {
+    static func mockFacebook(name: String? = nil) -> Social {
         let url = URLComponents()
             |> \.scheme .~ "https"
             |> \.host .~ "facebook.com"
-            |> \.path .~ "/tapit_app"
+            |> \.path .~ "/\(name ?? "tapit_app")"
         
         return .twitter(url)
-    }()
+    }
     
-    static let mockReddit: Social = {
+    static func mockReddit(name: String? = nil) -> Social {
         let url = URLComponents()
             |> \.scheme .~ "https"
             |> \.host .~ "reddit.com"
-            |> \.path .~ "/user/tapit_app"
+            |> \.path .~ "/user/\(name ?? "tapit_app")"
         
         return .twitter(url)
-    }()
+    }
     
-    static let mockTikTok: Social = {
+    static func mockTikTok(name: String? = nil) -> Social {
         let url = URLComponents()
         |> \.scheme .~ "https"
         |> \.host .~ "tiktok.com"
-        |> \.path .~ "/@tapit_app"
+        |> \.path .~ "/@\(name ?? "tapit_app")"
         
         return .twitter(url)
-    }()
+    }
     
     // TODO: - Figure out WeChat ID
-    static let mockWeChat: Social = {
+    static func mockWeChat(name: String? = nil) -> Social {
         let url = URLComponents()
             |> \.scheme .~ "https"
             |> \.host .~ "wechat.com"
-            |> \.path .~ "/tapit_app"
+            |> \.path .~ "/\(name ?? "tapit_app")"
         
         return .twitter(url)
-    }()
+    }
     
-    static let mockGithub: Social = {
+    static func mockGithub(name: String? = nil) -> Social {
         let url = URLComponents()
             |> \.scheme .~ "https"
             |> \.host .~ "github.com"
-            |> \.path .~ "/lattner"
+            |> \.path .~ "/\(name ?? "lattner")"
         
         return .github(url)
-    }()
+    }
     
-    static let mockLinkedIn: Social = {
+    static func mockLinkedIn(name: String? = nil) -> Social {
         let url = URLComponents()
             |> \.scheme .~ "https"
             |> \.host .~ "linkedin.com"
-            |> \.path .~ "/in/chris-lattner-5664498a"
+            |> \.path .~ "/in/\(name ?? "chris-lattner-5664498a")"
         
         return .github(url)
-    }()
+    }
     
-    static let mockAddress: Social = .address(.init(latitude: 37.3330, longitude: 122.0090))
+    static func mockAddress() -> Social { .address(.init(latitude: 37.3330, longitude: 122.0090)) }
     
-    static let mockEmail: Social = .email(.mock)
+    static func mockEmail(name: String? = nil) -> Social {
+        let emailAddress = EmailAddress(rawValue: name ?? EmailAddress.mock.rawValue)
+        
+        return .email(emailAddress ?? .mock)
+    }
     
-    static let mockPhone: Social = {
+    static func mockPhone() -> Social {
         let manager = PhoneNumberKit()
         let phoneNumber = try! manager.parse("+44 7565825633")
         return .phone(phoneNumber)
-    }()
+    }
 }
 
+
 public extension Array where Element == Social {
-    static let mock: [Social] = [
-        .mockInstagram,
-        .mockSnapchat,
-        .mockTwitter,
-        .mockFacebook,
-        .mockReddit,
-        .mockTikTok,
-        .mockWeChat,
-        .mockGithub,
-        .mockLinkedIn,
-        .mockAddress,
-        .mockEmail,
-        .mockPhone,
+    static var mock: [Social] = [
+        .mockInstagram(),
+        .mockSnapchat(),
+        .mockTwitter(),
+        .mockFacebook(),
+        .mockReddit(),
+        .mockTikTok(),
+        .mockWeChat(),
+        .mockGithub(),
+        .mockLinkedIn(),
+        .mockAddress(),
+        .mockEmail(),
+        .mockPhone(),
     ]
     
 }
