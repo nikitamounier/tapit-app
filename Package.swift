@@ -58,6 +58,10 @@ let package = Package(
             targets: ["P2PClient"]
         ),
         .library(
+            name: "TapFeature",
+            targets: ["TapFeature"]
+        ),
+        .library(
             name: "ProximitySensorClient",
             targets: ["ProximitySensorClient"]
         ),
@@ -182,6 +186,25 @@ let package = Package(
         .target(
             name: "P2PClient",
             dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "TapFeature",
+            dependencies: [
+                "BeaconClient",
+                "FeedbackGeneratorClient",
+                "OrientationClient",
+                "P2PClient",
+                "ProximitySensorClient",
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .testTarget(
+            name: "TapFeatureTests",
+            dependencies: [
+                "TapFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),

@@ -58,6 +58,7 @@ public enum HistoryAction: Equatable {
     
     case setNavigation(id: SentProfile.ID?)
     
+    case goToCategory(ProfilesCategory.ID)
     case createCategoryButtonTapped
     case createCategory(name: String, profileIDs: Set<SentProfile.ID>)
     case removeCategory(index: Int)
@@ -136,6 +137,10 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case .sentProfile:
             return .none
             
+        case let .goToCategory(id):
+            state.currentCategory = id
+            return .none
+            
         case .createCategoryButtonTapped:
             state.showCategoryCreation = true
             return .none
@@ -195,7 +200,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             state.isSearching = false
             state.currentSearch = ""
             state.searchResults = []
-            return .none
+            return .cancel(id: SearchID())
         }
     }
 )
