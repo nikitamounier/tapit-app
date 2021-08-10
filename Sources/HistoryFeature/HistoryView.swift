@@ -175,26 +175,28 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             state.currentSearch = text
             return Effect(value: .searchResponse(input: text))
                 .debounce(id: SearchID(), for: 0.5, scheduler: env.mainQueue)
-            
+        
         case let .searchResponse(input: input):
             let predicate = { (profile: SentProfile) -> Bool in
-                return profile.name.localizedCaseInsensitiveContains(input) || profile.socials.contains { social in
-                    switch social {
-                    case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
-                        return urlComp.path.localizedCaseInsensitiveContains(input)
-                    case let .address(address):
-                        return false
-                    case let .email(email):
-                        return email.rawValue.localizedCaseInsensitiveContains(input)
-                    case let .phone(phone):
-                        return phone.numberString.localizedCaseInsensitiveContains(input)
+                return input.split(separator: " ")
+                    .reduce(false) { _, word in
+                        profile.name.localizedCaseInsensitiveContains(word) || profile.socials.contains { social in
+                            switch social {
+                            case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
+                                return urlComp.path.localizedCaseInsensitiveContains(word)
+                            case let .address(address):
+                                return false
+                            case let .email(email):
+                                return email.rawValue.localizedCaseInsensitiveContains(word)
+                            case let .phone(phone):
+                                return phone.numberString.localizedCaseInsensitiveContains(word)
+                            }
+                        }
                     }
-                }
             }
             
             state.searchResults = state.profiles.filter(predicate).ids
             return .none
-            
             
         case .cancelSearchTapped:
             state.isSearching = false

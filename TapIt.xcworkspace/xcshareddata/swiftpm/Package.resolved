@@ -57,10 +57,10 @@
       },
       {
         "package": "swift-nonempty",
-        "repositoryURL": "https://github.com/nikitamounier/swift-nonempty-1.git",
+        "repositoryURL": "https://github.com/nikitamounier/swift-nonempty.git",
         "state": {
-          "branch": "default-subsequence-and-iterator",
-          "revision": "93fe7e020352d43a30c978eca929997310a8a7ea",
+          "branch": "main",
+          "revision": "44a999b40fb5afa0e0723fd51c06652e9051068d",
           "version": null
         }
       },
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "152390e9e78ebbf0d767ee52971d41e7f44f39bc",
-          "version": "0.1.1"
+          "revision": "b9eeb1a7ea3fd6fea54ce57dee2f5794b667c8df",
+          "version": "0.2.0"
         }
       }
     ]

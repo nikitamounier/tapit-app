@@ -89,8 +89,8 @@ let package = Package(
         ),
         .package(
             name: "swift-nonempty",
-            url: "https://github.com/nikitamounier/swift-nonempty-1.git",
-            .branch("default-subsequence-and-iterator")
+            url: "https://github.com/nikitamounier/swift-nonempty.git",
+            .branch("main")
         ),
         .package(
             name: "Prelude",

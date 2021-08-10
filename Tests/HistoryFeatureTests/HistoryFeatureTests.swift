@@ -105,7 +105,7 @@ class HistoryFeatureTests: XCTestCase {
         let store = TestStore(
             initialState: HistoryState(
                 profiles: [firstProfile, secondProfile, thirdProfile],
-                categories: .init(arrayLiteral: .all, golfCategory)
+                categories: .init(.all, golfCategory)
             ),
             reducer: historyReducer,
             environment: HistoryEnvironment(
@@ -122,14 +122,14 @@ class HistoryFeatureTests: XCTestCase {
         }
 
         store.send(.sentProfile(id: firstProfile.id, action: .removeFromCategory(golfCategory))) {
-            $0.categories = .init(arrayLiteral:
+            $0.categories = .init(
                 .all,
                 .custom(name: "Golf", profileIDs: [self.thirdProfile.id])
             )
         }
 
         store.send(.sentProfile(id: firstProfile.id, action: .addToCategory(golfCategory))) {
-            $0.categories = .init(arrayLiteral:
+            $0.categories = .init(
                 .all,
                 .custom(name: "Golf", profileIDs: [self.firstProfile.id, self.thirdProfile.id])
             )
@@ -151,7 +151,7 @@ class HistoryFeatureTests: XCTestCase {
         let store = TestStore(
             initialState: HistoryState(
                 profiles: [firstProfile, secondProfile, thirdProfile],
-                categories: .init(arrayLiteral: .all, golfCategory)
+                categories: .init(.all, golfCategory)
             ),
             reducer: historyReducer,
             environment: HistoryEnvironment(
@@ -162,6 +162,14 @@ class HistoryFeatureTests: XCTestCase {
                 openAppSettings: { XCTFail() }
             )
         )
+        
+        store.send(.goToCategory(golfCategory.id)) {
+            $0.currentCategory = "Golf"
+        }
+        
+        store.send(.goToCategory(ProfilesCategory.all.id)) {
+            $0.currentCategory = "all"
+        }
 
         store.send(.createCategoryButtonTapped) {
             $0.showCategoryCreation = true
@@ -172,11 +180,11 @@ class HistoryFeatureTests: XCTestCase {
         }
 
         store.send(.createCategory(name: "Girl friends", profileIDs: [secondProfile.id])) {
-            $0.categories = .init(arrayLiteral: .all, golfCategory, girlCategory)
+            $0.categories = .init(.all, golfCategory, girlCategory)
         }
 
         store.send(.moveCategory(from: 1, toOffset: 3)) {
-            $0.categories = .init(arrayLiteral: .all, girlCategory, golfCategory)
+            $0.categories = .init(.all, girlCategory, golfCategory)
         }
 
         store.send(.moveCategory(from: 0, toOffset: 2)) // shouldn't do anything since .all can't be moved
@@ -184,7 +192,7 @@ class HistoryFeatureTests: XCTestCase {
         store.send(.moveCategory(from: 1, toOffset: 0)) // shouldn't do anything since .all can't be moved
 
         store.send(.removeCategory(index: 2)) {
-            $0.categories = .init(arrayLiteral: .all, girlCategory)
+            $0.categories = .init(.all, girlCategory)
         }
 
         store.send(.removeCategory(index: 0)) // shouldn't do anything since .all can't be removed
@@ -255,6 +263,80 @@ class HistoryFeatureTests: XCTestCase {
             $0.searchResults = [self.firstProfile.id, self.thirdProfile.id]
         }
 
+        store.send(.cancelSearchTapped) {
+            $0.currentSearch = ""
+            $0.searchResults = []
+            $0.isSearching = false
+        }
+    }
+    
+    func testComplexSearch() {
+        
+        let modifiedFirst = firstProfile
+            |> \.socials[0] .~ .mockInstagram(name: "dragonslayer69")
+        
+        let modifiedSecond = secondProfile
+            |> \.socials[2] .~ .mockFacebook(name: "johnswife")
+        
+        let modifiedThird = thirdProfile
+            |> \.socials[2] .~ .mockTikTok(name: "janeswife")
+        
+        let store = TestStore(
+            initialState: HistoryState(profiles: [modifiedFirst, modifiedSecond, modifiedThird]),
+            reducer: historyReducer,
+            environment: HistoryEnvironment(
+                mainQueue: .immediate,
+                feedbackGenerator: .failing,
+                isSentProfileExpired: .failing,
+                openSocial: .failing,
+                openAppSettings: { XCTFail() }
+            )
+        )
+        
+        store.send(.searchBarTapped) {
+            $0.isSearching = true
+        }
+        
+        store.send(.searchInput(text: "drag")) {
+            $0.currentSearch = "drag"
+        }
+        
+        store.receive(.searchResponse(input: "drag")) {
+            $0.searchResults = [modifiedFirst.id]
+        }
+        
+        store.send(.searchInput(text: "")) {
+            $0.currentSearch = ""
+        }
+        
+        store.receive(.searchResponse(input: "")) {
+            $0.searchResults = []
+        }
+        
+        store.send(.searchInput(text: "john")) {
+            $0.currentSearch = "john"
+        }
+        
+        store.receive(.searchResponse(input: "john")) {
+            $0.searchResults = [modifiedFirst.id, modifiedSecond.id, modifiedThird.id]
+        }
+        
+        store.send(.searchInput(text: "Johmmy Appleseed")) {
+            $0.currentSearch = "Johmmy Appleseed"
+        }
+        
+        store.receive(.searchResponse(input: "Johmmy Appleseed")) {
+            $0.searchResults = [modifiedFirst.id]
+        }
+        
+        store.send(.searchInput(text: "Johmmy Appleseed")) {
+            $0.currentSearch = "Johmmy Appleseed"
+        }
+        
+        store.receive(.searchResponse(input: "Johmmy Appleseed")) {
+            $0.searchResults = [modifiedFirst.id]
+        }
+        
         store.send(.cancelSearchTapped) {
             $0.currentSearch = ""
             $0.searchResults = []
