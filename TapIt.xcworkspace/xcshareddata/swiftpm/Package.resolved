@@ -57,10 +57,10 @@
       },
       {
         "package": "swift-nonempty",
-        "repositoryURL": "https://github.com/nikitamounier/swift-nonempty",
+        "repositoryURL": "https://github.com/nikitamounier/swift-nonempty-1.git",
         "state": {
-          "branch": "main",
-          "revision": "5cde62a583e54b2af0e3195416100a1986842466",
+          "branch": "default-subsequence-and-iterator",
+          "revision": "93fe7e020352d43a30c978eca929997310a8a7ea",
           "version": null
         }
       },

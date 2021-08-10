@@ -16,7 +16,7 @@ public struct HistoryState: Equatable {
     
     public var viewingOrder: ViewingOrder
     
-    public var categories: Array<ProfilesCategory>
+    public var categories: NonEmptyArray<ProfilesCategory>
     public var currentCategory: ProfilesCategory.ID
     public var showCategoryCreation: Bool
     
@@ -34,7 +34,7 @@ public struct HistoryState: Equatable {
         profiles: IdentifiedArrayOf<SentProfile> = [],
         selectedProfile: SentProfile.ID? = nil,
         viewingOrder: ViewingOrder = .newestToOldest,
-        categories: Array<ProfilesCategory> = .init(arrayLiteral: .all),
+        categories: NonEmptyArray<ProfilesCategory> = .init(.all),
         currentCategory: ProfilesCategory.ID = "all",
         showCategoryCreation: Bool = false,
         isSearching: Bool = false,
@@ -209,7 +209,7 @@ public struct HistoryView: View {
     struct ViewState: Equatable {
         var profiles: IdentifiedArrayOf<SentProfile>
         var selectedProfile: SentProfile.ID?
-        var categories: Array<ProfilesCategory>
+        var categories: NonEmptyArray<ProfilesCategory>
         
         init(state: HistoryState) {
             self.profiles = state.profiles

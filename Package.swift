@@ -81,7 +81,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: "0.21.0")),
         .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.3")),
-        .package(name: "swift-nonempty", url: "https://github.com/nikitamounier/swift-nonempty", .branch("main")),
+        .package(name: "swift-nonempty", url: "https://github.com/nikitamounier/swift-nonempty-1.git", .branch("default-subsequence-and-iterator")),
+        
         .package(name: "Prelude", url: "https://github.com/pointfreeco/swift-prelude", .branch("main"))
     ],
     targets: [
