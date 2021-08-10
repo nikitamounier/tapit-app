@@ -179,6 +179,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case let .searchResponse(input: input):
             let predicate = { (profile: SentProfile) -> Bool in
                 return input.split(separator: " ")
+                    .reversed()
                     .reduce(false) { _, word in
                         profile.name.localizedCaseInsensitiveContains(word) || profile.socials.contains { social in
                             switch social {
