@@ -187,7 +187,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
                 case socialContains
             }
             
-            let searchResults: [SearchResult: [SentProfile.ID]] = state.profiles
+            let resultBuckets: [SearchResult: [SentProfile.ID]] = state.profiles
                 .reduce(
                     into: Dictionary(uniqueKeysWithValues: SearchResult.allCases.map { ($0, []) })
                 ) { result, profile in
@@ -196,29 +196,29 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
                     }
                     
                     if input == profile.name {
-                        result[.completeMatch]?.append(profile.id)
+                        result[.completeMatch]!.append(profile.id)
                         return
                     }
                     
                     let words = input.split(separator: " ")
                     
                     if words[0] == profile.name {
-                        result[.firstWordMatch]?.append(profile.id)
+                        result[.firstWordMatch]!.append(profile.id)
                         return
                     }
                     
                     words.dropFirst()
                         .forEach { word in
                             if word == profile.name {
-                                result[.notFirstWordMatch]?.append(profile.id)
+                                result[.notFirstWordMatch]!.append(profile.id)
                                 return
                                 
                             } else if profile.name.localizedCaseInsensitiveContains(words[0]) {
-                                result[.firstWordContains]?.append(profile.id)
+                                result[.firstWordContains]!.append(profile.id)
                                 return
                                 
                             } else if profile.name.localizedCaseInsensitiveContains(word) {
-                                result[.notFirstWordContains]?.append(profile.id)
+                                result[.notFirstWordContains]!.append(profile.id)
                                 return
                             
                                 
@@ -237,14 +237,14 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
                                     return phone.numberString.localizedCaseInsensitiveContains(word)
                                 }
                             }) {
-                                result[.socialContains]?.append(profile.id)
+                                result[.socialContains]!.append(profile.id)
                             }
                         }
                 }
             
             state.searchResults = SearchResult.allCases
                 .reduce(into: [SentProfile.ID]()) { array, classification in
-                    array.append(contentsOf: searchResults[classification] ?? [])
+                    array.append(contentsOf: resultBuckets[classification] ?? [])
                 }
             return .none
             
