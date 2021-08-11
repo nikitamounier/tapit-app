@@ -1,8 +1,4 @@
-#if canImport(UIKit)
 import UIKit
-#else
-import AppKit
-#endif
 
 public struct ProfileImage: Equatable {
     public var image: UIImage
