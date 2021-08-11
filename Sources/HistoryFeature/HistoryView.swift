@@ -5,6 +5,7 @@ import IdentifiedCollections
 import NonEmpty
 import OpenSocialClient
 import OrderedCollections
+import Prelude
 @_exported import SentProfileFeature
 import SharedModels
 import SwiftHelpers
@@ -22,7 +23,7 @@ public struct HistoryState: Equatable {
     
     public var isSearching: Bool
     public var currentSearch: String
-    public var searchResults: OrderedSet<SentProfile.ID>
+    public var searchResults: [SentProfile.ID]
     
     public enum ViewingOrder: Codable {
         case newestToOldest
@@ -39,7 +40,7 @@ public struct HistoryState: Equatable {
         showCategoryCreation: Bool = false,
         isSearching: Bool = false,
         currentSearch: String = "",
-        searchResults: OrderedSet<SentProfile.ID> = []
+        searchResults: [SentProfile.ID] = []
     ) {
         self.profiles = profiles
         self.selectedProfile = selectedProfile
@@ -175,28 +176,76 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             state.currentSearch = text
             return Effect(value: .searchResponse(input: text))
                 .debounce(id: SearchID(), for: 0.5, scheduler: env.mainQueue)
-        
+ 
         case let .searchResponse(input: input):
-            let predicate = { (profile: SentProfile) -> Bool in
-                return input.split(separator: " ")
-                    .reversed()
-                    .reduce(false) { _, word in
-                        profile.name.localizedCaseInsensitiveContains(word) || profile.socials.contains { social in
-                            switch social {
-                            case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
-                                return urlComp.path.localizedCaseInsensitiveContains(word)
-                            case let .address(address):
-                                return false
-                            case let .email(email):
-                                return email.rawValue.localizedCaseInsensitiveContains(word)
-                            case let .phone(phone):
-                                return phone.numberString.localizedCaseInsensitiveContains(word)
-                            }
-                        }
-                    }
+            enum SearchResult: Hashable, CaseIterable {
+                case completeMatch
+                case firstWordMatch
+                case notFirstWordMatch
+                case firstWordContains
+                case notFirstWordContains
+                case socialContains
             }
             
-            state.searchResults = state.profiles.filter(predicate).ids
+            let searchResults: [SearchResult: [SentProfile.ID]] = state.profiles
+                .reduce(
+                    into: Dictionary(uniqueKeysWithValues: SearchResult.allCases.map { ($0, []) })
+                ) { result, profile in
+                    if input.isEmpty {
+                        return
+                    }
+                    
+                    if input == profile.name {
+                        result[.completeMatch]?.append(profile.id)
+                        return
+                    }
+                    
+                    let words = input.split(separator: " ")
+                    
+                    if words[0] == profile.name {
+                        result[.firstWordMatch]?.append(profile.id)
+                        return
+                    }
+                    
+                    words.dropFirst()
+                        .forEach { word in
+                            if word == profile.name {
+                                result[.notFirstWordMatch]?.append(profile.id)
+                                return
+                                
+                            } else if profile.name.localizedCaseInsensitiveContains(words[0]) {
+                                result[.firstWordContains]?.append(profile.id)
+                                return
+                                
+                            } else if profile.name.localizedCaseInsensitiveContains(word) {
+                                result[.notFirstWordContains]?.append(profile.id)
+                                return
+                            
+                                
+                            } else if profile.socials.contains(where: { social in
+                                switch social {
+                                case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
+                                    return urlComp.path.localizedCaseInsensitiveContains(word)
+                                    
+                                case let .address(address):
+                                    return false
+                                    
+                                case let .email(email):
+                                    return email.rawValue.localizedCaseInsensitiveContains(word)
+                                    
+                                case let .phone(phone):
+                                    return phone.numberString.localizedCaseInsensitiveContains(word)
+                                }
+                            }) {
+                                result[.socialContains]?.append(profile.id)
+                            }
+                        }
+                }
+            
+            state.searchResults = SearchResult.allCases
+                .reduce(into: [SentProfile.ID]()) { array, classification in
+                    array.append(contentsOf: searchResults[classification] ?? [])
+                }
             return .none
             
         case .cancelSearchTapped:
@@ -285,4 +334,3 @@ extension CasePath where Root == HistoryAction, Value == (SentProfile.ID, SentPr
         }
     )
 }
-
