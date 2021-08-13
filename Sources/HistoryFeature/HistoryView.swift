@@ -1,3 +1,4 @@
+import Combine
 import ComposableArchitecture
 import FeedbackGeneratorClient
 import ExpirationClient
@@ -176,6 +177,8 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             state.currentSearch = text
             return Effect(value: .searchResponse(input: text))
                 .debounce(id: SearchID(), for: 0.5, scheduler: env.mainQueue)
+                .removeDuplicates()
+                .eraseToEffect()
  
         case let .searchResponse(input: input):
             enum SearchResult: Hashable, CaseIterable {
@@ -306,7 +309,7 @@ public struct HistoryView: View {
     }
 }
 
-@available(iOSApplicationExtension, unavailable)
+ 
 struct HistoryView_Previews: PreviewProvider {
     static var previews: some View {
         HistoryView(
