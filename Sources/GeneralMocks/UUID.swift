@@ -15,3 +15,13 @@ public extension UUID {
     static let minor3 = Self(uuidString: "deadbeef-dead-beef-dead-6d696e6f7233")!
     
 }
+
+public extension UUID {
+    static var incrementing: () -> UUID {
+        var uuid = 0
+        return {
+            defer { uuid += 1 }
+            return UUID(uuidString: "00000000-0000-0000-0000\(String(format: "%012x", uuid))")!
+        }
+    }
+}
