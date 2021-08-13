@@ -7,7 +7,7 @@ import ProximitySensorClient
 import SharedModels
 import SwiftUI
 
-public struct TapState: Equatable {
+public struct TapFeatureState: Equatable {
     public var profile: UserProfile
     public var presets: [Preset]
     
@@ -16,6 +16,8 @@ public struct TapState: Equatable {
     public var selectedSocials: [Social]
     public var selectedPreset: Preset?
     public var finishedSelectingSocials: Bool
+    
+    public var session: TapState?
     
     
     public struct Preset: Equatable {
@@ -30,10 +32,10 @@ public struct TapState: Equatable {
     
     public init(
         profile: UserProfile,
-        presets: [TapState.Preset] = [],
-        currentSection: TapState.Section = .socials,
+        presets: [Preset] = [],
+        currentSection: Section = .socials,
         selectedSocials: [Social] = [],
-        selectedPreset: TapState.Preset? = nil,
+        selectedPreset: Preset? = nil,
         finishedSelectingSocials: Bool = false
     ) {
         self.profile = profile
@@ -45,18 +47,18 @@ public struct TapState: Equatable {
     }
 }
 
-public enum TapAction: Equatable {
-    case goToSection(TapState.Section)
+public enum TapFeatureAction: Equatable {
+    case goToSection(TapFeatureState.Section)
     
     case selectSocial(Social)
     case deselectSocial(Social)
-    case selectPreset(TapState.Preset)
+    case selectPreset(TapFeatureState.Preset)
     case deselectPreset
     
     case tapButtonTapped
 }
 
-public struct TapEnvironment {
+public struct TapFeatureEnvironment {
     public var mainQueue: AnySchedulerOf<DispatchQueue>
     public var beaconQueue: AnySchedulerOf<DispatchQueue>
     public var p2pQueue: AnySchedulerOf<DispatchQueue>
@@ -87,7 +89,15 @@ public struct TapEnvironment {
     }
 }
 
-public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, action, env in
+public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFeatureEnvironment>.combine(
+    tapReducer
+        .pullback(
+            state: \.tapState,
+            action: .tap,
+            environment: TapEnvironment.init
+        )
+
+    .init { state, action, env in
     switch action {
     case let .goToSection(section):
         state.currentSection = section
@@ -119,4 +129,14 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         return .none
         
     }
+}
+
+extension CasePath where Root == TapFeatureAction, Value == TapAction {
+    static let tap = Self(
+        embed: TapFeatureAction.tap,
+        extract: {
+            guard case let .tap(tapAction) = $0 else { return nil }
+            return tapAction
+        }
+    )
 }
