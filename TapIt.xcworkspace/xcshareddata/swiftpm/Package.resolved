@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Difference",
+        "repositoryURL": "https://github.com/krzysztofzablocki/Difference.git",
+        "state": {
+          "branch": "master",
+          "revision": "412f4d48ab5e8e31a520baf09d01f8bd5a13dc7a",
+          "version": null
+        }
+      },
+      {
         "package": "PhoneNumberKit",
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit",
         "state": {

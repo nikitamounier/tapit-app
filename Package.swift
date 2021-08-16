@@ -58,10 +58,6 @@ let package = Package(
             targets: ["P2PClient"]
         ),
         .library(
-            name: "TapFeature",
-            targets: ["TapFeature"]
-        ),
-        .library(
             name: "ProximitySensorClient",
             targets: ["ProximitySensorClient"]
         ),
@@ -76,6 +72,14 @@ let package = Package(
         .library(
             name: "SwiftHelpers",
             targets: ["SwiftHelpers"]
+        ),
+        .library(
+            name: "TapFeature",
+            targets: ["TapFeature"]
+        ),
+        .library(
+            name: "TCAHelpers",
+            targets: ["TCAHelpers"]
         ),
     ],
     dependencies: [
@@ -96,7 +100,12 @@ let package = Package(
             name: "Prelude",
             url: "https://github.com/pointfreeco/swift-prelude",
             .branch("main")
-        )
+        ),
+        .package(
+            name: "Difference",
+            url: "https://github.com/krzysztofzablocki/Difference.git",
+            .branch("master")
+        ),
     ],
     targets: [
         .target(
@@ -179,6 +188,7 @@ let package = Package(
                 "HistoryFeature",
                 "GeneralMocks",
                 "SharedModels",
+                "TCAHelpers",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "NonEmpty", package: "swift-nonempty"),
                 .product(name: "Optics", package: "Prelude"),
@@ -200,25 +210,6 @@ let package = Package(
         .target(
             name: "P2PClient",
             dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "TapFeature",
-            dependencies: [
-                "BeaconClient",
-                "FeedbackGeneratorClient",
-                "OrientationClient",
-                "P2PClient",
-                "ProximitySensorClient",
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .testTarget(
-            name: "TapFeatureTests",
-            dependencies: [
-                "TapFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
@@ -260,6 +251,32 @@ let package = Package(
             name: "SwiftHelpersTests",
             dependencies: [
                 "SwiftHelpers",
+            ]
+        ),
+        .target(
+            name: "TapFeature",
+            dependencies: [
+                "BeaconClient",
+                "FeedbackGeneratorClient",
+                "OrientationClient",
+                "P2PClient",
+                "ProximitySensorClient",
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .testTarget(
+            name: "TapFeatureTests",
+            dependencies: [
+                "TapFeature",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "TCAHelpers",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Difference", package: "Difference"),
             ]
         ),
     ]
