@@ -203,46 +203,55 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
                         return
                     }
                     
-                    let words = input.split(separator: " ")
+                    let words = input
+                        .localizedLowercase
+                        .split(separator: " ")
                     
-                    if words[0] == profile.name {
+                    let profileWords = profile.name
+                        .localizedLowercase
+                        .split(separator: " ")
+                  
+                  // john, doe
+                  // johhny, appleseed
+                    
+                    if words[0].localizedLowercase == profileWords[0].localizedLowercase {
                         result[.firstWordMatch]!.append(profile.id)
                         return
                     }
+                  
+                    if profile.name.localizedCaseInsensitiveContains(words[0]) {
+                        result[.firstWordContains]!.append(profile.id)
+                        return
+                    }
                     
-                    words.dropFirst()
-                        .forEach { word in
-                            if word == profile.name {
-                                result[.notFirstWordMatch]!.append(profile.id)
-                                return
-                                
-                            } else if profile.name.localizedCaseInsensitiveContains(words[0]) {
-                                result[.firstWordContains]!.append(profile.id)
-                                return
-                                
-                            } else if profile.name.localizedCaseInsensitiveContains(word) {
-                                result[.notFirstWordContains]!.append(profile.id)
-                                return
+                    for (index, word) in words.indexed() {
+                        if profileWords.contains(word), index != 0 {
+                            result[.notFirstWordMatch]!.append(profile.id)
+                            break
                             
+                        } else if profile.name.localizedCaseInsensitiveContains(word), index != 0 {
+                            result[.notFirstWordContains]!.append(profile.id)
+                            break
+                            
+                            
+                        } else if profile.socials.contains(where: { social in
+                            switch social {
+                            case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
+                                return urlComp.path.localizedCaseInsensitiveContains(word)
                                 
-                            } else if profile.socials.contains(where: { social in
-                                switch social {
-                                case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
-                                    return urlComp.path.localizedCaseInsensitiveContains(word)
-                                    
-                                case let .address(address):
-                                    return false
-                                    
-                                case let .email(email):
-                                    return email.rawValue.localizedCaseInsensitiveContains(word)
-                                    
-                                case let .phone(phone):
-                                    return phone.numberString.localizedCaseInsensitiveContains(word)
-                                }
-                            }) {
-                                result[.socialContains]!.append(profile.id)
+                            case let .address(address):
+                                return false
+                                
+                            case let .email(email):
+                                return email.rawValue.localizedCaseInsensitiveContains(word)
+                                
+                            case let .phone(phone):
+                                return phone.numberString.localizedCaseInsensitiveContains(word)
                             }
+                        }) {
+                            result[.socialContains]!.append(profile.id)
                         }
+                    }
                 }
             
             state.searchResults = SearchResult.allCases
@@ -309,7 +318,7 @@ public struct HistoryView: View {
     }
 }
 
- 
+@available(iOSApplicationExtension, unavailable)
 struct HistoryView_Previews: PreviewProvider {
     static var previews: some View {
         HistoryView(

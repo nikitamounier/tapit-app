@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import TCAHelpers
 import GeneralMocks
 import NonEmpty
 import Optics
@@ -225,7 +226,7 @@ class HistoryFeatureTests: XCTestCase {
     func testSimpleSearching() {
         let store = TestStore(
             initialState: HistoryState(profiles: [firstProfile, secondProfile, thirdProfile]),
-            reducer: historyReducer,
+            reducer: historyReducer.debugDiff(),
             environment: HistoryEnvironment(
                 mainQueue: .immediate,
                 feedbackGenerator: .failing,
@@ -260,7 +261,10 @@ class HistoryFeatureTests: XCTestCase {
         }
 
         store.receive(.searchResponse(input: "John")) {
-            $0.searchResults = [self.firstProfile.id, self.thirdProfile.id]
+            $0.searchResults = [
+                self.thirdProfile.id,
+                self.firstProfile.id
+            ]
         }
 
         store.send(.cancelSearchTapped) {
@@ -318,7 +322,9 @@ class HistoryFeatureTests: XCTestCase {
         }
         
         store.receive(.searchResponse(input: "john")) {
-            $0.searchResults = [modifiedFirst.id, modifiedSecond.id, modifiedThird.id]
+            $0.searchResults = [
+                modifiedThird.id, modifiedFirst.id, modifiedSecond.id
+            ]
         }
         
         store.send(.searchInput(text: "Johmmy Appleseed")) {
@@ -413,7 +419,7 @@ class HistoryFeatureTests: XCTestCase {
         scheduler.advance(by: 0.5)
 
         store.receive(.searchResponse(input: "John Doe")) {
-            $0.searchResults = [self.thirdProfile.id]
+            $0.searchResults = [self.thirdProfile.id, self.secondProfile.id]
         }
 
         store.send(.cancelSearchTapped) {
