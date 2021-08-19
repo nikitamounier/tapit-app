@@ -72,27 +72,19 @@ public struct ListenerClient {
 
 public struct ConnectionClient {
     public enum Event {
-        public enum StateEvent {
-            case stateUpdated(NWConnection.State)
-        }
-        
-        public enum MessageEvent {
-            case receivedMessage(type: UInt32, data: Data)
-            case receivedMessageError
-        }
-        
-        case connectionState(StateEvent)
-        case message(MessageEvent)
+        case stateUpdated(NWConnection.State)
+        case receivedMessage(type: UInt32, data: Data)
+        case receivedMessageError
     }
     
-    public var create: (_ id: AnyHashable, _ connection: NWConnection) -> Effect<Event.StateEvent, Never>
-    public var startConnection: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Event.MessageEvent, Never>
+    public var create: (_ id: AnyHashable, _ connection: NWConnection) -> Effect<Event, Never>
+    public var startConnection: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Event, Never>
     public var stopConnection: (_ id: AnyHashable) -> Effect<Never, Never>
     public var sendMessage: (_ id: AnyHashable, _ type: MessageType, _ content: Data) -> Effect<Never, Never>
     
     public init(
-        create: @escaping (AnyHashable, NWConnection) -> Effect<Event.StateEvent, Never>,
-        startConnection: @escaping (AnyHashable, DispatchQueue) -> Effect<Event.MessageEvent, Never>,
+        create: @escaping (AnyHashable, NWConnection) -> Effect<Event, Never>,
+        startConnection: @escaping (AnyHashable, DispatchQueue) -> Effect<Event, Never>,
         stopConnection: @escaping (AnyHashable) -> Effect<Never, Never>,
         sendMessage: @escaping (AnyHashable, MessageType, Data) -> Effect<Never, Never>
     ) {
