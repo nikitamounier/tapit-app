@@ -12,11 +12,6 @@ public struct BeaconClient {
     }
 }
 
-public enum BeaconEvent {
-    case detector(DetectorClient.Event)
-    case advertiser(AdvertiserClient.Event)
-}
-
 public struct DetectorClient {
     public enum Event {
         case authorizationChanged(CLAuthorizationStatus)
