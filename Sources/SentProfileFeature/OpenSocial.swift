@@ -65,10 +65,11 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
             alert = .init(
                 title: TextState("Authorization to add contact"),
                 message: TextState("Tap It requires access to your contacts, so that it can add this phone number to your contacts. No information is sent to Tap It nor to third-party servers."),
-                dismissButton: .default(
+                primaryButton: .default(
                     TextState("OK"),
-                    send: .confirmButtonTapped(effect: nil)
-                )
+                    send: .confirmButtonTapped(effect: .fireAndForget(env.openAppSettings))
+                ),
+                secondaryButton: .cancel(send: .fireAndForget(env.openAppSettings))
             )
             return .none
             
@@ -78,8 +79,17 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
                 message: TextState("Make sure you have the right phone number. If it still doesn't work, delete this profile and tap the other person again."),
                 dismissButton: .default(
                     TextState("OK"),
-                    send: .confirmButtonTapped(effect: .fireAndForget(env.openAppSettings))
+                    send: .confirmButtonTapped(effect: nil)
                 )
+            )
+            
+            alert = .init(
+                title: TextState("Failed to open phone number"),
+                message: TextState("Make sure you have the right phone number. If it still doesn't work, delete this profile and tap the other person again."),
+                dismissButton: .default(
+                    TextState("OK"),
+                    send: .confirmButtonTapped(effect: .fireAndForget(env.openAppSettings))
+                ),
             )
             return .none
         }
