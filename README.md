@@ -16,6 +16,14 @@ Tap It uses:
   
    *  [Core Location](https://developer.apple.com/documentation/corelocation) and [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) ([iBeacon](https://developer.apple.com/documentation/corelocation/clbeacon))
    
+   *  [Non-Empty](https://github.com/pointfreeco/swift-non-empty)
+   
+   *  [Prelude](https://github.com/pointfreeco/swift-prelude)
+   
+   *  [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit)
+   
+   *  [Difference](https://github.com/krzysztofzablocki/Difference)
+   
    * [Sourcery Pro](https://merowing.info/sourcery-pro/)
   
 
