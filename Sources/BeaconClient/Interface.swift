@@ -16,7 +16,7 @@ public struct DetectorClient {
     public enum Event {
         case authorizationChanged(CLAuthorizationStatus)
         case failed(Error)
-        case ranged(beacons: [CLBeacon])
+        case ranged(beacons: [Beacon])
         case failedRanging(Error)
     }
     

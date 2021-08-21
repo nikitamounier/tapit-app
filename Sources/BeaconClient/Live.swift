@@ -156,7 +156,7 @@ private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
         logger.debug("Location manager ranged beacons \(beacons.map(\.rssi), privacy: .public)")
-        subscriber.send(.ranged(beacons: beacons))
+        subscriber.send(.ranged(beacons: beacons.map(Beacon.init(beacon:))))
     }
     
     func locationManager(_ manager: CLLocationManager, didFailRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
