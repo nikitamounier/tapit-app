@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/apple/swift-collections",
         "state": {
           "branch": null,
-          "revision": "0959ba76a1d4a98fd11163aa83fd49c25b93bfae",
-          "version": "0.0.5"
+          "revision": "9d8719c8bebdc79740b6969c912ac706eb721d7a",
+          "version": "0.0.7"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-composable-architecture.git",
         "state": {
           "branch": null,
-          "revision": "4223ffbf97cfe030617b95b713bb5d6b6503567d",
-          "version": "0.23.0"
+          "revision": "96cdc7e38e2d1d89b95b0ad80c914eb369476c4b",
+          "version": "0.24.0"
         }
       },
       {
@@ -74,11 +74,11 @@
         }
       },
       {
-        "package": "Prelude",
+        "package": "swift-prelude",
         "repositoryURL": "https://github.com/pointfreeco/swift-prelude",
         "state": {
           "branch": "main",
-          "revision": "0ec0a56bb99911647d2081f99a6f6c9699a6a646",
+          "revision": "16550d9104f12e9033c0b0de5d6c6d9de3f04dfa",
           "version": null
         }
       },
