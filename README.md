@@ -43,4 +43,4 @@ Nikita Mounier, nikita.mounier@gmail.com
 
 ## Licence / Copyright
 
-View [LICENSE.md](\LICENSE.md)
+View [LICENSE.md](LICENSE.md)
