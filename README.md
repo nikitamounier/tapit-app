@@ -41,6 +41,6 @@ Tap It now has the structure to become hyper-modularized, allowing for better te
 
 Nikita Mounier, nikita.mounier@gmail.com
 
-## Copyright
+## Licence / Copyright
 
-This project does not have a license, hence default copyright laws apply, meaning that I retain all rights to my source code and no one may reproduce, distribute, or create derivative works from my work.
+View [LICENSE.md](\LICENSE.md)
