@@ -5,7 +5,8 @@ import OpenSocialClient
 
 public enum AlertAction: Equatable {
     case cancelButtonTapped
-    case confirmButtonTapped(effect: Effect<SentProfileAction, Never>?)
+    case confirmButtonTapped
+    case openAppSettings
     
     case failedToOpenURL
     case failedToOpenAddress
@@ -33,15 +34,18 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
             alert = nil
             return .none
             
-        case let .confirmButtonTapped(effect: effect):
+        case let .confirmButtonTapped:
             alert = nil
-            return effect ?? .none
+            return .none
+        
+        case .openAppSettings:
+            return .fireAndForget(env.openAppSettings)
             
         case .failedToOpenURL:
             alert = .init(
                 title: TextState("Failed to open URL"),
                 message: TextState("Make sure you have the right username. If it still doesn't work, delete this profile and tap the other person again."),
-                dismissButton: .default(TextState("OK"), send: .confirmButtonTapped(effect: nil))
+                dismissButton: .default(TextState("OK"), action: .send(.confirmButtonTapped))
             )
             return .none
             
@@ -49,7 +53,7 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
             alert = .init(
                 title: TextState("Failed to open address in Maps"),
                 message: TextState("Make sure you have the right address. If it still doesn't work, delete this profile and tap the other person again."),
-                dismissButton: .default(TextState("OK"), send: .confirmButtonTapped(effect: nil))
+                dismissButton: .default(TextState("OK"), action: .send(.confirmButtonTapped))
             )
             return .none
             
@@ -57,7 +61,7 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
             alert = .init(
                 title: TextState("Failed to open email address"),
                 message: TextState("Make sure you have the right email address. If it still doesn't work, delete this profile and tap the other person again."),
-                dismissButton: .default(TextState("OK"), send: .confirmButtonTapped(effect: nil))
+                dismissButton: .default(TextState("OK"), action: .send(.confirmButtonTapped))
             )
             return .none
             
@@ -67,9 +71,9 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
                 message: TextState("Tap It requires access to your contacts, so that it can add this phone number to your contacts. No information is sent to Tap It nor to third-party servers."),
                 primaryButton: .default(
                     TextState("OK"),
-                    send: .confirmButtonTapped(effect: .fireAndForget(env.openAppSettings))
+                    action: .send(.openAppSettings)
                 ),
-                secondaryButton: .cancel(send: .fireAndForget(env.openAppSettings))
+                secondaryButton: .cancel(action: .send(.confirmButtonTapped))
             )
             return .none
             
@@ -79,17 +83,8 @@ public let openSocialReducer = Reducer<AlertState<AlertAction>?, SentProfileActi
                 message: TextState("Make sure you have the right phone number. If it still doesn't work, delete this profile and tap the other person again."),
                 dismissButton: .default(
                     TextState("OK"),
-                    send: .confirmButtonTapped(effect: nil)
+                    action: .send(.confirmButtonTapped)
                 )
-            )
-            
-            alert = .init(
-                title: TextState("Failed to open phone number"),
-                message: TextState("Make sure you have the right phone number. If it still doesn't work, delete this profile and tap the other person again."),
-                dismissButton: .default(
-                    TextState("OK"),
-                    send: .confirmButtonTapped(effect: .fireAndForget(env.openAppSettings))
-                ),
             )
             return .none
         }
