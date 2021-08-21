@@ -35,7 +35,7 @@ Tap It aims to drastically streamline this process, to both parties simply press
 
 ## Current Progress
 
-Tap It now has the structure to become hyper-modularized, allowing for better testing, build times, and dependancy management. Development will go feature by feature, with the core business logic built before the thin, lightweight views laid on top.
+Tap It now has the structure to become hyper-modularized, allowing for better testing, build times, and dependency management. Development will go feature by feature, with the core business logic built before the thin, lightweight views laid on top.
 
 ## Author
 
