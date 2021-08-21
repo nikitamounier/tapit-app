@@ -18,7 +18,7 @@ public extension DetectorClient {
         return Self(
             createBeaconDetector: { id, beaconUUID, identifier in
                 .run { subscriber in
-                    logger.log(level: .debug, "Creating beacon detector")
+                    logger.debug("Creating beacon detector")
                     let locationManager = CLLocationManager()
                     let delegate = DetectorDelegate(subscriber)
                     let detectingRegion = CLBeaconRegion(uuid: beaconUUID, identifier: identifier)
@@ -32,7 +32,7 @@ public extension DetectorClient {
                     )
                     
                     return AnyCancellable {
-                        logger.log(level: .debug, "Deinitializing beacon detector")
+                        logger.debug("Deinitializing beacon detector")
                         detectorDependencies[id]?.locationManager.stopMonitoring(for: detectingRegion)
                         detectorDependencies[id]?.locationManager.stopRangingBeacons(
                             satisfying: detectingRegion.beaconIdentityConstraint
@@ -43,19 +43,19 @@ public extension DetectorClient {
             },
             startDetectingBeacons: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Starting to detect beacons")
+                    logger.debug("Starting to detect beacons")
                     let detectingRegion = detectorDependencies[id]!.detectingRegion
                     
                     detectorDependencies[id]?.locationManager.startMonitoring(for: detectingRegion)
                     detectorDependencies[id]?.locationManager.startRangingBeacons(
                         satisfying: detectingRegion.beaconIdentityConstraint
                     )
-                    logger.log(level: .debug, "Monitoring/ranging for beacons")
+                    logger.debug("Monitoring/ranging for beacons")
                 }
             },
             stopDetectingBeacons: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Stopping detecting beacons")
+                    logger.debug("Stopping detecting beacons")
                     let detectingRegion = detectorDependencies[id]!.detectingRegion
                     
                     detectorDependencies[id]?.locationManager.stopMonitoring(for: detectingRegion)
@@ -77,7 +77,7 @@ public extension AdvertiserClient {
         return Self(
             createBeaconAdvertiser: { id, beaconUUID, major, minor, identifier in
                 .run { subscriber in
-                    logger.log(level: .debug, "Creating beacon advertiser")
+                    logger.debug("Creating beacon advertiser")
                     let peripheralManager = CBPeripheralManager()
                     let delegate = AdvertiserDelegate(subscriber)
                     let advertisingRegion = CLBeaconRegion(
@@ -96,7 +96,7 @@ public extension AdvertiserClient {
                         beaconPeripheralData: advertisingRegion.peripheralData(withMeasuredPower: nil))
                     
                     return AnyCancellable {
-                        logger.log(level: .debug, "Deinitializing beacon advertiser")
+                        logger.debug("Deinitializing beacon advertiser")
                         advertiserDependencies[id]?.peripheralManager.stopAdvertising()
                         advertiserDependencies[id] = nil
                     }
@@ -104,14 +104,14 @@ public extension AdvertiserClient {
             },
             startAdvertisingBeacon: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Starting to advertise beacon")
+                    logger.debug("Starting to advertise beacon")
                     let data = advertiserDependencies[id]!.beaconPeripheralData
                     advertiserDependencies[id]?.peripheralManager.startAdvertising(data as? [String: Any])
                 }
             },
             stopAdvertisingBeacon: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Stopping advertising beacon")
+                    logger.debug("Stopping advertising beacon")
                     advertiserDependencies[id]?.peripheralManager.stopAdvertising()
                     advertiserDependencies[id] = nil
                 }
@@ -138,43 +138,92 @@ private struct AdvertiserDependencies {
 
 private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
     let subscriber: Effect<DetectorClient.Event, Never>.Subscriber
+    let logger: Logger = Logger(subsystem: "Beacon.DetectorDelegate", category: "AdvertiseClient")
     
     init(_ subscriber: Effect<DetectorClient.Event, Never>.Subscriber) {
         self.subscriber = subscriber
     }
     
     func locationManagerAuthorizationChanged(_ manager: CLLocationManager) {
+        logger.debug("Location manager authorization changed to \(manager.authorizationStatus.debugDescription), privacy: .public)")
         subscriber.send(.authorizationChanged(manager.authorizationStatus))
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        logger.debug("Location manager failed with error \(error.localizedDescription, privacy: .public)")
         subscriber.send(.failed(error))
     }
     
     func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
+        logger.debug("Location manager ranged beacons \(beacons.map(\.rssi), privacy: .public)")
         subscriber.send(.ranged(beacons: beacons))
     }
     
     func locationManager(_ manager: CLLocationManager, didFailRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
+        logger.debug("Location Manager failed ranging for beacon constraint with error: \(error.localizedDescription)")
         subscriber.send(.failedRanging(error))
     }
 }
 
 private final class AdvertiserDelegate: NSObject, CBPeripheralManagerDelegate {
-    
     let subscriber: Effect<AdvertiserClient.Event, Never>.Subscriber
+    let logger: Logger = Logger(subsystem: "Beacon.AdvertiserDelegate", category: "AdvertiseClient")
     
     init(_ subscriber: Effect<AdvertiserClient.Event, Never>.Subscriber) {
         self.subscriber = subscriber
     }
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+        logger.debug("Peripheral manager updated state to \(peripheral.state.debugDescription, privacy: .public)")
         subscriber.send(.stateUpdated(peripheral.state))
     }
     
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         if let error = error {
+            logger.debug("Peripheral manager did not start advertising, error: \(error.localizedDescription, privacy: .public)")
             subscriber.send(.didNotStartAdvertising(error))
+        } else {
+            logger.debug("Peripheral manager started advertising")
+        }
+    }
+}
+
+extension CLAuthorizationStatus: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .notDetermined:
+            return "notDetermined"
+        case .restricted:
+            return "restricted"
+        case .denied:
+            return "denied"
+        case .authorizedAlways:
+            return "authorizedAlways"
+        case .authorizedWhenInUse:
+            return "authorizedWhenInUse"
+        @unknown default:
+            return "unknown"
+        }
+    }
+}
+
+extension CBManagerState: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .unknown:
+            return "unknown"
+        case .resetting:
+            return "resetting"
+        case .unsupported:
+            return "unsupported"
+        case .unauthorized:
+            return "unauthorized"
+        case .poweredOff:
+            return "poweredOff"
+        case .poweredOn:
+            return "poweredOn"
+        @unknown default:
+            return "unknown"
         }
     }
 }
