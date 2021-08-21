@@ -6,6 +6,7 @@ import P2PClient
 import ProximitySensorClient
 import SharedModels
 import SwiftUI
+import TapCore
 
 public struct TapFeatureState: Equatable {
     public var profile: UserProfile

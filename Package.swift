@@ -74,6 +74,10 @@ let package = Package(
             targets: ["SwiftHelpers"]
         ),
         .library(
+            name: "TapCore",
+            targets: ["TapCore"]
+        ),
+        .library(
             name: "TapFeature",
             targets: ["TapFeature"]
         ),
@@ -97,7 +101,7 @@ let package = Package(
             .branch("main")
         ),
         .package(
-            name: "Prelude",
+            name: "swift-prelude",
             url: "https://github.com/pointfreeco/swift-prelude",
             .branch("main")
         ),
@@ -191,7 +195,7 @@ let package = Package(
                 "TCAHelpers",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "NonEmpty", package: "swift-nonempty"),
-                .product(name: "Optics", package: "Prelude"),
+                .product(name: "Optics", package: "swift-prelude"),
             ]
         ),
         .target(
@@ -233,7 +237,7 @@ let package = Package(
             name: "SharedModels",
             dependencies: [
                 "GeneralMocks",
-                .product(name: "Optics", package: "Prelude"),
+                .product(name: "Optics", package: "swift-prelude"),
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
             ]
         ),
@@ -251,6 +255,26 @@ let package = Package(
             name: "SwiftHelpersTests",
             dependencies: [
                 "SwiftHelpers",
+            ]
+        ),
+        .target(
+            name: "TapCore",
+            dependencies: [
+                "BeaconClient",
+                "FeedbackGeneratorClient",
+                "GeneralMocks",
+                "OrientationClient",
+                "P2PClient",
+                "ProximitySensorClient",
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .testTarget(
+            name: "TapCoreTests",
+            dependencies: [
+                "TapCore",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
         .target(
