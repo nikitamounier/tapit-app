@@ -16,7 +16,7 @@ Tap It uses:
   
    *  [Core Location](https://developer.apple.com/documentation/corelocation) and [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) ([iBeacon](https://developer.apple.com/documentation/corelocation/clbeacon))
    
-   *  [Non-Empty](https://github.com/pointfreeco/swift-non-empty)
+   *  [Non-Empty](https://github.com/pointfreeco/swift-nonempty)
    
    *  [Prelude](https://github.com/pointfreeco/swift-prelude)
    
