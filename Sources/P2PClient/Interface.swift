@@ -17,12 +17,6 @@ public struct P2PClient {
     }
 }
 
-public enum P2PEvent {
-    case browser(BrowserClient.Event)
-    case listener(ListenerClient.Event)
-    case connection(ConnectionClient.Event)
-}
-
 public struct BrowserClient {
     public enum Event {
         case stateUpdated(NWBrowser.State)
@@ -30,12 +24,12 @@ public struct BrowserClient {
     }
     
     public var create: (_ id: AnyHashable, _ bonjourService: String) -> Effect<Event, Never>
-    public var startBrowsing: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Never, Never>
+    public var startBrowsing: (_ id: AnyHashable) -> Effect<Never, Never>
     public var stopBrowsing: (_ id: AnyHashable) -> Effect<Never, Never>
     
     public init(
         create: @escaping (AnyHashable, String) -> Effect<Event, Never>,
-        startBrowsing: @escaping (AnyHashable, DispatchQueue) -> Effect<Never, Never>,
+        startBrowsing: @escaping (AnyHashable) -> Effect<Never, Never>,
         stopBrowsing: @escaping (AnyHashable) -> Effect<Never, Never>
     ) {
         self.create = create
@@ -56,12 +50,12 @@ public struct ListenerClient {
                         _ presharedKey: String,
                         _ identity: String,
                         _ myPeerID: String) -> Effect<Event, Never>
-    public var startListening: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Never, Never>
+    public var startListening: (_ id: AnyHashable) -> Effect<Never, Never>
     public var stopListening: (_ id: AnyHashable) -> Effect<Never, Never>
     
     public init(
         create: @escaping (AnyHashable, String, String, String, String) -> Effect<Event, Never>,
-        startListening: @escaping (AnyHashable, DispatchQueue) -> Effect<Never, Never>,
+        startListening: @escaping (AnyHashable) -> Effect<Never, Never>,
         stopListening: @escaping (AnyHashable) -> Effect<Never, Never>
     ) {
         self.create = create
@@ -78,13 +72,13 @@ public struct ConnectionClient {
     }
     
     public var create: (_ id: AnyHashable, _ connection: NWConnection) -> Effect<Event, Never>
-    public var startConnection: (_ id: AnyHashable, _ queue: DispatchQueue) -> Effect<Event, Never>
+    public var startConnection: (_ id: AnyHashable) -> Effect<Event, Never>
     public var stopConnection: (_ id: AnyHashable) -> Effect<Never, Never>
     public var sendMessage: (_ id: AnyHashable, _ type: MessageType, _ content: Data) -> Effect<Never, Never>
     
     public init(
         create: @escaping (AnyHashable, NWConnection) -> Effect<Event, Never>,
-        startConnection: @escaping (AnyHashable, DispatchQueue) -> Effect<Event, Never>,
+        startConnection: @escaping (AnyHashable) -> Effect<Event, Never>,
         stopConnection: @escaping (AnyHashable) -> Effect<Never, Never>,
         sendMessage: @escaping (AnyHashable, MessageType, Data) -> Effect<Never, Never>
     ) {

@@ -1,5 +1,6 @@
 import Combine
 import ComposableArchitecture
+import GlobalQueues
 import Network
 import OSLog
 
@@ -17,11 +18,19 @@ public extension BrowserClient {
         return Self(
             create: { id, bonjourService in
                 .run { subscriber in
-                    logger.log(level: .debug, "Creating browser")
+                    logger.debug("Creating browser")
                     let params = NWParameters(includePeerToPeer: true, interfaceType: .wifi)
                     let browser = NWBrowser(for: .bonjour(type: bonjourService, domain: nil), using: params)
-                    browser.stateUpdateHandler = { subscriber.send(.stateUpdated($0)) }
-                    browser.browseResultsChangedHandler = { subscriber.send(.browseResultsChanged($1)) }
+                    
+                    browser.stateUpdateHandler = { state in
+                        logger.log("Browser state updated to \(state.debugDescription, privacy: .public)")
+                        subscriber.send(.stateUpdated(state))
+                    }
+                    
+                    browser.browseResultsChangedHandler = { _, change in
+                        logger.log("Browser results changed with \(change.debugDescription)")
+                        subscriber.send(.browseResultsChanged(change))
+                    }
                     
                     browserDependencies[id] = browser
                     
@@ -31,15 +40,15 @@ public extension BrowserClient {
                     }
                 }
             },
-            startBrowsing: { id, queue in
+            startBrowsing: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Starting to browse")
-                    browserDependencies[id]?.start(queue: queue)
+                    logger.debug("Starting to browse")
+                    browserDependencies[id]?.start(queue: GlobalQueues.p2pQueue)
                 }
             },
             stopBrowsing: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Stopping browsing")
+                    logger.debug("Stopping browsing")
                     browserDependencies[id]?.cancel()
                     browserDependencies[id] = nil
                 }
@@ -55,14 +64,20 @@ public extension ListenerClient {
             create: { id, bonjourService, presharedKey, identity, myPeerID in
                 .run { subscriber in
                     do {
-                        logger.log(level: .debug, "Creating listener")
+                        logger.debug("Creating listener")
                         
                         let listener = try NWListener(using: NWParameters(secret: presharedKey, identity: identity))
                         listener.service = NWListener.Service(
                             name: myPeerID, type: bonjourService, domain: nil, txtRecord: nil
                         )
-                        listener.stateUpdateHandler = { subscriber.send(.stateUpdated($0)) }
-                        listener.newConnectionHandler = { subscriber.send(.foundNewConnection($0)) }
+                        listener.stateUpdateHandler = { state in
+                            logger.debug("Listener state updated to \(state.debugDescription, privacy: .public)")
+                            subscriber.send(.stateUpdated(state))
+                        }
+                        listener.newConnectionHandler = { connection in
+                            logger.debug("Listener found new connection \(connection.debugDescription, privacy: .public)")
+                            subscriber.send(.foundNewConnection(connection))
+                        }
                         
                         listenerDependencies[id] = listener
                     } catch {
@@ -76,15 +91,15 @@ public extension ListenerClient {
                     }
                 }
             },
-            startListening: { id, queue in
+            startListening: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Starting listener")
-                    listenerDependencies[id]?.start(queue: queue)
+                    logger.debug("Starting listener")
+                    listenerDependencies[id]?.start(queue: GlobalQueues.p2pQueue)
                 }
             },
             stopListening: { id in
                 .fireAndForget {
-                    logger.log(level: .debug, "Stopping listener")
+                    logger.debug("Stopping listener")
                     listenerDependencies[id]?.cancel()
                     listenerDependencies[id] = nil
                 }
@@ -95,12 +110,15 @@ public extension ListenerClient {
 
 public extension ConnectionClient {
     static var live: Self {
-        let logger = Logger(subsystem: "P2P", category: "Connection")
+        let logger = Logger(subsystem: "P2P", category: "ConnectionClient")
         return Self(
             create: { id, connection in
                 .run { subscriber in
-                    logger.log(level: .debug, "Creating connection")
-                    connection.stateUpdateHandler = { subscriber.send(.stateUpdated($0)) }
+                    logger.debug("Creating connection")
+                    
+                    connection.stateUpdateHandler = { state in
+                        logger.debug("Connection state updated to \(state.debugDescription, privacy: .public)")
+                    }
                     
                     connectionDependencies[id] = connection
                     
@@ -110,15 +128,15 @@ public extension ConnectionClient {
                     }
                 }
             },
-            startConnection: { id, queue in
+            startConnection: { id in
                 .run { subscriber in
-                    logger.log(level: .debug, "Starting connection")
-                    connectionDependencies[id]?.start(queue: queue)
+                    logger.debug("Starting connection on queue")
+                    connectionDependencies[id]?.start(queue: GlobalQueues.p2pQueue)
                     
                     func receiveNextMessage() {
                         connectionDependencies[id]?.receiveMessage { data, context, _, error in
                             if let message = context?.protocolMetadata(definition: TLVMessageProtocol.definition) as? NWProtocolFramer.Message {
-                                logger.log(level: .debug, "Received message")
+                                logger.debug("Received message")
                                 subscriber.send(.receivedMessage(type: message.messageType, data: data ?? Data()))
                             }
                             
@@ -137,6 +155,7 @@ public extension ConnectionClient {
             },
             stopConnection: { id in
                 .fireAndForget {
+                    logger.debug("Stopping connection")
                     connectionDependencies[id]?.cancel()
                     connectionDependencies[id] = nil
                 }
@@ -144,6 +163,7 @@ public extension ConnectionClient {
             sendMessage: { id, messageType, content in
                 .fireAndForget {
                     guard connectionDependencies[id]?.state == .ready else { return }
+                    logger.debug("Sending message")
                     
                     let framerMessage = NWProtocolFramer.Message(messageType: messageType.rawValue)
                     let context = NWConnection.ContentContext(identifier: "Message", metadata: [framerMessage])
