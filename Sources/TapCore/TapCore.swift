@@ -4,6 +4,7 @@ import ComposableArchitecture
 import CoreLocation
 import FeedbackGeneratorClient
 import GeneralMocks
+import Network
 import OrientationClient
 import P2PClient
 import ProximitySensorClient
@@ -12,7 +13,8 @@ import SwiftUI
 
 public struct TapState: Equatable {
     public var tapErrorAlert: AlertState<TapAction>?
-    public var foundBeacons: Set<Beacon> = []
+    public var foundBeacons: [Beacon] = []
+    public var browserResults: Set<NWBrowser.Result> = []
 }
 
 public enum TapAction: Equatable {
@@ -21,9 +23,14 @@ public enum TapAction: Equatable {
     case beaconBluetoothAuthorizationDeniedResponse
     case rangedBeaconsResponse([Beacon])
     
+    case startP2P
+    case browserResultsChangedResponse(Set<NWBrowser.Result.Change>)
+    
     case setupFailed
     case tapErrorAlertDismissed
     case openAppSettings
+    case prepareFeedbackGenerator
+    case cancelAll
 }
 
 public struct TapEnvironment {
@@ -90,7 +97,10 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                             .fireAndForget()
                         
                     case .authorizationChanged(.restricted), .authorizationChanged(.denied):
-                        return Effect(value: .beaconLocationAuthorizationDeniedResponse)
+                        return .merge(
+                            Effect(value: .beaconLocationAuthorizationDeniedResponse),
+                            env.feedbackGenerator.notificationOccurred(.error).fireAndForget()
+                        )
                         
                     case .authorizationChanged(.notDetermined):
                         return .none
@@ -102,7 +112,10 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                         return Effect(value: .rangedBeaconsResponse(beacons))
                         
                     case .failedRanging, .failed:
-                        return Effect(value: .setupFailed)
+                        return .merge(
+                            Effect(value: .setupFailed),
+                            env.feedbackGenerator.notificationOccurred(.error).fireAndForget()
+                        )
                     }
                 }
                 .receive(on: env.mainQueue)
@@ -119,10 +132,16 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                             .fireAndForget()
                     
                     case .stateUpdated(.poweredOff), .stateUpdated(.unsupported):
-                        return Effect(value: .setupFailed)
-                    
+                        return .merge(
+                            Effect(value: .setupFailed),
+                            env.feedbackGenerator.notificationOccurred(.error).fireAndForget()
+                    )
+                        
                     case .stateUpdated(.unauthorized):
-                        return Effect(value: .beaconBluetoothAuthorizationDeniedResponse)
+                        return .merge(
+                            Effect(value: .beaconBluetoothAuthorizationDeniedResponse),
+                            env.feedbackGenerator.notificationOccurred(.error).fireAndForget()
+                        )
                     
                     case .stateUpdated(.resetting), .stateUpdated(.unknown):
                         return .none
@@ -131,7 +150,10 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                         return .none
                     
                     case .didNotStartAdvertising:
-                        return Effect(value: .setupFailed)
+                        return .merge(
+                            Effect(value: .setupFailed),
+                            env.feedbackGenerator.notificationOccurred(.error).fireAndForget()
+                        )
                     }
                 }
                 .receive(on: env.mainQueue)
@@ -164,16 +186,54 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         return .cancel(id: CancelBeaconSetupID())
         
     case let .rangedBeaconsResponse(beacons):
-        state.foundBeacons.formUnion(beacons)
+        state.foundBeacons = beacons
         return .none
         
     // MARK: -  P2P logic
-        
-        
-        
-        
-        
-        
+    
+    case .startP2P:
+        return .merge(
+            env.p2p.browser.create(P2PBrowserID(), "_deadbeef._tcp")
+                .subscribe(on: env.p2pQueue)
+                .flatMap { event -> Effect<TapAction, Never> in
+                    switch event {
+                    case .stateUpdated(.ready):
+                        return env.p2p.browser.startBrowsing(P2PBrowserID())
+                            .fireAndForget()
+                    
+                    case .stateUpdated(.failed):
+                        return Effect(value: .setupFailed)
+                        
+                    case .stateUpdated(.waiting), .stateUpdated(.cancelled):
+                        return .none
+                        
+                    case .stateUpdated:
+                        return .none
+                        
+                    case let .browseResultsChanged(changes):
+                        return Effect(value: .browserResultsChangedResponse(changes))
+                    }
+                }
+                .receive(on: env.mainQueue)
+                .eraseToEffect(),
+            
+                .none
+        )
+            
+    case let .browserResultsChangedResponse(changes):
+        changes.forEach { change in
+            switch change {
+            case let .added(result):
+                state.browserResults.insert(result)
+            case let .removed(result):
+                state.browserResults.remove(result)
+            case .identical, .changed:
+                break
+            @unknown default:
+                break
+            }
+        }
+        return .none
         
         
         
@@ -188,10 +248,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             message: TextState("Make sure Wi-Fi and Bluetooth are turned on, and that Tap It has permission to use Bluetooth and access to your general location information. None of it is sent to Tap It nor to third-party servers."),
             dismissButton: .cancel(action: .send(.tapErrorAlertDismissed))
         )
-        return .merge(
-            .cancel(ids: CancelBeaconSetupID(), CancelP2PSetupID())
-        )
-        .fireAndForget()
+        return Effect(value: .cancelAll)
         
     case .tapErrorAlertDismissed:
         state.tapErrorAlert = nil
@@ -199,6 +256,13 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         
     case .openAppSettings:
         return .fireAndForget(env.openAppSettings)
+        
+    case .prepareFeedbackGenerator:
+        return env.feedbackGenerator.prepareNotificationGenerator()
+            .fireAndForget()
+        
+    case .cancelAll:
+        return .cancel(ids: CancelBeaconSetupID(), CancelP2PSetupID())
     }
 }
 

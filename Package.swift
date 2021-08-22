@@ -42,6 +42,10 @@ let package = Package(
             targets: ["GeneralMocks"]
         ),
         .library(
+            name: "GlobalQueues",
+            targets: ["GlobalQueues"]
+        ),
+        .library(
             name: "HistoryFeature",
             targets: ["HistoryFeature"]
         ),
@@ -174,6 +178,10 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "GlobalQueues",
+            dependencies: []
+        ),
+        .target(
             name: "HistoryFeature",
             dependencies: [
                 "FeedbackGeneratorClient",
@@ -214,6 +222,7 @@ let package = Package(
         .target(
             name: "P2PClient",
             dependencies: [
+                "GlobalQueues",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
