@@ -12,12 +12,12 @@ public extension PhoneNumberValidationClient {
             .eraseToEffect()
         },
         parse: { id, string, region, ignoreType in
-            .future { callback in
+            .future { promise in
                 do {
                     let phoneNumber = try phoneNumberManagers[id]!.parse(string, withRegion: region, ignoreType: ignoreType)
-                    callback(.success(phoneNumber))
+                    promise(.success(phoneNumber))
                 } catch {
-                    callback(.failure(error as! PhoneNumberError))
+                    promise(.failure(error as! PhoneNumberError))
                 }
             }
             .eraseToEffect()

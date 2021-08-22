@@ -18,6 +18,10 @@ let package = Package(
             targets: ["BeaconClient"]
         ),
         .library(
+            name: "BiometricsClient",
+            targets: ["BiometricsClient"]
+        ),
+        .library(
             name: "CombineHelpers",
             targets: ["CombineHelpers"]
         ),
@@ -133,6 +137,12 @@ let package = Package(
         ),
         .target(
             name: "BeaconClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "BiometricsClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
