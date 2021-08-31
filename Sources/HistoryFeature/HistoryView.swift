@@ -160,9 +160,12 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             state.showCategoryCreation = false
             return .none
             
-        case let .moveCategory(from: sourceIndex, toOffset: destinationIndex):
-            guard sourceIndex != 0 && destinationIndex != 0 else { return .none }
-            state.categories.move(fromOffsets: IndexSet(integer: sourceIndex), toOffset: destinationIndex)
+        case let .moveCategory(from: source, toOffset: destination):
+            guard source != 0 && destination != 0 else { return .none }
+            state.categories.move(
+                fromOffsets: IndexSet(integer: source),
+                toOffset: destination > source ? destination + 1 : destination
+            )
             return .none
             
         case let .changeViewingOrder(to: order):

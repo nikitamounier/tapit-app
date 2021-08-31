@@ -31,7 +31,7 @@ final class CodableTests: XCTestCase {
     }
     
     func testCoordinateCodable() throws {
-        let coordinates: CLLocationCoordinate2D = .mock
+        let coordinates: Coordinate = .mock
         try XCTAssertTrue(assertCodable(coordinates))
     }
     

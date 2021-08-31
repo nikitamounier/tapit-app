@@ -184,11 +184,11 @@ class HistoryFeatureTests: XCTestCase {
             $0.categories = .init(.all, golfCategory, girlCategory)
         }
 
-        store.send(.moveCategory(from: 1, toOffset: 3)) {
+        store.send(.moveCategory(from: 1, toOffset: 2)) {
             $0.categories = .init(.all, girlCategory, golfCategory)
         }
 
-        store.send(.moveCategory(from: 0, toOffset: 2)) // shouldn't do anything since .all can't be moved
+        store.send(.moveCategory(from: 0, toOffset: 1)) // shouldn't do anything since .all can't be moved
 
         store.send(.moveCategory(from: 1, toOffset: 0)) // shouldn't do anything since .all can't be moved
 
