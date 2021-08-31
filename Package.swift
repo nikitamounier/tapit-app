@@ -58,6 +58,10 @@ let package = Package(
             targets: ["OpenSocialClient"]
         ),
         .library(
+            name: "OpenSocialFeature",
+            targets: ["OpenSocialFeature"]
+        ),
+        .library(
             name: "OrientationClient",
             targets: ["OrientationClient"]
         ),
@@ -78,6 +82,10 @@ let package = Package(
             targets: ["SharedModels"]
         ),
         .library(
+            name: "SpringboardFeature",
+            targets: ["SpringboardFeature"]
+        ),
+        .library(
             name: "SwiftHelpers",
             targets: ["SwiftHelpers"]
         ),
@@ -92,6 +100,10 @@ let package = Package(
         .library(
             name: "TCAHelpers",
             targets: ["TCAHelpers"]
+        ),
+        .library(
+            name: "UserProfileFeature",
+            targets: ["UserProfileFeature"]
         ),
     ],
     dependencies: [
@@ -217,8 +229,25 @@ let package = Package(
             ]
         ),
         .target(
+            name: "ImageLibraryClient",
+            dependencies: [
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
             name: "OpenSocialClient",
             dependencies: [
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
+            name: "OpenSocialFeature",
+            dependencies: [
+                "CombineHelpers",
+                "FeedbackGeneratorClient",
+                "OpenSocialClient",
                 "SharedModels",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
@@ -248,6 +277,7 @@ let package = Package(
                 "CombineHelpers",
                 "FeedbackGeneratorClient",
                 "OpenSocialClient",
+                "OpenSocialFeature",
                 "SharedModels",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
@@ -264,6 +294,21 @@ let package = Package(
             name: "SharedModelsTests",
             dependencies: [
                 "SharedModels",
+            ]
+        ),
+        .target(
+            name: "SpringboardFeature",
+            dependencies: [
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .testTarget(
+            name: "SpringboardFeatureTests",
+            dependencies: [
+                "SharedModels",
+                "SpringboardFeature",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
         .target(
@@ -320,6 +365,24 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "Difference", package: "Difference"),
+            ]
+        ),
+        .target(
+            name: "UserProfileFeature",
+            dependencies: [
+                "FeedbackGeneratorClient",
+                "ImageLibraryClient",
+                "OpenSocialClient",
+                "OpenSocialFeature",
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .testTarget(
+            name: "UserProfileFeatureTests",
+            dependencies: [
+                "UserProfileFeature",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
     ]
