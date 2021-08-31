@@ -1,12 +1,17 @@
 import ComposableArchitecture
 import FeedbackGeneratorClient
 import OpenSocialClient
+import OpenSocialFeature
 import SharedModels
 
+public struct SentProfileState: Equatable {
+    public var profile: SentProfile
+    public var openSocial: OpenSocialState
+}
+
 public enum SentProfileAction: Equatable {
-    case alert(AlertAction)
+    case openSocial(OpenSocialAction)
     case setName(to: String)
-    case open(Social, OpenSocialClient.Option?)
     case addToCategory(ProfilesCategory)
     case removeFromCategory(ProfilesCategory)
     case removeSentProfile
@@ -28,17 +33,24 @@ public struct SentProfileEnvironment {
     }
 }
 
-public let sentProfileReducer = Reducer<SentProfile, SentProfileAction, SentProfileEnvironment>.combine(
-    openSocialReducer.pullback(
-        state: \.openSocialFailed,
-        action: /SentProfileAction.self,
-        environment: { $0 }
-    ),
+public let sentProfileReducer = Reducer<SentProfileState, SentProfileAction, SentProfileEnvironment>.combine(
+    openSocialReducer
+        .pullback(
+            state: \.openSocial,
+            action: .openSocial,
+            environment: {
+                OpenSocialEnvironment(
+                    openSocial: $0.openSocial,
+                    feedbackGenerator: $0.feedbackGenerator,
+                    openAppSettings: $0.openAppSettings
+                )
+            }
+        ),
     
-    Reducer { profile, action, env in
+    Reducer { state, action, env in
         switch action {
         case let .setName(name):
-            profile.name = name
+            state.profile.name = name
             return .none
             
         case .addToCategory:
@@ -50,13 +62,18 @@ public let sentProfileReducer = Reducer<SentProfile, SentProfileAction, SentProf
         case .removeSentProfile:
             return .none
             
-        case .alert:
-            return .none
-            
-        case .open:
+        case .openSocial:
             return .none
         }
     }
 )
 
-
+extension CasePath where Root == SentProfileAction, Value == OpenSocialAction {
+    static let openSocial = Self(
+        embed: SentProfileAction.openSocial,
+        extract: {
+            guard case let .openSocial(openSocialAction) = $0 else { return nil }
+            return openSocialAction
+        }
+    )
+}
