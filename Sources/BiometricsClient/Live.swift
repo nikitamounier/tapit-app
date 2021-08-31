@@ -6,9 +6,8 @@ public extension BiometricsClient {
         authenticate: {
             .future { promise in
                 let context = LAContext()
-                var error: NSError?
                 
-                guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+                guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) else {
                     promise(.success(.cancelled))
                     return
                 }
