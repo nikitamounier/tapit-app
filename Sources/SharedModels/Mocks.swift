@@ -10,7 +10,7 @@ public extension EmailAddress {
 }
 
 
-public extension CLLocationCoordinate2D {
+public extension Coordinate {
     static let mock = Self(latitude: 37.3330, longitude: 122.0090)
 }
 

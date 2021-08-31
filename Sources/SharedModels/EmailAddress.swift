@@ -1,6 +1,6 @@
 import Foundation
 
-public struct EmailAddress: RawRepresentable, Codable, Equatable {
+public struct EmailAddress: RawRepresentable, Codable, Hashable, Equatable {
     public let rawValue: String
     
     public init?(rawValue: String) {

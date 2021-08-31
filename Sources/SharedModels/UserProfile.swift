@@ -8,7 +8,12 @@ public struct UserProfile: Codable, Identifiable, Equatable {
 
     public var socials: [Social]
     
-    public init(id: UUID, name: String, profileImage: ProfileImage, socials: [Social]) {
+    public init(
+        id: UUID,
+        name: String,
+        profileImage: ProfileImage,
+        socials: [Social]
+    ) {
         self.id = id
         self.name = name
         self.profileImage = profileImage

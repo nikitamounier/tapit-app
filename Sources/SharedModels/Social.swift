@@ -12,7 +12,7 @@ public enum Social {
     case weChat(URLComponents)
     case github(URLComponents)
     case linkedIn(URLComponents)
-    case address(CLLocationCoordinate2D)
+    case address(Coordinate)
     case email(EmailAddress)
     case phone(PhoneNumber)
 }
@@ -101,7 +101,7 @@ extension Social: Codable {
             self = .linkedIn(associatedValues0)
         case "address":
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.AddressKeys.self, forKey: .associatedValues)
-            let associatedValues0 = try subContainer.decode(CLLocationCoordinate2D.self, forKey: .associatedValue0)
+            let associatedValues0 = try subContainer.decode(Coordinate.self, forKey: .associatedValue0)
             self = .address(associatedValues0)
         case "email":
             let subContainer = try container.nestedContainer(keyedBy: CodingKeys.EmailKeys.self, forKey: .associatedValues)
@@ -171,5 +171,10 @@ extension Social: Codable {
     }
 }
 
-
-extension Social: Equatable {}
+extension Social: Hashable, Identifiable, Equatable {
+    public typealias Hash = Int
+    
+    public var id: Social.Hash {
+        self.hashValue
+    }
+}
