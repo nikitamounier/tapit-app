@@ -61,12 +61,23 @@ public extension ListenerClient {
     static var live: Self {
         let logger = Logger(subsystem: "P2P", category: "ListenerClient")
         return Self(
-            create: { id, bonjourService, presharedKey, identity, myPeerID in
+            create: { id, bonjourService, myPeerID in
                 .run { subscriber in
                     do {
                         logger.debug("Creating listener")
+                       
+                        let tcpOptions = NWProtocolTCP.Options()
+                        tcpOptions.enableKeepalive = true
+                        tcpOptions.keepaliveIdle = 2
                         
-                        let listener = try NWListener(using: NWParameters(secret: presharedKey, identity: identity))
+                        let parameters = NWParameters(tls: nil, tcp: tcpOptions)
+                        parameters.includePeerToPeer = true
+                        
+                        let customProtocol = NWProtocolFramer.Options(definition: TLVMessageProtocol.definition)
+                        parameters.defaultProtocolStack.applicationProtocols.insert(customProtocol, at: 0)
+                       
+                        let listener = try NWListener(using: parameters)
+                        
                         listener.service = NWListener.Service(
                             name: myPeerID, type: bonjourService, domain: nil, txtRecord: nil
                         )
@@ -103,7 +114,8 @@ public extension ListenerClient {
                     listenerDependencies[id]?.cancel()
                     listenerDependencies[id] = nil
                 }
-            }
+            },
+            uuid: UUID.init
         )
     }
 }
@@ -118,6 +130,7 @@ public extension ConnectionClient {
                     
                     connection.stateUpdateHandler = { state in
                         logger.debug("Connection state updated to \(state.debugDescription, privacy: .public)")
+                        subscriber.send(.stateUpdated(state))
                     }
                     
                     connectionDependencies[id] = connection
@@ -130,7 +143,7 @@ public extension ConnectionClient {
             },
             startConnection: { id in
                 .run { subscriber in
-                    logger.debug("Starting connection on queue")
+                    logger.debug("Starting connection on queue: \(GlobalQueues.p2pQueue.debugDescription)")
                     connectionDependencies[id]?.start(queue: GlobalQueues.p2pQueue)
                     
                     func receiveNextMessage() {
@@ -172,6 +185,9 @@ public extension ConnectionClient {
                         content: content, contentContext: context, isComplete: true, completion: .idempotent
                     )
                 }
+            },
+            connectionExists: { id in
+                .init(value: connectionDependencies[id] != nil)
             }
         )
     }

@@ -47,20 +47,21 @@ public struct ListenerClient {
     
     public var create: (_ id: AnyHashable,
                         _ bonjourService: String,
-                        _ presharedKey: String,
-                        _ identity: String,
                         _ myPeerID: String) -> Effect<Event, Never>
     public var startListening: (_ id: AnyHashable) -> Effect<Never, Never>
     public var stopListening: (_ id: AnyHashable) -> Effect<Never, Never>
+    public var uuid: () -> UUID
     
     public init(
-        create: @escaping (AnyHashable, String, String, String, String) -> Effect<Event, Never>,
+        create: @escaping (AnyHashable, String, String) -> Effect<Event, Never>,
         startListening: @escaping (AnyHashable) -> Effect<Never, Never>,
-        stopListening: @escaping (AnyHashable) -> Effect<Never, Never>
+        stopListening: @escaping (AnyHashable) -> Effect<Never, Never>,
+        uuid: @escaping () -> UUID
     ) {
         self.create = create
         self.startListening = startListening
         self.stopListening = stopListening
+        self.uuid = uuid
     }
 }
 
@@ -75,16 +76,19 @@ public struct ConnectionClient {
     public var startConnection: (_ id: AnyHashable) -> Effect<Event, Never>
     public var stopConnection: (_ id: AnyHashable) -> Effect<Never, Never>
     public var sendMessage: (_ id: AnyHashable, _ type: MessageType, _ content: Data) -> Effect<Never, Never>
+    public var connectionExists: (_ id: AnyHashable) -> Effect<Bool, Never>
     
     public init(
         create: @escaping (AnyHashable, NWConnection) -> Effect<Event, Never>,
         startConnection: @escaping (AnyHashable) -> Effect<Event, Never>,
         stopConnection: @escaping (AnyHashable) -> Effect<Never, Never>,
-        sendMessage: @escaping (AnyHashable, MessageType, Data) -> Effect<Never, Never>
+        sendMessage: @escaping (AnyHashable, MessageType, Data) -> Effect<Never, Never>,
+        connectionExists: @escaping (_ id: AnyHashable) -> Effect<Bool, Never>
     ) {
         self.create = create
         self.startConnection = startConnection
         self.stopConnection = stopConnection
         self.sendMessage = sendMessage
+        self.connectionExists = connectionExists
     }
 }

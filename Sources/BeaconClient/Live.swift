@@ -65,7 +65,8 @@ public extension DetectorClient {
                     
                     detectorDependencies[id] = nil
                 }
-            }
+            },
+            uuid: UUID.init
         )
     }
 }
@@ -115,6 +116,13 @@ public extension AdvertiserClient {
                     advertiserDependencies[id]?.peripheralManager.stopAdvertising()
                     advertiserDependencies[id] = nil
                 }
+            },
+            uuid: UUID.init,
+            major: {
+                .random(in: UInt16.min...UInt16.max)
+            },
+            minor: {
+                .random(in: UInt16.min...UInt16.max)
             }
         )
     }

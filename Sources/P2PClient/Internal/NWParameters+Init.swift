@@ -1,7 +1,7 @@
 import CryptoKit
 import Network
 
-extension NWParameters {
+public extension NWParameters {
 
     // Create parameters for use with Connection and Listener.
     convenience init(secret: String, identity: String) {
@@ -34,6 +34,18 @@ extension NWParameters {
 
         self.includePeerToPeer = true
 
+        let customProtocol = NWProtocolFramer.Options(definition: TLVMessageProtocol.definition)
+        self.defaultProtocolStack.applicationProtocols.insert(customProtocol, at: 0)
+    }
+    
+    convenience init(enableKeepAlive: Bool, keepAliveIdle: Int, includePeerToPeer: Bool) {
+        let tcpOptions = NWProtocolTCP.Options()
+        tcpOptions.enableKeepalive = enableKeepAlive
+        tcpOptions.keepaliveIdle = keepAliveIdle
+        
+        self.init(tls: nil, tcp: tcpOptions)
+        self.includePeerToPeer = includePeerToPeer
+        
         let customProtocol = NWProtocolFramer.Options(definition: TLVMessageProtocol.definition)
         self.defaultProtocolStack.applicationProtocols.insert(customProtocol, at: 0)
     }
