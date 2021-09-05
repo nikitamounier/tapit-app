@@ -70,6 +70,10 @@ let package = Package(
             targets: ["P2PClient"]
         ),
         .library(
+            name: "P2PEncodeDecode",
+            targets: ["P2PEncodeDecode"]
+        ),
+        .library(
             name: "ProximitySensorClient",
             targets: ["ProximitySensorClient"]
         ),
@@ -266,6 +270,13 @@ let package = Package(
             ]
         ),
         .target(
+            name: "P2PEncodeDecode",
+            dependencies: [
+                "SharedModels",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
             name: "ProximitySensorClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -329,6 +340,7 @@ let package = Package(
                 "GeneralMocks",
                 "OrientationClient",
                 "P2PClient",
+                "P2PEncodeDecode",
                 "ProximitySensorClient",
                 "SharedModels",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
