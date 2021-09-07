@@ -13,6 +13,7 @@ import SharedModels
 import SwiftUI
 
 public struct TapState: Equatable {
+    public var userProfile: UserProfile
     public var tapErrorAlert: AlertState<TapAction>?
     public var foundBeacons: [Beacon]
     public var peerInfo: String?
@@ -22,6 +23,7 @@ public struct TapState: Equatable {
     public var hasSentProfile: Bool
     
     public init(
+        userProfile: UserProfile,
         tapErrorAlert: AlertState<TapAction>? = nil,
         foundBeacons: [Beacon] = [],
         peerInfo: String? = nil,
@@ -30,6 +32,7 @@ public struct TapState: Equatable {
         hasReceivedProfile: Bool = false,
         hasSentProfile: Bool = false
     ) {
+        self.userProfile = userProfile
         self.tapErrorAlert = tapErrorAlert
         self.foundBeacons = foundBeacons
         self.browserResults = browserResults
@@ -61,6 +64,8 @@ public enum TapAction: Equatable {
     case receiveProfileResponse(UserProfile, from: NWConnection)
     
     case tapButtonTapped
+    case sendProfile
+    case profileSentResponse
     
     case startReconnectionTimer
     case timerResponse
@@ -128,6 +133,8 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
     
     struct CancelBeaconSetupID: Hashable {}
     struct CancelP2PSetupID: Hashable {}
+    
+    struct CancelSendProfileID: Hashable {}
     
     struct ReconnectionTimerID: Hashable {}
     
@@ -304,10 +311,11 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             .cancellable(id: CancelP2PSetupID())
         
     case let .browserResultsChangedResponse(changes):
-        changes.forEach { change in
+        return changes.reduce(into: Effect.none) { effect, change in
             switch change {
             case let .added(result):
                 state.browserResults.insert(result)
+                effect = Effect(value: .attemptNewConnections)
                 
             case let .removed(result):
                 state.browserResults.remove(result)
@@ -319,7 +327,6 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                 break
             }
         }
-        return .none
         
     case let .listenerNewConnectionResponse(connection):
         guard !state.foundConnections.keys.contains(connection) else {
@@ -343,20 +350,26 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                     return env.p2p.connection.startConnection(connection.endpoint)
                         .flatMap { event -> Effect<TapAction, Never> in
                             switch event {
-                            case .receivedMessage(type: MessageType.ping.rawValue, data: _): // received ping
+                            case .receivedMessage(type: MessageType.ping, data: _): // received ping
                                 return Effect(value: .receivePingResponse(from: connection))
                                 
-                            case let .receivedMessage(type: MessageType.peerInfo.rawValue, data: data): // received peer info
+                            case let .receivedMessage(type: .peerInfo, data: data): // received peer info
                                 guard let peerInfo = env.p2pEncodeDecode.decodePeerInfo(data)
                                 else { return Effect(value: .connectionFailed) }
                                 
                                 return Effect(value: .receivePeerInfoResponse(peerInfo, from: connection))
                                 
-                            case let .receivedMessage(type: MessageType.profile.rawValue, data: data): // received profile
+                            case let .receivedMessage(type: .sendProfile, data: data): // received profile
                                 guard let profile = env.p2pEncodeDecode.decodeUserProfile(data)
                                 else { return Effect(value: .connectionFailed) }
                                 
-                                return Effect(value: .receiveProfileResponse(profile, from: connection))
+                                return .merge(
+                                    Effect(value: .receiveProfileResponse(profile, from: connection)),
+                                    env.p2p.connection.sendMessage(connection.endpoint, .profileReceived, Data()).fireAndForget()
+                                )
+                            
+                            case .receivedMessage(type: .profileReceived, data: _): // peer successfully received our profile
+                                return Effect(value: .profileSentResponse)
                                 
                             case .receivedMessage:
                                 return .none
@@ -412,23 +425,59 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         
     case let .receiveProfileResponse(profile, from: connection):
         state.hasReceivedProfile = true
-        return .merge(
-            .cancel(id: CancelBeaconSetupID()),
-            Effect(value: .cancelConnection(connection)),
-            state.hasSentProfile ? .cancel(id: CancelP2PSetupID()) : env.p2p.browser.stopBrowsing(P2PBrowserID()).fireAndForget()
-        )
         
+        if state.hasSentProfile {
+            return Effect(value: .cancelAll)
+        } else {
+            return .merge(
+                .cancel(id: CancelBeaconSetupID()),
+                env.p2p.browser.stopBrowsing(P2PBrowserID()).fireAndForget()
+            )
+        }
+    
     case .tapButtonTapped:
+        return state.peerInfo != nil ? Effect(value: .sendProfile) : .none
+        
+    case .sendProfile:
+        guard let peerInfo = state.peerInfo,
+              let endpoint = state.foundConnections
+                .first(where: { $1.peerInfo == peerInfo })?
+                .key
+                .endpoint
+        else { return .none }
+        
+        let profile = state.userProfile
+        
         return env.proximitySensor.start()
             .combineLatest(env.orientation.start())
             .filter { proximity, orientation in
                 switch (proximity, orientation) {
-                case .inProximity, .faceDown: return true
-                case .inProximity, .faceUp: return true
+                case (.inProximity, .faceDown): return true
+                case (.inProximity, .faceUp): return true
                 default: return false
                 }
             }
-            .flatMap { _ in /* send message if have peerID */ }
+            .flatMap { _ -> Effect<TapAction, Never> in
+                guard let data = env.p2pEncodeDecode.encodeUserProfile(profile)
+                else { return Effect(value: .connectionFailed) }
+                
+                return env.p2p.connection.sendMessage(endpoint, .sendProfile, data)
+                    .fireAndForget()
+            }
+            .eraseToEffect()
+            .cancellable(id: CancelSendProfileID())
+    
+    case .profileSentResponse:
+        state.hasSentProfile = true
+        
+        if state.hasReceivedProfile {
+            return Effect(value: .cancelAll)
+        } else {
+            return .merge(
+                .cancel(ids: CancelBeaconSetupID(), CancelSendProfileID()),
+                env.p2p.listener.stopListening(P2PBrowserID()).fireAndForget()
+            )
+        }
         
     case .startReconnectionTimer:
         return Effect.timer(id: ReconnectionTimerID(), every: 3, on: env.mainQueue)
@@ -461,8 +510,8 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         return .merge(
             state.browserResults.map { result in
                 env.p2p.connection.connectionExists(result.endpoint)
-                    .flatMap { existence -> Effect<TapAction, Never> in
-                        guard !existence,
+                    .flatMap { exists -> Effect<TapAction, Never> in
+                        guard !exists,
                               case let .service(name, type, _, _) = result.endpoint,
                               type == "_deadbeef._tcp" && name < env.p2p.listener.uuid().uuidString
                         else { return .none }
@@ -479,7 +528,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
     case .connectionFailed:
         state.tapErrorAlert = .init(
             title: TextState("Tap It encountered a connection error with the other person"),
-            message: TextState("Make sure Wi-Fi is tuned on, and that Tap It has permission to your local network. No data is sent to Tap It nor to third-party servers."),
+            message: TextState("Make sure Wi-Fi is turned on, and that Tap It has permission to your local network. No data is sent to Tap It nor to third-party servers."),
             dismissButton: .cancel(action: .send(.tapErrorAlertDismissed))
         )
         return Effect(value: .cancelAll)
@@ -506,7 +555,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             .fireAndForget()
         
     case .cancelAll:
-        return .cancel(ids: CancelBeaconSetupID(), CancelP2PSetupID(), ReconnectionTimerID())
+        return .cancel(ids: CancelBeaconSetupID(), CancelP2PSetupID(), CancelSendProfileID(), ReconnectionTimerID())
     }
 }
 

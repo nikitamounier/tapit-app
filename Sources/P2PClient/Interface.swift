@@ -68,7 +68,7 @@ public struct ListenerClient {
 public struct ConnectionClient {
     public enum Event {
         case stateUpdated(NWConnection.State)
-        case receivedMessage(type: UInt32, data: Data)
+        case receivedMessage(type: MessageType, data: Data)
         case receivedMessageError
     }
     

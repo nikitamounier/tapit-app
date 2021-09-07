@@ -150,7 +150,7 @@ public extension ConnectionClient {
                         connectionDependencies[id]?.receiveMessage { data, context, _, error in
                             if let message = context?.protocolMetadata(definition: TLVMessageProtocol.definition) as? NWProtocolFramer.Message {
                                 logger.debug("Received message")
-                                subscriber.send(.receivedMessage(type: message.messageType, data: data ?? Data()))
+                                subscriber.send(.receivedMessage(type: MessageType(rawValue: message.messageType) ?? .ping, data: data ?? Data()))
                             }
                             
                             if let error = error {
