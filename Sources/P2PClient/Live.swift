@@ -43,7 +43,7 @@ public extension BrowserClient {
             startBrowsing: { id in
                 .fireAndForget {
                     logger.debug("Starting to browse")
-                    browserDependencies[id]?.start(queue: GlobalQueues.p2pQueue)
+                    browserDependencies[id]?.start(queue: GlobalQueues.p2pBrowserQueue)
                 }
             },
             stopBrowsing: { id in
@@ -105,7 +105,7 @@ public extension ListenerClient {
             startListening: { id in
                 .fireAndForget {
                     logger.debug("Starting listener")
-                    listenerDependencies[id]?.start(queue: GlobalQueues.p2pQueue)
+                    listenerDependencies[id]?.start(queue: GlobalQueues.p2pListenerQueue)
                 }
             },
             stopListening: { id in
@@ -143,8 +143,9 @@ public extension ConnectionClient {
             },
             startConnection: { id in
                 .run { subscriber in
-                    logger.debug("Starting connection on queue: \(GlobalQueues.p2pQueue.debugDescription)")
-                    connectionDependencies[id]?.start(queue: GlobalQueues.p2pQueue)
+                    let newQueue = GlobalQueues.p2pConnectionQueue()
+                    logger.debug("Starting connection on queue: \(newQueue.debugDescription)")
+                    connectionDependencies[id]?.start(queue: newQueue)
                     
                     func receiveNextMessage() {
                         connectionDependencies[id]?.receiveMessage { data, context, _, error in
