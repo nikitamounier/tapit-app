@@ -349,6 +349,14 @@ let package = Package(
         .testTarget(
             name: "TapCoreTests",
             dependencies: [
+                "BeaconClient",
+                "FeedbackGeneratorClient",
+                "GeneralMocks",
+                "OrientationClient",
+                "P2PClient",
+                "P2PEncodeDecode",
+                "ProximitySensorClient",
+                "SharedModels",
                 "TapCore",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]

@@ -15,7 +15,6 @@ import SwiftUI
 public struct TapState: Equatable {
     public var userProfile: UserProfile
     public var tapErrorAlert: AlertState<TapAction>?
-    public var foundBeacons: [Beacon]
     public var peerInfo: String?
     public var browserResults: Set<NWBrowser.Result>
     public var foundConnections: [NWConnection: ConnectionInfo]
@@ -25,7 +24,6 @@ public struct TapState: Equatable {
     public init(
         userProfile: UserProfile,
         tapErrorAlert: AlertState<TapAction>? = nil,
-        foundBeacons: [Beacon] = [],
         peerInfo: String? = nil,
         browserResults: Set<NWBrowser.Result> = [],
         foundConnections: [NWConnection: ConnectionInfo] = [:],
@@ -34,7 +32,6 @@ public struct TapState: Equatable {
     ) {
         self.userProfile = userProfile
         self.tapErrorAlert = tapErrorAlert
-        self.foundBeacons = foundBeacons
         self.browserResults = browserResults
         self.foundConnections = foundConnections
         self.hasReceivedProfile = hasReceivedProfile
@@ -42,8 +39,8 @@ public struct TapState: Equatable {
     }
     
     public struct ConnectionInfo: Equatable {
-        public let date: Date
-        public var lastPing: Date
+        public let date: DispatchTime
+        public var lastPing: DispatchTime
         public var peerInfo: String?
     }
 }
@@ -86,40 +83,36 @@ public enum TapAction: Equatable {
 public struct TapEnvironment {
     public var mainQueue: AnySchedulerOf<DispatchQueue>
     public var beaconQueue: AnySchedulerOf<DispatchQueue>
-    public var p2pQueue: AnySchedulerOf<DispatchQueue>
     public var beacon: BeaconClient
     public var p2p: P2PClient
     public var p2pEncodeDecode: P2PEncodeDecode
     public var feedbackGenerator: FeedbackGeneratorClient
     public var proximitySensor: ProximitySensorClient
     public var orientation: OrientationClient
-    public var now: () -> Date
+    public var dispatchNow: () -> DispatchTime
     public var openAppSettings: () -> Void
     
     public init(
         mainQueue: AnySchedulerOf<DispatchQueue>,
         beaconQueue: AnySchedulerOf<DispatchQueue>,
-        p2pQueue: AnySchedulerOf<DispatchQueue>,
         beacon: BeaconClient,
         p2p: P2PClient,
         p2pEncodeDecode: P2PEncodeDecode,
         feedbackGenerator: FeedbackGeneratorClient,
         proximitySensor: ProximitySensorClient,
         orientation: OrientationClient,
-        uuid: @escaping () -> UUID,
-        now: @escaping () -> Date,
+        dispatchNow: @escaping () -> DispatchTime,
         openAppSettings: @escaping () -> Void
     ) {
         self.mainQueue = mainQueue
         self.beaconQueue = beaconQueue
-        self.p2pQueue = p2pQueue
         self.beacon = beacon
         self.p2p = p2p
         self.p2pEncodeDecode = p2pEncodeDecode
         self.feedbackGenerator = feedbackGenerator
         self.proximitySensor = proximitySensor
         self.orientation = orientation
-        self.now = now
+        self.dispatchNow = dispatchNow
         self.openAppSettings = openAppSettings
     }
 }
@@ -244,7 +237,18 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         return .cancel(id: CancelBeaconSetupID())
         
     case let .rangedBeaconsResponse(beacons):
-        state.foundBeacons = beacons
+        let beaconPredicate: (Beacon, Beacon) -> Bool = { first, second in
+            guard first.accuracy != second.accuracy else { return first.rssi > second.rssi }
+            return first.accuracy < second.accuracy
+        }
+        
+        guard let closestBeacon = beacons
+                .filter({ $0.proximity == .near })
+                .min(by: beaconPredicate)
+        else { return .none }
+        
+        state.peerInfo = "\(closestBeacon.major)-\(closestBeacon.minor)"
+        
         return .none
         
         // MARK: -  P2P logic
@@ -252,7 +256,6 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
     case .startP2P:
         return .merge(
             env.p2p.browser.create(P2PBrowserID(), "_deadbeef._tcp")
-                .subscribe(on: env.p2pQueue)
                 .flatMap { event -> Effect<TapAction, Never> in
                     switch event {
                     case .stateUpdated(.ready):
@@ -276,7 +279,6 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                 .eraseToEffect(),
             
             env.p2p.listener.create(P2PListenerID(), "_deadbeef._tcp", env.p2p.listener.uuid().uuidString)
-                .subscribe(on: env.p2pQueue)
                 .flatMap { event -> Effect<TapAction, Never> in
                     switch event {
                     case .failedToCreate:
@@ -337,14 +339,14 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         return Effect(value: .createConnection(connection))
         
     case let .createConnection(connection):
-        state.foundConnections[connection] = .init(date: env.now(), lastPing: env.now())
+        state.foundConnections[connection] = .init(date: env.dispatchNow(), lastPing: env.dispatchNow())
+        let peerInfo = state.peerInfo
         
         return env.p2p.connection.create(connection.endpoint, connection)
-            .subscribe(on: env.p2pQueue)
             .flatMap { [state] event -> Effect<TapAction, Never> in
                 switch event {
-                case .stateUpdated(.ready) where state.peerInfo != nil:
-                    guard let data = env.p2pEncodeDecode.encodePeerInfo(state.peerInfo!)
+                case .stateUpdated(.ready) where peerInfo != nil:
+                    guard let data = env.p2pEncodeDecode.encodePeerInfo(peerInfo!)
                     else { return Effect(value: .setupFailed) }
                     
                     return env.p2p.connection.startConnection(connection.endpoint)
@@ -381,6 +383,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                                 return .none
                             }
                         }
+                        .receive(on: env.mainQueue)
                         .eraseToEffect()
                     
                 case .stateUpdated(.ready) where state.peerInfo == nil:
@@ -416,7 +419,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             .fireAndForget()
         
     case let .receivePingResponse(connection):
-        state.foundConnections[connection]?.lastPing = env.now()
+        state.foundConnections[connection]?.lastPing = env.dispatchNow()
         return .none
         
     case let .receivePeerInfoResponse(peerInfo, from: connection):
@@ -475,7 +478,9 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         } else {
             return .merge(
                 .cancel(ids: CancelBeaconSetupID(), CancelSendProfileID()),
-                env.p2p.listener.stopListening(P2PBrowserID()).fireAndForget()
+                env.p2p.listener.stopListening(P2PBrowserID()).fireAndForget(),
+                env.proximitySensor.stop.fireAndForget(),
+                env.orientation.stop.fireAndForget()
             )
         }
         
@@ -501,7 +506,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             state.foundConnections.keys
                 .filter {
                     $0.state == .preparing
-                    && env.now().timeIntervalSince(state.foundConnections[$0]?.date ?? env.now()) > 10
+                    && env.dispatchNow() - (state.foundConnections[$0]?.lastPing ?? env.dispatchNow()) > .seconds(10)
                 }
                 .map { env.p2p.connection.stopConnection($0.endpoint).fireAndForget() }
         )
@@ -555,7 +560,11 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             .fireAndForget()
         
     case .cancelAll:
-        return .cancel(ids: CancelBeaconSetupID(), CancelP2PSetupID(), CancelSendProfileID(), ReconnectionTimerID())
+        return .merge(
+            .cancel(ids: CancelBeaconSetupID(), CancelP2PSetupID(), CancelSendProfileID(), ReconnectionTimerID()),
+            env.proximitySensor.stop.fireAndForget(),
+            env.orientation.stop.fireAndForget()
+            )
     }
 }
 

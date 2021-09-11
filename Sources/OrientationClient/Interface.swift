@@ -1,7 +1,7 @@
 import ComposableArchitecture
 
 public struct OrientationClient {
-    public enum OrientationEvent {
+    public enum Event {
         case unknown
         case portrait
         case portraitUpsideDown
@@ -11,12 +11,12 @@ public struct OrientationClient {
         case faceDown
     }
     
-    public var start: () -> Effect<OrientationEvent, Never>
+    public var start: () -> Effect<Event, Never>
     public var stop: Effect<Never, Never>
     
     
     public init(
-        start: @escaping () -> Effect<OrientationEvent, Never>,
+        start: @escaping () -> Effect<Event, Never>,
         stop: Effect<Never, Never>
     ) {
         self.start = start
