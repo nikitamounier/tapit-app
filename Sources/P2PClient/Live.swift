@@ -29,7 +29,7 @@ public extension BrowserClient {
                     
                     browser.browseResultsChangedHandler = { _, change in
                         logger.log("Browser results changed with \(change.debugDescription)")
-                        subscriber.send(.browseResultsChanged(change))
+                        subscriber.send(.browseResultsChanged(change.setMap(BrowserResult.Change.init)))
                     }
                     
                     browserDependencies[id] = browser

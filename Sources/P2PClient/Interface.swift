@@ -20,7 +20,7 @@ public struct P2PClient {
 public struct BrowserClient {
     public enum Event {
         case stateUpdated(NWBrowser.State)
-        case browseResultsChanged(Set<NWBrowser.Result.Change>)
+        case browseResultsChanged(Set<BrowserResult.Change>)
     }
     
     public var create: (_ id: AnyHashable, _ bonjourService: String) -> Effect<Event, Never>
