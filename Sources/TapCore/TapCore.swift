@@ -16,7 +16,7 @@ public struct TapState: Equatable {
     public var userProfile: UserProfile
     public var tapErrorAlert: AlertState<TapAction>?
     public var peerInfo: String?
-    public var browserResults: Set<NWBrowser.Result>
+    public var browserResults: Set<BrowserResult>
     public var foundConnections: [NWConnection: ConnectionInfo]
     public var hasReceivedProfile: Bool
     public var hasSentProfile: Bool
@@ -25,7 +25,7 @@ public struct TapState: Equatable {
         userProfile: UserProfile,
         tapErrorAlert: AlertState<TapAction>? = nil,
         peerInfo: String? = nil,
-        browserResults: Set<NWBrowser.Result> = [],
+        browserResults: Set<BrowserResult> = [],
         foundConnections: [NWConnection: ConnectionInfo] = [:],
         hasReceivedProfile: Bool = false,
         hasSentProfile: Bool = false
@@ -52,7 +52,7 @@ public enum TapAction: Equatable {
     case rangedBeaconsResponse([Beacon])
     
     case startP2P
-    case browserResultsChangedResponse(Set<NWBrowser.Result.Change>)
+    case browserResultsChangedResponse(Set<BrowserResult.Change>)
     case listenerNewConnectionResponse(NWConnection)
     
     case createConnection(NWConnection)
@@ -243,7 +243,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         }
         
         guard let closestBeacon = beacons
-                .filter({ $0.proximity == .near })
+                .filter({ $0.proximity == .near || $0.proximity == .immediate })
                 .min(by: beaconPredicate)
         else { return .none }
         
