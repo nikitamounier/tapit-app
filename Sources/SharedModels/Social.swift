@@ -1,6 +1,7 @@
 import Foundation
 import MapKit
 @_exported import PhoneNumberKit
+import SwiftUI
 
 public enum Social {
     case instagram(URLComponents)
@@ -21,7 +22,7 @@ extension Social: Codable {
     enum CodingKeys: String, CodingKey {
         case type
         case associatedValues
-
+        
         enum InstagramKeys: String, CodingKey {
             case associatedValue0
         }
@@ -59,7 +60,7 @@ extension Social: Codable {
             case associatedValue0
         }
     }
-
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch try container.decode(String.self, forKey: .type) {
@@ -115,7 +116,7 @@ extension Social: Codable {
             throw DecodingError.keyNotFound(CodingKeys.type, .init(codingPath: container.codingPath, debugDescription: "Unknown key"))
         }
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
@@ -176,5 +177,67 @@ extension Social: Hashable, Identifiable, Equatable {
     
     public var id: Social.Hash {
         self.hashValue
+    }
+}
+
+public extension Image {
+    init(social: Social) {
+        switch social {
+        case .instagram:
+            self.init("Instagram")
+        case .snapchat:
+            self.init("Snapchat")
+        case .twitter:
+            self.init("Twitter")
+        case .facebook:
+            self.init("Facebook")
+        case .reddit:
+            self.init("Reddit")
+        case .tikTok:
+            self.init("TikTok")
+        case .weChat:
+            self.init("WeChat")
+        case .github:
+            self.init("Github")
+        case .linkedIn:
+            self.init("LinkedIn")
+        case .address:
+            self.init("Address")
+        case .email:
+            self.init("Email")
+        case .phone:
+            self.init("Phone")
+        }
+    }
+}
+
+public extension Text {
+    init(social: Social) {
+        switch social {
+        case .instagram:
+            self.init("Instagram")
+        case .snapchat:
+            self.init("Snapchat")
+        case .twitter:
+            self.init("Twitter")
+        case .facebook:
+            self.init("Facebook")
+        case .reddit:
+            self.init("Reddit")
+        case .tikTok:
+            self.init("TikTok")
+        case .weChat:
+            self.init("WeChat")
+        case .github:
+            self.init("Github")
+        case .linkedIn:
+            self.init("LinkedIn")
+        case .address:
+            self.init("Address")
+        case .email:
+            self.init("Email")
+        case .phone:
+            self.init("Phone")
+        }
     }
 }
