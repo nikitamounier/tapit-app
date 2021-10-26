@@ -90,6 +90,10 @@ let package = Package(
             targets: ["SpringboardFeature"]
         ),
         .library(
+            name: "Styleguide",
+            targets: ["Styleguide"]
+        ),
+        .library(
             name: "SwiftHelpers",
             targets: ["SwiftHelpers"]
         ),
@@ -128,6 +132,10 @@ let package = Package(
             name: "swift-prelude",
             url: "https://github.com/pointfreeco/swift-prelude",
             .branch("main")
+        ),
+        .package(
+            url: "https://github.com/apple/swift-collections",
+            .upToNextMajor(from: "1.0.1")
         ),
         .package(
             name: "Difference",
@@ -323,6 +331,10 @@ let package = Package(
             ]
         ),
         .target(
+            name: "Styleguide",
+            dependencies: []
+        ),
+        .target(
             name: "SwiftHelpers",
             dependencies: []
         ),
@@ -368,8 +380,10 @@ let package = Package(
                 "FeedbackGeneratorClient",
                 "OrientationClient",
                 "P2PClient",
+                "P2PEncodeDecode",
                 "ProximitySensorClient",
                 "SharedModels",
+                .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),
