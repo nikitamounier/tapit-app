@@ -188,7 +188,7 @@ public extension ConnectionClient {
                 }
             },
             connectionExists: { id in
-                .init(value: connectionDependencies[id] != nil)
+                return connectionDependencies[id] != nil
             }
         )
     }

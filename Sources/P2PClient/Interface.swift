@@ -76,14 +76,14 @@ public struct ConnectionClient {
     public var startConnection: (_ id: AnyHashable) -> Effect<Event, Never>
     public var stopConnection: (_ id: AnyHashable) -> Effect<Never, Never>
     public var sendMessage: (_ id: AnyHashable, _ type: MessageType, _ content: Data) -> Effect<Never, Never>
-    public var connectionExists: (_ id: AnyHashable) -> Effect<Bool, Never>
+    public var connectionExists: (_ id: AnyHashable) -> Bool
     
     public init(
         create: @escaping (AnyHashable, NWConnection) -> Effect<Event, Never>,
         startConnection: @escaping (AnyHashable) -> Effect<Event, Never>,
         stopConnection: @escaping (AnyHashable) -> Effect<Never, Never>,
         sendMessage: @escaping (AnyHashable, MessageType, Data) -> Effect<Never, Never>,
-        connectionExists: @escaping (_ id: AnyHashable) -> Effect<Bool, Never>
+        connectionExists: @escaping (_ id: AnyHashable) -> Bool
     ) {
         self.create = create
         self.startConnection = startConnection

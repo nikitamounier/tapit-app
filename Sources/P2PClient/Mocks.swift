@@ -32,7 +32,7 @@ public extension ConnectionClient {
         startConnection: { _ in .none },
         stopConnection: { _ in .none },
         sendMessage: { _, _, _ in .none },
-        connectionExists: { _ in .none }
+        connectionExists: { _ in false }
     )
 }
 
@@ -71,7 +71,11 @@ public extension ConnectionClient {
         startConnection: { _ in .failing("\(Self.self).startConnection is unimplemented") },
         stopConnection: { _ in .failing("\(Self.self).stopConnection is unimplemented") },
         sendMessage: { _, _, _ in .failing("\(Self.self).sendMessage is unimplemented") },
-        connectionExists: { _ in .failing("\(Self.self).connectionExists is unimplemented") }
+        connectionExists: { _ in
+            XCTFail("\(Self.self).connectionExists is unimplemented")
+            return false
+            
+        }
     )
 }
 #endif
