@@ -15,7 +15,7 @@ import SwiftUI
 public struct TapState: Equatable {
     public var userProfile: UserProfile
     public var tapErrorAlert: AlertState<TapAction>?
-    public var peerInfo: String?
+    public var peerMajorMinor: String?
     public var browserResults: Set<BrowserResult>
     public var foundConnections: [NWConnection: ConnectionInfo]
     public var hasReceivedProfile: Bool
@@ -78,6 +78,7 @@ public enum TapAction: Equatable {
     case openAppSettings
     case prepareFeedbackGenerator
     case cancelAll
+    case finished
 }
 
 public struct TapEnvironment {
@@ -247,7 +248,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                 .min(by: beaconPredicate)
         else { return .none }
         
-        state.peerInfo = "\(closestBeacon.major)-\(closestBeacon.minor)"
+        state.peerMajorMinor = "\(closestBeacon.major)-\(closestBeacon.minor)"
         
         return .none
         
@@ -324,9 +325,6 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                 
             case .identical, .changed:
                 break
-                
-            @unknown default:
-                break
             }
         }
         
@@ -340,22 +338,18 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         
     case let .createConnection(connection):
         state.foundConnections[connection] = .init(date: env.dispatchNow(), lastPing: env.dispatchNow())
-        let peerInfo = state.peerInfo
         
         return env.p2p.connection.create(connection.endpoint, connection)
             .flatMap { [state] event -> Effect<TapAction, Never> in
                 switch event {
-                case .stateUpdated(.ready) where peerInfo != nil:
-                    guard let data = env.p2pEncodeDecode.encodePeerInfo(peerInfo!)
-                    else { return Effect(value: .setupFailed) }
-                    
+                case .stateUpdated(.setup):
                     return env.p2p.connection.startConnection(connection.endpoint)
                         .flatMap { event -> Effect<TapAction, Never> in
                             switch event {
                             case .receivedMessage(type: MessageType.ping, data: _): // received ping
                                 return Effect(value: .receivePingResponse(from: connection))
                                 
-                            case let .receivedMessage(type: .peerInfo, data: data): // received peer info
+                            case let .receivedMessage(type: .peerInfo, data: data):  // received peer info
                                 guard let peerInfo = env.p2pEncodeDecode.decodePeerInfo(data)
                                 else { return Effect(value: .connectionFailed) }
                                 
@@ -369,7 +363,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                                     Effect(value: .receiveProfileResponse(profile, from: connection)),
                                     env.p2p.connection.sendMessage(connection.endpoint, .profileReceived, Data()).fireAndForget()
                                 )
-                            
+                                
                             case .receivedMessage(type: .profileReceived, data: _): // peer successfully received our profile
                                 return Effect(value: .profileSentResponse)
                                 
@@ -384,10 +378,20 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                             }
                         }
                         .receive(on: env.mainQueue)
+                        
                         .eraseToEffect()
                     
-                case .stateUpdated(.ready) where state.peerInfo == nil:
-                    return .none
+                case .stateUpdated(.ready) where state.peerMajorMinor != nil:
+                    guard let myPeerInfo = env.p2pEncodeDecode.encodePeerInfo(state.peerMajorMinor!) else { return .none }
+                    
+                    return .merge(
+                        env.p2p.connection.sendMessage(connection.endpoint, .ping, Data()).fireAndForget(),
+                        env.p2p.connection.sendMessage(connection.endpoint, .peerInfo, myPeerInfo).fireAndForget()
+                    )
+                    
+                case .stateUpdated(.ready):
+                    return env.p2p.connection.sendMessage(connection.endpoint, .ping, Data())
+                        .fireAndForget()
                     
                 case .stateUpdated(.failed):
                     return .merge(
@@ -398,7 +402,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                 case .stateUpdated(.cancelled):
                     return Effect(value: .cancelConnection(connection))
                     
-                case .stateUpdated(.waiting), .stateUpdated(.preparing), .stateUpdated(.setup):
+                case .stateUpdated(.waiting), .stateUpdated(.preparing):
                     return .none
                     
                 case .stateUpdated:
@@ -430,19 +434,19 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         state.hasReceivedProfile = true
         
         if state.hasSentProfile {
-            return Effect(value: .cancelAll)
+            return Effect(value: .finished)
         } else {
             return .merge(
                 .cancel(id: CancelBeaconSetupID()),
                 env.p2p.browser.stopBrowsing(P2PBrowserID()).fireAndForget()
             )
         }
-    
+        
     case .tapButtonTapped:
-        return state.peerInfo != nil ? Effect(value: .sendProfile) : .none
+        return state.peerMajorMinor != nil ? Effect(value: .sendProfile) : .none
         
     case .sendProfile:
-        guard let peerInfo = state.peerInfo,
+        guard let peerInfo = state.peerMajorMinor,
               let endpoint = state.foundConnections
                 .first(where: { $1.peerInfo == peerInfo })?
                 .key
@@ -469,7 +473,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             }
             .eraseToEffect()
             .cancellable(id: CancelSendProfileID())
-    
+        
     case .profileSentResponse:
         state.hasSentProfile = true
         
@@ -506,7 +510,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             state.foundConnections.keys
                 .filter {
                     $0.state == .preparing
-                    && env.dispatchNow() - (state.foundConnections[$0]?.lastPing ?? env.dispatchNow()) > .seconds(10)
+                    && env.dispatchNow() - (state.foundConnections[$0]?.lastPing ?? env.dispatchNow()) > .seconds(8)
                 }
                 .map { env.p2p.connection.stopConnection($0.endpoint).fireAndForget() }
         )
@@ -514,19 +518,15 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
     case .attemptNewConnections:
         return .merge(
             state.browserResults.map { result in
-                env.p2p.connection.connectionExists(result.endpoint)
-                    .flatMap { exists -> Effect<TapAction, Never> in
-                        guard !exists,
-                              case let .service(name, type, _, _) = result.endpoint,
-                              type == "_deadbeef._tcp" && name < env.p2p.listener.uuid().uuidString
-                        else { return .none }
-                        
-                        let connection = NWConnection(
-                            to: result.endpoint, using: NWParameters(enableKeepAlive: true, keepAliveIdle: 2, includePeerToPeer: true)
-                        )
-                        return Effect(value: .createConnection(connection))
-                    }
-                    .eraseToEffect()
+                guard !env.p2p.connection.connectionExists(result.endpoint),
+                      case let .service(name, type, _, _) = result.endpoint,
+                      type == "_deadbeef._tcp" && name < env.p2p.listener.uuid().uuidString
+                else { return .none }
+                
+                let connection = NWConnection(
+                    to: result.endpoint, using: NWParameters(enableKeepAlive: true, keepAliveIdle: 2, includePeerToPeer: true)
+                )
+                return Effect(value: .createConnection(connection))
             }
         )
         
@@ -558,13 +558,16 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
     case .prepareFeedbackGenerator:
         return env.feedbackGenerator.prepareNotificationGenerator()
             .fireAndForget()
+    
+    case .finished:
+        return Effect(value: .cancelAll)
         
     case .cancelAll:
         return .merge(
             .cancel(ids: CancelBeaconSetupID(), CancelP2PSetupID(), CancelSendProfileID(), ReconnectionTimerID()),
             env.proximitySensor.stop.fireAndForget(),
             env.orientation.stop.fireAndForget()
-            )
+        )
     }
 }
 
