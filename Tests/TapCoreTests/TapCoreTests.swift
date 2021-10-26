@@ -2,6 +2,7 @@ import BeaconClient
 import Combine
 import ComposableArchitecture
 import FeedbackGeneratorClient
+import Network
 import OrientationClient
 import P2PClient
 import P2PEncodeDecode
@@ -10,7 +11,6 @@ import SharedModels
 import XCTest
 
 @testable import TapCore
-import Network
 
 class TapCoreTests: XCTestCase {
     func testPerfectPath() {
@@ -35,8 +35,6 @@ class TapCoreTests: XCTestCase {
         let p2pBrowserEventPublisher = PassthroughSubject<BrowserClient.Event, Never>()
         let p2pListenerEventPublisher = PassthroughSubject<ListenerClient.Event, Never>()
         let p2pConnectionEventPublisher = PassthroughSubject<ConnectionClient.Event, Never>()
-        
-        let connectionExists = CurrentValueSubject<Bool, Never>(false)
         
         let proximityEventPublisher = PassthroughSubject<ProximitySensorClient.Event, Never>()
         
@@ -95,7 +93,7 @@ class TapCoreTests: XCTestCase {
                 startConnection: { _ in p2pConnectionEventPublisher.eraseToEffect() },
                 stopConnection: { _ in .none },
                 sendMessage: { _, _, _ in .none },
-                connectionExists: { _ in connectionExists.eraseToEffect() })
+                connectionExists: { _ in false })
         )
         
         store.environment.proximitySensor = ProximitySensorClient(
@@ -139,10 +137,11 @@ class TapCoreTests: XCTestCase {
             ]
         ))
         
+        scheduler.advance()
+        
         store.receive(.rangedBeaconsResponse(
             [.init(uuid: .deadbeef, major: 120, minor: 430, proximity: .far, accuracy: 50, rssi: 20, timestamp: Date())]
-        )) // shouldn't do anything since proxmity is .far
-        scheduler.advance()
+        )) // shouldn't do anything since proximity is .far
         
         scheduler.advance(by: 1)
         
@@ -168,17 +167,40 @@ class TapCoreTests: XCTestCase {
         
         // MARK: - Finding some P2P results
         
-        p2pBrowserEventPublisher.send(.browseResultsChanged([
-            .added(BrowserResult(endpoint: .service(name: UUID.deadbeef.uuidString, type: "_deadbeef.tcp", domain: "", interface: nil), interfaces: [], metadata: .none))
-        ]))
+        let foundBrowser = BrowserResult(endpoint: .service(name: UUID.deadbeef.uuidString, type: "_deadbeef.tcp", domain: "", interface: nil), interfaces: [], metadata: .none)
+        
+        p2pBrowserEventPublisher.send(.browseResultsChanged([.added(foundBrowser)]))
+        
         scheduler.advance()
         
-        store.receive(.browserResultsChangedResponse([
-            .added(BrowserResult(endpoint: .service(name: UUID.deadbeef.uuidString, type: "_deadbeef.tcp", domain: "", interface: nil), interfaces: [], metadata: .none))
-        ])) {
-            $0.browserResults.insert(BrowserResult(endpoint: .service(name: UUID.deadbeef.uuidString, type: "_deadbeef.tcp", domain: "", interface: nil), interfaces: [], metadata: .none))
+        store.receive(.browserResultsChangedResponse([.added(foundBrowser)])) {
+            $0.browserResults.insert(foundBrowser)
         }
         
         store.receive(.attemptNewConnections)
+        
+        let newConnection = NWConnection(to: foundBrowser.endpoint, using: NWParameters(enableKeepAlive: true, keepAliveIdle: 2, includePeerToPeer: true))
+        
+        store.receive(.createConnection(newConnection)) {
+            $0.foundConnections[newConnection] = TapState.ConnectionInfo(date: scheduler.now.dispatchTime, lastPing: scheduler.now.dispatchTime)
+        }
+        
+        p2pConnectionEventPublisher.send(.stateUpdated(.ready))
+        p2pConnectionEventPublisher.send(.receivedMessage(type: .ping, data: Data()))
+        scheduler.advance()
+        
+        store.receive(.receivePingResponse(from: newConnection)) {
+            $0.foundConnections[newConnection]?.lastPing = scheduler.now.dispatchTime
+        }
+        
+        scheduler.advance(by: 0.5)
+        
+        store.receive(.timerResponse)
+        store.receive(.pingExistingConnections)
+        store.receive(.killFailingConnections)
+        store.receive(.attemptNewConnections)
+        
+        p2pConnectionEventPublisher.send(.receivedMessage(type: .peerInfo, data: <#T##Data#>))
+        
     }
 }
