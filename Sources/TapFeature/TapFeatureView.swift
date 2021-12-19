@@ -8,6 +8,7 @@ import P2PClient
 import P2PEncodeDecode
 import ProximitySensorClient
 import SharedModels
+import Styleguide
 import SwiftUI
 import TapCore
 
@@ -200,25 +201,48 @@ public struct TapFeatureView: View {
         self.viewStore = ViewStore(store)
     }
     
+    @State private var gradientDegrees: Double = 0
+    
     public var body: some View {
         ZStack(alignment: .bottom) {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
                 ForEach(viewStore.profile.socials) { social in
-                    RoundedRectangle(cornerRadius: 10)
-                        .rotatingGradientBorder(showBorder: viewStore.selectedSocials.contains(social.id))
-                        .foregroundColor(.primary)
-                        .overlayView(alignment: .center) {
-                            VStack {
-                                Image(social: social)
-                                    .padding(.bottom, 15)
-                                Text(social: social)
-                                    .bold()
+                    Button(action: { viewStore.send(.selectSocial(social.id)) }) {
+                        RoundedRectangle(cornerRadius: 10)
+                            .rotatingGradientBorder(
+                                showBorder: viewStore.selectedSocials.contains(social.id), degrees: gradientDegrees
+                            )
+                            .foregroundColor(.primary)
+                            .overlayView(alignment: .center) {
+                                VStack {
+                                    Image(social: social)
+                                        .padding(.bottom, 15)
+                                    Text(social: social)
+                                        .bold()
+                                }
                             }
-                        }
+                    }
+                    .padding()
+                }
+            }
+            .onAppear {
+                withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                    self.gradientDegrees = 360
                 }
             }
             
-            Button("")
+            if !viewStore.selectedSocials.isEmpty {
+                Button(action: { viewStore.send(.tapButtonTapped)} ) {
+                    Capsule(style: .circular)
+                        .fill(.tapGradient())
+                        .overlayView {
+                            Text("Share")
+                                .foregroundColor(.white)
+                                .bold()
+                        }
+                }
+                .transition(.move(edge: .bottom))
+            }
         }
     }
 }
@@ -261,4 +285,14 @@ extension View {
     }
 }
 
-
+struct TapFeatureView_Previews: PreviewProvider {
+    static var previews: some View {
+        TapFeatureView(
+            store: .init(
+                initialState: .init(profile: .mock),
+                reducer: tapFeatureReducer,
+                environment: TapFeatureEnvironment(mainQueue: .immediate, beaconQueue: .failing, beacon: .failing, p2p: .failing, p2pEncodeDecode: .noop, feedbackGenerator: .failing, proximitySensor: .failing, orientation: .failing, dispatchNow: {.distantFuture}, openAppSettings: {})
+            )
+        )
+    }
+}

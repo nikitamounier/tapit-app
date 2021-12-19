@@ -1,35 +1,32 @@
+import Styleguide
 import SwiftUI
 
-struct RotatingGradient<Content: InsettableShape>: View {
+struct RotatingGradient<Content: InsettableShape>: View, Animatable {
     let content: Content
     let showBorder: Bool
-    @State private var gradientDegrees: Double = 0
+    var gradientDegrees: Double
+    
+    var animatableData: Double {
+        get { gradientDegrees }
+        set { gradientDegrees = newValue }
+    }
     
     var body: some View {
         content
-            .strokeBorder(gradient)
-            .onChange(of: showBorder) { showingBorder in
-                if showingBorder {
-                    withAnimation(.linear(duration: 8).repeatForever(autoreverses: false)) {
-                        self.gradientDegrees = 360
-                    }
-                }
-            }
-    }
-    
-    var gradient: AngularGradient {
-        AngularGradient(
-            gradient: Gradient(
-                colors: showBorder ? [Color(red: 32 / 255, green: 127 / 255, blue: 253 / 255), Color(red: 243 / 255, green: 0, blue: 246 / 255)] : [Color.primary]
-            ),
-            center: .center,
-            angle: .degrees(gradientDegrees)
-        )
+            .strokeBorder(
+                showBorder ?
+                    AngularGradient(
+                        gradient: Gradient(colors: [.tapBlue, .tapPurple, .tapBlue]),
+                        center: .center,
+                        angle: .degrees(gradientDegrees)
+                    ) :
+                    AngularGradient(colors: [], center: .center)
+            )
     }
 }
 
 extension InsettableShape {
-    func rotatingGradientBorder(showBorder: Bool) -> some View {
-        return RotatingGradient(content: self, showBorder: showBorder)
+    func rotatingGradientBorder(showBorder: Bool, degrees: Double) -> some View {
+        return RotatingGradient(content: self, showBorder: showBorder, gradientDegrees: degrees)
     }
 }

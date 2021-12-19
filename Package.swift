@@ -383,6 +383,8 @@ let package = Package(
                 "P2PEncodeDecode",
                 "ProximitySensorClient",
                 "SharedModels",
+                "Styleguide",
+                "TapCore",
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
