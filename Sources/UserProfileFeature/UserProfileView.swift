@@ -122,6 +122,20 @@ public let userProfileReducer = Reducer<UserProfileState, UserProfileAction, Use
     }
 )
 
+public struct UserProfileView: View {
+    let store: Store<UserProfileState, UserProfileAction>
+    @ObservedObject var viewStore: ViewStore<UserProfileState, UserProfileAction>
+    
+    public init(store: Store<UserProfileState, UserProfileAction>) {
+        self.store = store
+        self.viewStore = store
+    }
+    
+    public var body: some View {
+        EmptyView()
+    }
+}
+
 extension CasePath where Root == UserProfileAction, Value == SpringboardAction {
     static let springboard = Self(
         embed: UserProfileAction.springboard,
