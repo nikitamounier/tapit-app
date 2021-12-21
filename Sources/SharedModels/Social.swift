@@ -173,9 +173,20 @@ extension Social: Codable {
 }
 
 extension Social: Hashable, Identifiable, Equatable {
-    public typealias Hash = Int
+    public func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .instagram(url), let .snapchat(url), let .twitter(url), let .facebook(url), let .reddit(url), let .tikTok(url), let .weChat(url), let .github(url), let .linkedIn(url):
+            hasher.combine(url)
+        case let .address(address):
+            hasher.combine(address)
+        case let .email(email):
+            hasher.combine(email)
+        case let .phone(phoneNumber):
+            hasher.combine(phoneNumber)
+        }
+    }
     
-    public var id: Social.Hash {
+    public var id: Int {
         self.hashValue
     }
 }
