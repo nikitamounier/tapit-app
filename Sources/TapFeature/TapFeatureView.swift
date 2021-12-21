@@ -1,3 +1,4 @@
+import Algorithms
 import BeaconClient
 import ComposableArchitecture
 import FeedbackGeneratorClient
@@ -20,9 +21,10 @@ public struct TapFeatureState: Equatable {
     
     public var selectedSocials: Set<Social.ID>
     public var selectedPresets: Set<Preset.ID>
-    public var finishedSelectingSocials: Bool
+    public var showTapSheet: Bool
     
     public var session: TapState?
+    public var receivedProfile: UserProfile?
     
     
     public struct Preset: Equatable, Identifiable {
@@ -42,14 +44,14 @@ public struct TapFeatureState: Equatable {
         currentSection: Section = .socials,
         selectedSocials: Set<Social.ID> = [],
         selectedPresets: Set<Preset.ID> = [],
-        finishedSelectingSocials: Bool = false
+        showTapSheet: Bool = false
     ) {
         self.profile = profile
         self.presets = presets
         self.currentSection = currentSection
         self.selectedSocials = selectedSocials
         self.selectedPresets = selectedPresets
-        self.finishedSelectingSocials = finishedSelectingSocials
+        self.showTapSheet = showTapSheet
     }
 }
 
@@ -61,6 +63,7 @@ public enum TapFeatureAction: Equatable {
     case selectPreset(TapFeatureState.Preset.ID)
     case deselectPreset(TapFeatureState.Preset.ID)
     
+    case tapSheetShown(Bool)
     case tapButtonTapped
     case tap(TapAction)
 }
@@ -181,6 +184,14 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
                     Effect(value: .tap(.startP2P))
                 )
                 
+            case let .tapSheetShown(showing):
+                state.showTapSheet = showing
+                return .none
+                
+            case let .tap(.receiveProfileResponse(profile, from: _)):
+                state.receivedProfile = profile
+                return .none
+                
             case .tap(.finished), .tap(.tapErrorAlertDismissed):
                 state.session = nil
                 return .none
@@ -204,45 +215,46 @@ public struct TapFeatureView: View {
     @State private var gradientDegrees: Double = 0
     
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
-                ForEach(viewStore.profile.socials) { social in
-                    Button(action: { viewStore.send(.selectSocial(social.id)) }) {
-                        RoundedRectangle(cornerRadius: 10)
-                            .rotatingGradientBorder(
-                                showBorder: viewStore.selectedSocials.contains(social.id), degrees: gradientDegrees
-                            )
-                            .foregroundColor(.primary)
-                            .overlayView(alignment: .center) {
-                                VStack {
-                                    Image(social: social)
-                                        .padding(.bottom, 15)
-                                    Text(social: social)
-                                        .bold()
-                                }
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+            ForEach(viewStore.profile.socials.indexed(), id: \.1.id) { index, social in
+                Button {
+                    viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
+                } label: {
+                    RoundedRectangle(cornerRadius: 20)
+                        .rotatingGradientBorder(
+                            showBorder: viewStore.selectedSocials.contains(social.id), degrees: gradientDegrees
+                        )
+                        .aspectRatio(1.25, contentMode: .fit)
+                        .overlayView(çalignment: .center) {
+                            VStack {
+                                Image(social: social)
+                                    .padding(.bottom, 15)
+                                Text(social: social)
+                                    .bold()
                             }
-                    }
-                    .padding()
-                }
-            }
-            .onAppear {
-                withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                    self.gradientDegrees = 360
-                }
-            }
-            
-            if !viewStore.selectedSocials.isEmpty {
-                Button(action: { viewStore.send(.tapButtonTapped)} ) {
-                    Capsule(style: .circular)
-                        .fill(.tapGradient())
-                        .overlayView {
-                            Text("Share")
-                                .foregroundColor(.white)
-                                .bold()
                         }
                 }
-                .transition(.move(edge: .bottom))
+                .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+                .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
             }
+        }
+        .onAppear {
+            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                self.gradientDegrees = 360
+            }
+        }
+        .overlayView {
+            if !viewStore.selectedSocials.isEmpty {
+                Button(action: { viewStore.send(.tapButtonTapped)} ) {
+                    Text("Share")
+                        .foregroundColor(.white)
+                        .bold()
+                }
+                .clipShape(Capsule())
+            }
+        }
+        .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: TapFeatureAction.tapSheetShown)) {
+            TapSheet(store: store)
         }
     }
 }
@@ -276,7 +288,7 @@ extension TapEnvironment {
 
 extension View {
     @ViewBuilder
-    func overlayView<Content: View>(alignment: Alignment = .center, content: @escaping () -> Content) -> some View {
+    func overlayView<Content: View>(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content) -> some View {
         if #available(iOS 15.0, *) {
             self.overlay(alignment: alignment, content: content)
         } else {
