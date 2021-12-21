@@ -138,6 +138,10 @@ let package = Package(
             .upToNextMajor(from: "1.0.1")
         ),
         .package(
+            url: "https://github.com/apple/swift-algorithms",
+            .upToNextMajor(from: "1.0.0")
+        ),
+        .package(
             name: "Difference",
             url: "https://github.com/krzysztofzablocki/Difference.git",
             .branch("master")
@@ -224,6 +228,7 @@ let package = Package(
                 "SentProfileFeature",
                 "SharedModels",
                 "SwiftHelpers",
+                .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "NonEmpty", package: "swift-nonempty"),
             ]
@@ -385,6 +390,7 @@ let package = Package(
                 "SharedModels",
                 "Styleguide",
                 "TapCore",
+                .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
