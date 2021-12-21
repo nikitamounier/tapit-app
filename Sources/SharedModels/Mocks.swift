@@ -48,7 +48,7 @@ public extension Social {
             |> \.host .~ "facebook.com"
             |> \.path .~ "/\(name ?? "tapit_app")"
         
-        return .twitter(url)
+        return .facebook(url)
     }
     
     static func mockReddit(name: String? = nil) -> Social {
@@ -57,7 +57,7 @@ public extension Social {
             |> \.host .~ "reddit.com"
             |> \.path .~ "/user/\(name ?? "tapit_app")"
         
-        return .twitter(url)
+        return .reddit(url)
     }
     
     static func mockTikTok(name: String? = nil) -> Social {
@@ -66,7 +66,7 @@ public extension Social {
         |> \.host .~ "tiktok.com"
         |> \.path .~ "/@\(name ?? "tapit_app")"
         
-        return .twitter(url)
+        return .tikTok(url)
     }
     
     // TODO: - Figure out WeChat ID
@@ -76,7 +76,7 @@ public extension Social {
             |> \.host .~ "wechat.com"
             |> \.path .~ "/\(name ?? "tapit_app")"
         
-        return .twitter(url)
+        return .weChat(url)
     }
     
     static func mockGithub(name: String? = nil) -> Social {
@@ -94,7 +94,7 @@ public extension Social {
             |> \.host .~ "linkedin.com"
             |> \.path .~ "/in/\(name ?? "chris-lattner-5664498a")"
         
-        return .github(url)
+        return .linkedIn(url)
     }
     
     static func mockAddress() -> Social { .address(.init(latitude: 37.3330, longitude: 122.0090)) }
@@ -115,18 +115,18 @@ public extension Social {
 
 public extension Array where Element == Social {
     static var mock: [Social] = [
-        .mockInstagram(),
-        .mockSnapchat(),
-        .mockTwitter(),
-        .mockFacebook(),
-        .mockReddit(),
-        .mockTikTok(),
-        .mockWeChat(),
-        .mockGithub(),
-        .mockLinkedIn(),
-        .mockAddress(),
-        .mockEmail(),
-        .mockPhone(),
+        .mockInstagram(), //
+        .mockSnapchat(), //
+        .mockTwitter(), //
+        .mockFacebook(),// -----
+        .mockReddit(), //
+        .mockTikTok(), //
+        .mockWeChat(), // ----
+        .mockGithub(), //
+        .mockLinkedIn(), //
+        .mockAddress(), //
+        .mockEmail(), //
+        .mockPhone(), //
     ]
     
 }
