@@ -225,7 +225,7 @@ public struct TapFeatureView: View {
                             showBorder: viewStore.selectedSocials.contains(social.id), degrees: gradientDegrees
                         )
                         .aspectRatio(1.25, contentMode: .fit)
-                        .overlayView(çalignment: .center) {
+                        .overlayView(alignment: .center) {
                             VStack {
                                 Image(social: social)
                                     .padding(.bottom, 15)
