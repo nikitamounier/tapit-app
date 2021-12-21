@@ -204,19 +204,31 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
 )
 
 public struct TapFeatureView: View {
+    struct ViewState: Equatable {
+        var profileSocials: [Social]
+        var selectedSocials: Set<Social.ID>
+        var showTapSheet: Bool
+        
+        init(state: TapFeatureState) {
+            self.profileSocials = state.profile.socials
+            self.selectedSocials = state.selectedSocials
+            self.showTapSheet = state.showTapSheet
+        }
+    }
+    
     let store: Store<TapFeatureState, TapFeatureAction>
-    @ObservedObject var viewStore: ViewStore<TapFeatureState, TapFeatureAction>
+    @ObservedObject var viewStore: ViewStore<ViewState, TapFeatureAction>
     
     public init(store: Store<TapFeatureState, TapFeatureAction>) {
         self.store = store
-        self.viewStore = ViewStore(store)
+        self.viewStore = ViewStore(store.scope(state: ViewState.init))
     }
     
     @State private var gradientDegrees: Double = 0
     
     public var body: some View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
-            ForEach(viewStore.profile.socials.indexed(), id: \.1.id) { index, social in
+            ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
                 Button {
                     viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
                 } label: {
