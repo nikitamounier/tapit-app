@@ -1,4 +1,3 @@
-import Algorithms
 import BeaconClient
 import ComposableArchitecture
 import FeedbackGeneratorClient
@@ -244,50 +243,40 @@ public struct TapFeatureView: View {
     
     public var body: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
-                ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
-                    Button {
-                        viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
-                    } label: {
-                        RoundedRectangle(cornerRadius: 20)
-                            .rotatingGradientBorder(
-                                showBorder: viewStore.selectedSocials.contains(social.id), degrees: gradientDegrees
-                            )
-                            .aspectRatio(1.25, contentMode: .fit)
-                            .backport.overlay(alignment: .center) {
-                                VStack {
-                                    EmptyView()
-                                        .padding(.bottom, 15)
-                                    Text(social: social)
-                                        .bold()
-                                }
-                            }
+            SocialsGrid(
+                using: viewStore.profileSocials,
+                containsID: { viewStore.selectedSocials.contains($0) },
+                selectElement: { viewStore.send(.selectSocial($0)) },
+                deselectElement: { viewStore.send(.deselectSocial($0)) },
+                showGradientBorder: { viewStore.selectedSocials.contains($0) },
+                gradientDegrees: gradientDegrees,
+                textFromElement: Text.init,
+                imageFromElement: Image.init
+            )
+                .onAppear {
+                    withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                        self.gradientDegrees = 360
                     }
-                    .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
-                    .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
                 }
-            }
-            .onAppear {
-                withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                    self.gradientDegrees = 360
-                }
-            }
         }
         .backport.overlay(alignment: .bottom) {
-            if !viewStore.selectedSocials.isEmpty {
-                Button(action: { viewStore.send(.tapButtonTapped) } ) {
-                    Text("Share")
-                        .foregroundColor(.white)
-                        .bold()
+            VStack {
+                if !viewStore.selectedSocials.isEmpty {
+                    Button(action: { viewStore.send(.tapButtonTapped) } ) {
+                        Text("Share")
+                            .foregroundColor(.white)
+                            .bold()
+                    }
+                    .padding()
+                    .padding(.horizontal, 40)
+                    .backport.background {
+                        LinearGradient(gradient: .tapGradient, startPoint: .topLeading, endPoint: .trailing)
+                    }
+                    .clipShape(Capsule())
+                    .transition(.move(edge: .bottom))
                 }
-                .padding()
-                .padding(.horizontal, 40)
-                .backport.background {
-                    LinearGradient(gradient: .tapGradient, startPoint: .topLeading, endPoint: .trailing)
-                }
-                .clipShape(Capsule())
-                .transition(.move(edge: .top).animation(.linear(duration: 0.25)))
             }
+            .animation(.interactiveSpring(), value: viewStore.selectedSocials.isEmpty)
         }
         .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: TapFeatureAction.tapSheetShown)) {
             TapSheet(store: store)
