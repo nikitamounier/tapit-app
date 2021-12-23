@@ -1,5 +1,5 @@
 import SwiftUI
-@_implementationOnly import PagerTabStripView
+import PagerTabStripView
 
 public struct SwipeTabView<Content: View>: View {
     let selection: Binding<Int>?
