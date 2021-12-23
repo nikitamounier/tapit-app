@@ -226,7 +226,7 @@ class HistoryFeatureTests: XCTestCase {
     func testSimpleSearching() {
         let store = TestStore(
             initialState: HistoryState(profiles: [firstProfile, secondProfile, thirdProfile]),
-            reducer: historyReducer.debugDiff(),
+            reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .immediate,
                 feedbackGenerator: .failing,

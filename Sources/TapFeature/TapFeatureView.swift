@@ -256,7 +256,7 @@ public struct TapFeatureView: View {
                             .aspectRatio(1.25, contentMode: .fit)
                             .backport.overlay(alignment: .center) {
                                 VStack {
-                                    Image(social: social)
+                                    EmptyView()
                                         .padding(.bottom, 15)
                                     Text(social: social)
                                         .bold()

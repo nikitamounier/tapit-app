@@ -11,12 +11,30 @@
         }
       },
       {
+        "package": "PagerTabStripView",
+        "repositoryURL": "https://github.com/xmartlabs/PagerTabStripView",
+        "state": {
+          "branch": null,
+          "revision": "5df4dbf4f125d0037112d2e6a37cb4ac786e2685",
+          "version": "3.1.1"
+        }
+      },
+      {
         "package": "PhoneNumberKit",
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit",
         "state": {
           "branch": null,
           "revision": "1ef0431b971f69c48ca5eb4cdba07f2c5da54c35",
           "version": "3.3.3"
+        }
+      },
+      {
+        "package": "swift-algorithms",
+        "repositoryURL": "https://github.com/apple/swift-algorithms",
+        "state": {
+          "branch": null,
+          "revision": "b14b7f4c528c942f121c8b860b9410b2bf57825e",
+          "version": "1.0.0"
         }
       },
       {
@@ -33,8 +51,8 @@
         "repositoryURL": "https://github.com/apple/swift-collections",
         "state": {
           "branch": null,
-          "revision": "0959ba76a1d4a98fd11163aa83fd49c25b93bfae",
-          "version": "0.0.5"
+          "revision": "48254824bb4248676bf7ce56014ff57b142b77eb",
+          "version": "1.0.2"
         }
       },
       {
@@ -51,17 +69,35 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-identified-collections",
         "state": {
           "branch": null,
-          "revision": "edececbdb56b07e9402f2f3f5b907d220a28b4ea",
-          "version": "0.1.1"
+          "revision": "680bf440178a78a627b1c2c64c0855f6523ad5b9",
+          "version": "0.3.2"
         }
       },
       {
-        "package": "Overture",
-        "repositoryURL": "https://github.com/pointfreeco/swift-overture",
+        "package": "swift-nonempty",
+        "repositoryURL": "https://github.com/nikitamounier/swift-nonempty.git",
+        "state": {
+          "branch": "main",
+          "revision": "44a999b40fb5afa0e0723fd51c06652e9051068d",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-numerics",
+        "repositoryURL": "https://github.com/apple/swift-numerics",
         "state": {
           "branch": null,
-          "revision": "7977acd7597f413717058acc1e080731249a1d7e",
-          "version": "0.5.0"
+          "revision": "0a5bc04095a675662cf24757cc0640aa2204253b",
+          "version": "1.0.2"
+        }
+      },
+      {
+        "package": "swift-prelude",
+        "repositoryURL": "https://github.com/pointfreeco/swift-prelude",
+        "state": {
+          "branch": "main",
+          "revision": "16550d9104f12e9033c0b0de5d6c6d9de3f04dfa",
+          "version": null
         }
       },
       {

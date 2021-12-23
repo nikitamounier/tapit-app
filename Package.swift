@@ -110,10 +110,6 @@ let package = Package(
             targets: ["TapFeature"]
         ),
         .library(
-            name: "TCAHelpers",
-            targets: ["TCAHelpers"]
-        ),
-        .library(
             name: "UserProfileFeature",
             targets: ["UserProfileFeature"]
         ),
@@ -146,9 +142,8 @@ let package = Package(
             .upToNextMajor(from: "1.0.0")
         ),
         .package(
-            name: "Difference",
-            url: "https://github.com/krzysztofzablocki/Difference.git",
-            .branch("master")
+            url: "https://github.com/xmartlabs/PagerTabStripView",
+            .upToNextMajor(from: "3.1.1")
         ),
     ],
     targets: [
@@ -243,7 +238,6 @@ let package = Package(
                 "HistoryFeature",
                 "GeneralMocks",
                 "SharedModels",
-                "TCAHelpers",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "NonEmpty", package: "swift-nonempty"),
                 .product(name: "Optics", package: "swift-prelude"),
@@ -341,7 +335,9 @@ let package = Package(
         ),
         .target(
             name: "Styleguide",
-            dependencies: []
+            dependencies: [
+                .product(name: "PagerTabStripView", package: "PagerTabStripView"),
+            ]
         ),
         .target(
             name: "SwiftHelpers",
@@ -409,13 +405,6 @@ let package = Package(
             dependencies: [
                 "TapFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "TCAHelpers",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "Difference", package: "Difference"),
             ]
         ),
         .target(

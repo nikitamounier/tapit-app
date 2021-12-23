@@ -11,12 +11,12 @@
         }
       },
       {
-        "package": "Difference",
-        "repositoryURL": "https://github.com/krzysztofzablocki/Difference.git",
+        "package": "PagerTabStripView",
+        "repositoryURL": "https://github.com/xmartlabs/PagerTabStripView",
         "state": {
-          "branch": "master",
-          "revision": "412f4d48ab5e8e31a520baf09d01f8bd5a13dc7a",
-          "version": null
+          "branch": null,
+          "revision": "5df4dbf4f125d0037112d2e6a37cb4ac786e2685",
+          "version": "3.1.1"
         }
       },
       {
