@@ -98,6 +98,10 @@ let package = Package(
             targets: ["SwiftHelpers"]
         ),
         .library(
+            name: "SwiftUIHelpers",
+            targets: ["SwiftUIHelpers"]
+        ),
+        .library(
             name: "TapCore",
             targets: ["TapCore"]
         ),
@@ -350,6 +354,10 @@ let package = Package(
             ]
         ),
         .target(
+            name: "SwiftUIHelpers",
+            dependencies: []
+        ),
+        .target(
             name: "TapCore",
             dependencies: [
                 "BeaconClient",
@@ -389,6 +397,7 @@ let package = Package(
                 "ProximitySensorClient",
                 "SharedModels",
                 "Styleguide",
+                "SwiftUIHelpers",
                 "TapCore",
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "OrderedCollections", package: "swift-collections"),

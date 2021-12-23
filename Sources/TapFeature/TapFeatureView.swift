@@ -11,6 +11,7 @@ import ProximitySensorClient
 import SharedModels
 import Styleguide
 import SwiftUI
+import SwiftUIHelpers
 import TapCore
 
 public struct TapFeatureState: Equatable {
@@ -126,6 +127,15 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
             case let .selectSocial(socialID):
                 state.selectedSocials.insert(socialID)
                 
+                if state.selectedSocials.count == 1 {
+                    state.session = TapState(userProfile: state.profile)
+                    
+                    return .merge(
+                        Effect(value: .tap(.startP2P)),
+                        Effect(value: .tap(.startBeacons))
+                    )
+                }
+                
                 return .none
                 
             case let .deselectSocial(socialID):
@@ -141,11 +151,20 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
                     }
                 }
                 
-                return .none
+                return state.selectedSocials.isEmpty ? Effect(value: .tap(.cancelAll)) : .none
                 
             case let .selectPreset(presetID):
                 state.selectedPresets.insert(presetID)
                 state.selectedSocials.formUnion(state.presets[id: presetID]!.socials)
+                
+                // if this is first thing user selects
+                if state.selectedPresets.count == 1 &&
+                    state.selectedSocials.count == state.presets[id: presetID]!.socials.count {
+                    return .merge(
+                        Effect(value: .tap(.startP2P)),
+                        Effect(value: .tap(.startBeacons))
+                    )
+                }
                 
                 return .none
                 
@@ -153,7 +172,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
                 state.selectedPresets.remove(presetID)
                 if state.selectedPresets.isEmpty {
                     state.selectedSocials.subtract(state.presets[id: presetID]!.socials)
-                    return .none
+                    return state.selectedSocials.isEmpty ? Effect(value: .tap(.cancelAll)) : .none
                 }
                 
                 // Don't remove socials which are still in other selected presets
@@ -179,10 +198,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
                 )
                 state.session = TapState(userProfile: profile)
                 
-                return .merge(
-                    Effect(value: .tap(.startBeacons)),
-                    Effect(value: .tap(.startP2P))
-                )
+                return Effect(value: .tap(.tapButtonTapped))
                 
             case let .tapSheetShown(showing):
                 state.showTapSheet = showing
@@ -227,42 +243,50 @@ public struct TapFeatureView: View {
     @State private var gradientDegrees: Double = 0
     
     public var body: some View {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
-            ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
-                Button {
-                    viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
-                } label: {
-                    RoundedRectangle(cornerRadius: 20)
-                        .rotatingGradientBorder(
-                            showBorder: viewStore.selectedSocials.contains(social.id), degrees: gradientDegrees
-                        )
-                        .aspectRatio(1.25, contentMode: .fit)
-                        .overlayView(alignment: .center) {
-                            VStack {
-                                Image(social: social)
-                                    .padding(.bottom, 15)
-                                Text(social: social)
-                                    .bold()
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+                ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
+                    Button {
+                        viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
+                    } label: {
+                        RoundedRectangle(cornerRadius: 20)
+                            .rotatingGradientBorder(
+                                showBorder: viewStore.selectedSocials.contains(social.id), degrees: gradientDegrees
+                            )
+                            .aspectRatio(1.25, contentMode: .fit)
+                            .backport.overlay(alignment: .center) {
+                                VStack {
+                                    Image(social: social)
+                                        .padding(.bottom, 15)
+                                    Text(social: social)
+                                        .bold()
+                                }
                             }
-                        }
+                    }
+                    .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+                    .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
                 }
-                .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
-                .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
+            }
+            .onAppear {
+                withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                    self.gradientDegrees = 360
+                }
             }
         }
-        .onAppear {
-            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                self.gradientDegrees = 360
-            }
-        }
-        .overlayView {
+        .backport.overlay(alignment: .bottom) {
             if !viewStore.selectedSocials.isEmpty {
-                Button(action: { viewStore.send(.tapButtonTapped)} ) {
+                Button(action: { viewStore.send(.tapButtonTapped) } ) {
                     Text("Share")
                         .foregroundColor(.white)
                         .bold()
                 }
+                .padding()
+                .padding(.horizontal, 40)
+                .backport.background {
+                    LinearGradient(gradient: .tapGradient, startPoint: .topLeading, endPoint: .trailing)
+                }
                 .clipShape(Capsule())
+                .transition(.move(edge: .top).animation(.linear(duration: 0.25)))
             }
         }
         .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: TapFeatureAction.tapSheetShown)) {
@@ -295,17 +319,6 @@ extension TapEnvironment {
             dispatchNow: parentEnvironment.dispatchNow,
             openAppSettings: parentEnvironment.openAppSettings
         )
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func overlayView<Content: View>(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content) -> some View {
-        if #available(iOS 15.0, *) {
-            self.overlay(alignment: alignment, content: content)
-        } else {
-            self.overlay(content(), alignment: alignment)
-        }
     }
 }
 
