@@ -16,12 +16,12 @@ public struct SwipeTabView<Content: View>: View {
                 .scrollableBarButton(
                     padding: EdgeInsets(
                         top: 5,
-                        leading: 10,
+                        leading: 15,
                         bottom: 0,
                         trailing: 10
                     ),
-                    tabItemSpacing: 5,
-                    tabItemHeight: 35
+                    tabItemSpacing: 15,
+                    tabItemHeight: 45
                 )
             )
     }
