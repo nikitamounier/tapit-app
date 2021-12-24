@@ -22,6 +22,7 @@ public struct TapFeatureState: Equatable {
     public var selectedSocials: Set<Social.ID>
     public var selectedPresets: Set<Preset.ID>
     public var showTapSheet: Bool
+
     
     public var session: TapState?
     public var receivedProfile: UserProfile?
@@ -31,9 +32,14 @@ public struct TapFeatureState: Equatable {
         public let id = UUID()
         public var name: String
         public var socials: OrderedSet<Social.ID>
+        
+        public init(name: String, socials: OrderedSet<Social.ID>) {
+            self.name = name
+            self.socials = socials
+        }
     }
     
-    public enum Section {
+    public enum Section: Int {
         case socials
         case presets
     }
@@ -159,6 +165,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
                 // if this is first thing user selects
                 if state.selectedPresets.count == 1 &&
                     state.selectedSocials.count == state.presets[id: presetID]!.socials.count {
+                    state.session = TapState(userProfile: state.profile)
                     return .merge(
                         Effect(value: .tap(.startP2P)),
                         Effect(value: .tap(.startBeacons))
@@ -222,11 +229,17 @@ public struct TapFeatureView: View {
     struct ViewState: Equatable {
         var profileSocials: [Social]
         var selectedSocials: Set<Social.ID>
+        var profilePresets: [TapFeatureState.Preset]
+        var selectedPresets: Set<TapFeatureState.Preset.ID>
+        var currentSection: TapFeatureState.Section
         var showTapSheet: Bool
         
         init(state: TapFeatureState) {
             self.profileSocials = state.profile.socials
             self.selectedSocials = state.selectedSocials
+            self.currentSection = state.currentSection
+            self.profilePresets = Array(state.presets)
+            self.selectedPresets = state.selectedPresets
             self.showTapSheet = state.showTapSheet
         }
     }
@@ -242,22 +255,54 @@ public struct TapFeatureView: View {
     @State private var gradientDegrees: Double = 0
     
     public var body: some View {
-        ScrollView {
-            SocialsGrid(
-                using: viewStore.profileSocials,
-                containsID: { viewStore.selectedSocials.contains($0) },
-                selectElement: { viewStore.send(.selectSocial($0)) },
-                deselectElement: { viewStore.send(.deselectSocial($0)) },
-                showGradientBorder: { viewStore.selectedSocials.contains($0) },
-                gradientDegrees: gradientDegrees,
-                textFromElement: Text.init,
-                imageFromElement: Image.init
+        SwipeTabView(
+            selection: viewStore.binding(
+                get: \.currentSection.rawValue,
+                send: { .goToSection(.init(rawValue: $0)!) }
             )
-                .onAppear {
-                    withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                        self.gradientDegrees = 360
-                    }
-                }
+        ) {
+            // socials
+            ScrollView {
+                SocialsGrid(
+                    using: viewStore.profileSocials,
+                    containsID: { viewStore.selectedSocials.contains($0) },
+                    selectElement: { viewStore.send(.selectSocial($0)) },
+                    deselectElement: { viewStore.send(.deselectSocial($0)) },
+                    showGradientBorder: { viewStore.selectedSocials.contains($0) },
+                    gradientDegrees: gradientDegrees,
+                    textFromElement: Text.init,
+                    imageFromElement: Image.init
+                )
+            }
+            .swipeTabItem {
+                Text("Socials")
+                    .bold()
+                    .foregroundColor(.blue)
+            }
+            
+            // presets
+            ScrollView {
+                SocialsGrid(
+                    using: viewStore.profilePresets,
+                    containsID: { viewStore.selectedPresets.contains($0) },
+                    selectElement: { viewStore.send(.selectPreset($0)) },
+                    deselectElement: { viewStore.send(.deselectPreset($0)) },
+                    showGradientBorder: { viewStore.selectedPresets.contains($0) },
+                    gradientDegrees: gradientDegrees,
+                    textFromElement: { Text($0.name) },
+                    imageFromElement: { _ in Image(systemName: "command.circle.fill") }
+                )
+            }
+            .swipeTabItem {
+                Text("Presets")
+                    .bold()
+                    .foregroundColor(.blue)
+            }
+        }
+        .onAppear {
+            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                self.gradientDegrees = 360
+            }
         }
         .backport.overlay(alignment: .bottom) {
             VStack {

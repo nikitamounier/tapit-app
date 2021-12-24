@@ -117,7 +117,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/pointfreeco/swift-composable-architecture.git",
-            .upToNextMajor(from: "0.21.0")
+            .upToNextMajor(from: "0.31.0")
         ),
         .package(
             url: "https://github.com/marmelroy/PhoneNumberKit",
