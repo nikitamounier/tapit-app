@@ -54,6 +54,10 @@ let package = Package(
             targets: ["HistoryFeature"]
         ),
         .library(
+            name: "ImageLibraryClient",
+            targets: ["ImageLibraryClient"]
+        ),
+        .library(
             name: "OpenSocialClient",
             targets: ["OpenSocialClient"]
         ),
