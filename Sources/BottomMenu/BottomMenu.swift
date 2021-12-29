@@ -7,10 +7,18 @@ public extension View {
         @ViewBuilder header: @escaping () -> HeaderContent,
         scrollingMain: () -> ScrollView<MainContent>
     ) -> some View {
+        let options: [BottomSheet.Options] = [
+            .appleScrollBehavior,
+            .noBottomPosition,
+            .backgroundBlur(effect: .systemThinMaterial),
+            .tapToDissmiss,
+            .swipeToDismiss,
+            .animation(SheetPosition.animation)
+        ]
         
-        self.bottomSheet(
+        return self.bottomSheet(
             bottomSheetPosition: sheetPosition,
-            options: [.noBottomPosition, .appleScrollBehavior, .backgroundBlur(effect: .systemThinMaterial), .tapToDissmiss, .swipeToDismiss, .animation(SheetPosition.animation)],
+            options: options,
             headerContent: header,
             mainContent: { scrollingMain().content }
         )
@@ -21,9 +29,18 @@ public extension View {
         @ViewBuilder header: @escaping () -> HeaderContent,
         @ViewBuilder main: @escaping () -> MainContent
     ) -> some View {
-        self.bottomSheet(
+        let options: [BottomSheet.Options] = [
+            .allowContentDrag,
+            .noBottomPosition,
+            .backgroundBlur(effect: .systemThinMaterial),
+            .tapToDissmiss,
+            .swipeToDismiss,
+            .animation(SheetPosition.animation)
+        ]
+        
+        return self.bottomSheet(
             bottomSheetPosition: sheetPosition,
-            options: [.noBottomPosition, .allowContentDrag, .backgroundBlur(effect: .systemThinMaterial), .tapToDissmiss, .swipeToDismiss, .animation(SheetPosition.animation)],
+            options: options,
             headerContent: header,
             mainContent: main
         )
@@ -35,7 +52,11 @@ public enum SheetPosition: CGFloat, CaseIterable {
     case middle = 0.4
     case hidden = 0
     
-    static let animation: Animation = .spring(response: 0.3, dampingFraction: 0.75, blendDuration: 1)
+    static let animation: Animation = .spring(
+        response: 0.3,
+        dampingFraction: 0.75,
+        blendDuration: 1
+    )
 }
 
 struct BottomMenu_Previews: PreviewProvider {
