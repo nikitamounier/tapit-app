@@ -22,6 +22,10 @@ let package = Package(
             targets: ["BiometricsClient"]
         ),
         .library(
+            name: "BottomSheet",
+            targets: ["BottomSheet"]
+        ),
+        .library(
             name: "CombineHelpers",
             targets: ["CombineHelpers"]
         ),
@@ -117,6 +121,10 @@ let package = Package(
             name: "UserProfileFeature",
             targets: ["UserProfileFeature"]
         ),
+        .library(
+            name: "VisualEffects",
+            targets: ["VisualEffects"]
+        ),
     ],
     dependencies: [
         .package(
@@ -177,6 +185,10 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
+        ),
+        .target(
+            name: "BottomSheet",
+            dependencies: []
         ),
         .target(
             name: "CombineHelpers",
@@ -428,6 +440,10 @@ let package = Package(
                 "UserProfileFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
+        ),
+        .target(
+            name: "VisualEffects",
+            dependencies: []
         ),
     ]
 )
