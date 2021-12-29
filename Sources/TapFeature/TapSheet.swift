@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import SharedModels
+import Styleguide
 import SwiftUI
 
 struct TapSheet: View {
@@ -10,30 +11,59 @@ struct TapSheet: View {
         }
     }
     
-    private let store: Store<TapFeatureState, TapFeatureAction>
+    private let store: Store<ViewState, TapFeatureAction>
     @ObservedObject private var viewStore: ViewStore<ViewState, TapFeatureAction>
     
-    init(store: Store<TapFeatureState, TapFeatureAction>) {
+    init(store: Store<ViewState, TapFeatureAction>) {
         self.store = store
-        self.viewStore = ViewStore(store.scope(state: ViewState.init))
+        self.viewStore = ViewStore(store)
     }
     
-    @State private var rotation: Double = 40
+    @State private var rotation: Double = 60
     
     var body: some View {
         switch viewStore.receivedProfile {
         case .none:
-            ZStack {
-                HandPhone()
-                    .rotationEffect(.degrees(180 - rotation), anchor: .trailing)
-                HandPhone()
-                    .rotationEffect(.degrees(-rotation), anchor: .trailing)
+            GeometryReader { geo in
+                ZStack {
+                    HStack {
+                        HandPhone()
+                            .fill(.tapGradient(startPoint: .topLeading, endPoint: .trailing))
+                            .aspectRatio(4, contentMode: .fit)
+                            .offset(x: 0, y: 30)
+                            .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+                            .rotationEffect(.degrees(rotation), anchor: .leading)
+                            .frame(width: geo.size.width / 2 + 30, alignment: .leading)
+                        Spacer()
+                    }
+                    HStack {
+                        Spacer()
+                        HandPhone()
+                            .fill(.tapGradient(startPoint: .topLeading, endPoint: .trailing))
+                            .aspectRatio(4, contentMode: .fit)
+                            .offset(x: 0, y: 30)
+                            .rotation3DEffect(.degrees(180), axis: (x: 1, y: 0, z: 0))
+                            .rotationEffect(.degrees(rotation), anchor: .trailing)
+                            .frame(width: geo.size.width / 2 + 30, alignment: .trailing)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
             .onAppear {
-                withAnimation(.easeOut(duration: 1.5)) {
+                withAnimation(
+                    .interpolatingSpring(
+                        mass: 0.1,
+                        stiffness: 1,
+                        damping: 1,
+                        initialVelocity: 0.9
+                    ).delay(0.25)
+                        
+                ) {
                     self.rotation = 0
                 }
             }
+            .drawingGroup()
+            .navigationBarHidden(true)
         case .some:
             EmptyView()
         }
