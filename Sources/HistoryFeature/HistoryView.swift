@@ -213,9 +213,6 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
                     let profileWords = profile.name
                         .localizedLowercase
                         .split(separator: " ")
-                  
-                  // john, doe
-                  // johhny, appleseed
                     
                     if words[0].localizedLowercase == profileWords[0].localizedLowercase {
                         result[.firstWordMatch]!.append(profile.id)
@@ -239,7 +236,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
                             
                         } else if profile.socials.contains(where: { social in
                             switch social {
-                            case .instagram(let urlComp), .snapchat(let urlComp), .twitter(let urlComp), .facebook(let urlComp), .reddit(let urlComp), .tikTok(let urlComp), .weChat(let urlComp), .github(let urlComp), .linkedIn(let urlComp):
+                            case let .instagram(urlComp), let .snapchat(urlComp), let .twitter(urlComp), let .facebook(urlComp), let .reddit(urlComp), let .tikTok(urlComp), let .weChat(urlComp), let .github(urlComp), let .linkedIn(urlComp):
                                 return urlComp.path.localizedCaseInsensitiveContains(word)
                                 
                             case let .address(address):
@@ -259,7 +256,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             
             state.searchResults = SearchResult.allCases
                 .reduce(into: [SentProfile.ID]()) { array, classification in
-                    array.append(contentsOf: resultBuckets[classification] ?? [])
+                    array.append(contentsOf: resultBuckets[classification, default: []])
                 }
             return .none
             
@@ -321,7 +318,6 @@ public struct HistoryView: View {
     }
 }
 
-@available(iOSApplicationExtension, unavailable)
 struct HistoryView_Previews: PreviewProvider {
     static var previews: some View {
         HistoryView(
