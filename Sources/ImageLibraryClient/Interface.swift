@@ -10,7 +10,7 @@ public struct ImageLibraryClient {
         self.openImagePicker = openImagePicker
     }
     
-    public enum Error {
+    public enum Error: Swift.Error {
         case noImagePicked
         case couldNotLoadImage
     }

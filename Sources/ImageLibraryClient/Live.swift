@@ -22,9 +22,9 @@ public extension ImageLibraryClient {
 }
 
 private final class Delegate: PHPickerViewControllerDelegate {
-    let promise: (Result<ProfileImage, ImageLibraryClient.Error) -> Void
+    let promise: (Result<ProfileImage, ImageLibraryClient.Error>) -> Void
     
-    init(with promise: @escaping (Result<ProfileImage, ImageLibraryClient.Error) -> Void) {
+    init(with promise: @escaping (Result<ProfileImage, ImageLibraryClient.Error>) -> Void) {
         self.promise = promise
     }
     
@@ -39,14 +39,14 @@ private final class Delegate: PHPickerViewControllerDelegate {
             return
         }
         
-        image.itemProvider.loadObject(ofClass: UIImage.self) { image, error in
+        image.itemProvider.loadObject(ofClass: UIImage.self) { [unowned self] image, error in
             guard error != nil, let image = image as? UIImage else {
-                promise(.failure(.couldNotLoadImage))
+                self.promise(.failure(.couldNotLoadImage))
                 return
             }
             
             let profileImage = ProfileImage(image)
-            promise(.success(profileImage))
+            self.promise(.success(profileImage))
         }
     }
 }
