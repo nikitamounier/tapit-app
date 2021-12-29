@@ -22,7 +22,7 @@ public struct TapFeatureState: Equatable {
     public var selectedSocials: Set<Social.ID>
     public var selectedPresets: Set<Preset.ID>
     public var showTapSheet: Bool
-
+    
     
     public var session: TapState?
     public var receivedProfile: UserProfile?
@@ -194,15 +194,10 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
                 return .none
                 
             case .tapButtonTapped:
-                guard !state.selectedSocials.isEmpty else { return .none }
-                
-                let profile = UserProfile(
-                    id: state.profile.id,
-                    name: state.profile.name,
-                    profileImage: state.profile.profileImage,
-                    socials: state.profile.socials.filter { state.selectedSocials.contains($0.id) }
-                )
-                state.session = TapState(userProfile: profile)
+                state.session?.userProfile.socials.removeAll { profileSocial in
+                    !state.selectedSocials.contains(profileSocial.id)
+                }
+                state.showTapSheet = true
                 
                 return Effect(value: .tap(.tapButtonTapped))
                 
@@ -253,6 +248,7 @@ public struct TapFeatureView: View {
     }
     
     @State private var gradientDegrees: Double = 0
+    @State private var gradientAlreadySet: Bool = false
     
     public var body: some View {
         SwipeTabView(
@@ -279,6 +275,14 @@ public struct TapFeatureView: View {
                     .bold()
                     .foregroundColor(.blue)
             }
+            .onPageAppear {
+                withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                    if !gradientAlreadySet {
+                        self.gradientDegrees = 360
+                        self.gradientAlreadySet = true
+                    }
+                }
+            }
             
             // presets
             ScrollView {
@@ -299,9 +303,9 @@ public struct TapFeatureView: View {
                     .foregroundColor(.blue)
             }
         }
-        .onAppear {
-            withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-                self.gradientDegrees = 360
+        .onDisappear {
+            withAnimation(.default) { // `nil` doesn't stop the .repeatForever(), but this does
+                self.gradientDegrees = 0
             }
         }
         .backport.overlay(alignment: .bottom) {
@@ -318,13 +322,13 @@ public struct TapFeatureView: View {
                         LinearGradient(gradient: .tapGradient, startPoint: .topLeading, endPoint: .trailing)
                     }
                     .clipShape(Capsule())
-                    .transition(.move(edge: .bottom))
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .animation(.interactiveSpring(), value: viewStore.selectedSocials.isEmpty)
         }
         .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: TapFeatureAction.tapSheetShown)) {
-            TapSheet(store: store)
+            TapSheet(store: store.scope(state: TapSheet.ViewState.init))
         }
     }
 }
