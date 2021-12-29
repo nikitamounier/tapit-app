@@ -22,8 +22,8 @@ let package = Package(
             targets: ["BiometricsClient"]
         ),
         .library(
-            name: "BottomSheet",
-            targets: ["BottomSheet"]
+            name: "BottomMenu",
+            targets: ["BottomMenu"]
         ),
         .library(
             name: "CombineHelpers",
@@ -157,6 +157,11 @@ let package = Package(
             url: "https://github.com/xmartlabs/PagerTabStripView",
             .upToNextMajor(from: "3.1.1")
         ),
+        .package(
+            name: "BottomSheet",
+            url: "https://github.com/LucasMucGH/BottomSheet",
+            .branch("main")
+        ),
     ],
     targets: [
         .target(
@@ -187,8 +192,10 @@ let package = Package(
             ]
         ),
         .target(
-            name: "BottomSheet",
-            dependencies: []
+            name: "BottomMenu",
+            dependencies: [
+                .product(name: "BottomSheet", package: "BottomSheet")
+            ]
         ),
         .target(
             name: "CombineHelpers",
@@ -426,6 +433,7 @@ let package = Package(
         .target(
             name: "UserProfileFeature",
             dependencies: [
+                "BottomMenu",
                 "FeedbackGeneratorClient",
                 "ImageLibraryClient",
                 "OpenSocialClient",

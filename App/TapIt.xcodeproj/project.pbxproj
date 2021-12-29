@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E4119CCA277286FE0056E6DD /* UserProfileFeature in Frameworks */ = {isa = PBXBuildFile; productRef = E4119CC9277286FE0056E6DD /* UserProfileFeature */; };
 		E4612FDB26977117004B8F2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4612FDA26977117004B8F2A /* ContentView.swift */; };
 		E4685EDE2772856800393DDA /* HistoryFeaturePreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4685EDD2772856800393DDA /* HistoryFeaturePreviewApp.swift */; };
 		E4685EE22772856A00393DDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4685EE12772856A00393DDA /* Assets.xcassets */; };
@@ -16,6 +15,7 @@
 		E4685EF2277286C800393DDA /* UserProfileFeaturePreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4685EF1277286C800393DDA /* UserProfileFeaturePreviewApp.swift */; };
 		E4685EF6277286C900393DDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4685EF5277286C900393DDA /* Assets.xcassets */; };
 		E4685EF9277286C900393DDA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4685EF8277286C900393DDA /* Preview Assets.xcassets */; };
+		E473E145277CFFD1001729DF /* UserProfileFeature in Frameworks */ = {isa = PBXBuildFile; productRef = E473E144277CFFD1001729DF /* UserProfileFeature */; };
 		E49AA45F267FBFA700D3F456 /* AppFeature in Frameworks */ = {isa = PBXBuildFile; productRef = E49AA45E267FBFA700D3F456 /* AppFeature */; };
 		E4AC9A80277250F1009101AF /* TapFeaturePreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AC9A7F277250F1009101AF /* TapFeaturePreviewApp.swift */; };
 		E4AC9A84277250F2009101AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4AC9A83277250F2009101AF /* Assets.xcassets */; };
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4119CCA277286FE0056E6DD /* UserProfileFeature in Frameworks */,
+				E473E145277CFFD1001729DF /* UserProfileFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,7 +232,7 @@
 			);
 			name = UserProfileFeaturePreview;
 			packageProductDependencies = (
-				E4119CC9277286FE0056E6DD /* UserProfileFeature */,
+				E473E144277CFFD1001729DF /* UserProfileFeature */,
 			);
 			productName = UserProfileFeaturePreview;
 			productReference = E4685EEF277286C800393DDA /* UserProfileFeaturePreview.app */;
@@ -796,13 +796,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E4119CC9277286FE0056E6DD /* UserProfileFeature */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = UserProfileFeature;
-		};
 		E4685EE92772857B00393DDA /* HistoryFeature */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = HistoryFeature;
+		};
+		E473E144277CFFD1001729DF /* UserProfileFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UserProfileFeature;
 		};
 		E49AA45E267FBFA700D3F456 /* AppFeature */ = {
 			isa = XCSwiftPackageProductDependency;
