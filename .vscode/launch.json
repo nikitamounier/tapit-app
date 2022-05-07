@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Test TapIt",
+            "program": "/Applications/Xcode.app/Contents/Developer/usr/bin/xctest",
+            "args": [
+                ".build/debug/TapItPackageTests.xctest"
+            ],
+            "cwd": "${workspaceFolder:TapIt}",
+            "preLaunchTask": "swift: Build All"
+        }
+    ]
+}

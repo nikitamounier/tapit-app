@@ -2,6 +2,7 @@ import BeaconClient
 import ComposableArchitecture
 import FeedbackGeneratorClient
 import IdentifiedCollections
+import Inject
 import OrientationClient
 import OrderedCollections
 import P2PClient
@@ -42,6 +43,7 @@ public struct TapFeatureState: Equatable {
     public enum Section: Int {
         case socials
         case presets
+        case helloThere
     }
     
     public init(

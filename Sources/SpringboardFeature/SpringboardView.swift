@@ -1,6 +1,11 @@
 import ComposableArchitecture
 import SharedModels
+import SwiftUI
+import SwiftUIHelpers
 import UniformTypeIdentifiers
+import struct Algorithms.IndexedCollection
+
+
 
 public struct SpringboardState: Equatable {
     public var socials: [Social]
@@ -39,5 +44,45 @@ public let springboardReducer = Reducer<SpringboardState, SpringboardAction, Spr
 }
 
 public struct SpringboardView: View {
+    @ObservedObject var viewStore: ViewStore<SpringboardState, SpringboardAction>
+    private let store: Store<SpringboardState, SpringboardAction>
     
+    public init(store: Store<SpringboardState, SpringboardAction>) {
+        self.store = store
+        self.viewStore = ViewStore(store)
+    }
+    
+    private let columns: [GridItem] = [
+        .init(.adaptive(minimum: 30, maximum: .infinity))
+    ]
+    
+    public var body: some View {
+        VStack {
+            Text("My Socials")
+                .font(.title3)
+            Text("Tap to edit, hold and drag to move.")
+                .font(.subheadline)
+            LazyVGrid(columns: columns) {
+                ForEach(viewStore.socials.indexed(), id: \.1) { index, social in
+                    Image(social: social)
+                        .backport.overlay(alignment: .topTrailing) {
+                            if viewStore.isEditing {
+                                Button(action: { viewStore.send(.removeSocial(index: index)) }) {
+                                    Image(systemName: "x.circle")
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        }
+                        .wobble(amount: 50)
+                        
+                }
+            }
+            
+        }
+        .eraseToAnyView()
+    }
+
+    #if DEBUG
+    @ObservedObject var iO = injectionObserver
+    #endif
 }

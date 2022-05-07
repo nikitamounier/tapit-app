@@ -1,4 +1,4 @@
-import UserProfileFeature
+import SpringboardFeature
 import SwiftUI
 
 @main

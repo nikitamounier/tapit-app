@@ -162,6 +162,11 @@ let package = Package(
             url: "https://github.com/LucasMucGH/BottomSheet",
             .branch("main")
         ),
+        .package(
+            name: "Inject",
+            url: "https://github.com/krzysztofzablocki/Inject.git",
+            from: "1.0.2"
+        )
     ],
     targets: [
         .target(
@@ -194,6 +199,7 @@ let package = Package(
         .target(
             name: "BottomMenu",
             dependencies: [
+                "SwiftUIHelpers",
                 .product(name: "BottomSheet", package: "BottomSheet")
             ]
         ),
@@ -345,7 +351,9 @@ let package = Package(
             name: "SpringboardFeature",
             dependencies: [
                 "SharedModels",
+                "SwiftUIHelpers",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Algorithms", package: "swift-algorithms"),
             ]
         ),
         .testTarget(
@@ -421,6 +429,7 @@ let package = Package(
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Inject", package: "Inject"),
             ]
         ),
         .testTarget(

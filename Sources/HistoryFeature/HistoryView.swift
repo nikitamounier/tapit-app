@@ -315,7 +315,12 @@ public struct HistoryView: View {
             }
             .navigationTitle(Text("History"))
         }
+        .eraseToAnyView()
     }
+
+    #if DEBUG
+    @ObservedObject var iO = injectionObserver
+    #endif
 }
 
 struct HistoryView_Previews: PreviewProvider {

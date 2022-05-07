@@ -1,29 +1,55 @@
 import BottomSheet
 import SwiftUI
+import SwiftUIHelpers
 
-public extension View {
+public enum SheetPosition: CGFloat, CaseIterable {
+    case top = 0.975
+    case middle = 0.4
+    case hidden = 0
+    
+    static let animation: Animation = .spring(
+        response: 0.3,
+        dampingFraction: 0.75,
+        blendDuration: 1
+    )
+}
+
+public extension Backport where Content: View {
+    @ViewBuilder
     func bottomMenu<HeaderContent: View, MainContent: View>(
         sheetPosition: Binding<SheetPosition>,
         @ViewBuilder header: @escaping () -> HeaderContent,
         scrollingMain: () -> ScrollView<MainContent>
     ) -> some View {
-        let options: [BottomSheet.Options] = [
-            .appleScrollBehavior,
-            .noBottomPosition,
-            .backgroundBlur(effect: .systemThinMaterial),
-            .tapToDissmiss,
-            .swipeToDismiss,
-            .animation(SheetPosition.animation)
-        ]
-        
-        return self.bottomSheet(
-            bottomSheetPosition: sheetPosition,
-            options: options,
-            headerContent: header,
-            mainContent: { scrollingMain().content }
-        )
+        if #available(iOS 15, *) {
+            self.content
+        } else {
+            let options: [BottomSheet.Options] = [
+                .appleScrollBehavior,
+                .noBottomPosition,
+                .backgroundBlur(effect: .systemThinMaterial),
+                .tapToDissmiss,
+                .swipeToDismiss,
+                .animation(SheetPosition.animation),
+            ]
+            
+            self.content.bottomSheet(
+                bottomSheetPosition: sheetPosition,
+                options: options,
+                headerContent: header,
+                mainContent: { scrollingMain().content }
+            )
+            
+            self.content.bottomSheet(
+                bottomSheetPosition: sheetPosition,
+                options: options,
+                headerContent: header,
+                mainContent: { scrollingMain().content }
+            )
+        }
     }
     
+    @ViewBuilder
     func bottomMenu<HeaderContent: View, MainContent: View>(
         sheetPosition: Binding<SheetPosition>,
         @ViewBuilder header: @escaping () -> HeaderContent,
@@ -38,7 +64,7 @@ public extension View {
             .animation(SheetPosition.animation)
         ]
         
-        return self.bottomSheet(
+        self.content.bottomSheet(
             bottomSheetPosition: sheetPosition,
             options: options,
             headerContent: header,
@@ -47,17 +73,17 @@ public extension View {
     }
 }
 
-public enum SheetPosition: CGFloat, CaseIterable {
-    case top = 0.975
-    case middle = 0.4
-    case hidden = 0
-    
-    static let animation: Animation = .spring(
-        response: 0.3,
-        dampingFraction: 0.75,
-        blendDuration: 1
-    )
-}
+
+@available(iOS 15, *)
+
+
+
+
+
+
+
+
+
 
 struct BottomMenu_Previews: PreviewProvider {
     struct Preview: View {
@@ -77,7 +103,7 @@ struct BottomMenu_Previews: PreviewProvider {
                         showSheet = true
                     }
             }
-            .bottomMenu(sheetPosition: $sheetPosition, header: {
+            .backport.bottomMenu(sheetPosition: $sheetPosition, header: {
                 Text("Hello there")
             }, scrollingMain: {
                 ScrollView {
@@ -92,7 +118,12 @@ struct BottomMenu_Previews: PreviewProvider {
                     }
                 }
             })
+            .eraseToAnyView()
         }
+
+        #if DEBUG
+        @ObservedObject var iO = injectionObserver
+        #endif
     }
     
     static var previews: some View {

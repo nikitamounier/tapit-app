@@ -16,7 +16,12 @@ public struct VisualEffectBlur<Content: View>: View {
     public var body: some View {
         Representable(blurStyle: blurStyle, vibrancyStyle: vibrancyStyle, content: ZStack { content })
             .accessibility(hidden: Content.self == EmptyView.self)
+        .eraseToAnyView()
     }
+
+    #if DEBUG
+    @ObservedObject var iO = injectionObserver
+    #endif
 }
 
 // MARK: - Representable
@@ -95,7 +100,12 @@ struct BackgroundBlur: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(VisualEffectBlur(blurStyle: blurStyle, vibrancyStyle: vibrancyStyle, content: { EmptyView() }))
+        .eraseToAnyView()
     }
+
+    #if DEBUG
+    @ObservedObject var iO = injectionObserver
+    #endif
 }
 
 public extension View {

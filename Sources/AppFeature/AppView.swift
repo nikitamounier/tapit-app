@@ -21,7 +21,12 @@ public struct AppView: View {
                 )
             )
         )
+        .eraseToAnyView()
     }
+
+    #if DEBUG
+    @ObservedObject var iO = injectionObserver
+    #endif
 }
 
 struct AppView_Previews: PreviewProvider {

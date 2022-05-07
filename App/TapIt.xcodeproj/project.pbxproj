@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E448E9B727FC727F001BF509 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = E448E9B627FC727F001BF509 /* Inject */; };
 		E4612FDB26977117004B8F2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4612FDA26977117004B8F2A /* ContentView.swift */; };
 		E4685EDE2772856800393DDA /* HistoryFeaturePreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4685EDD2772856800393DDA /* HistoryFeaturePreviewApp.swift */; };
 		E4685EE22772856A00393DDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4685EE12772856A00393DDA /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 		E4AC9A84277250F2009101AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4AC9A83277250F2009101AF /* Assets.xcassets */; };
 		E4AC9A87277250F2009101AF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4AC9A86277250F2009101AF /* Preview Assets.xcassets */; };
 		E4AC9A8D27725169009101AF /* TapFeature in Frameworks */ = {isa = PBXBuildFile; productRef = E4AC9A8C27725169009101AF /* TapFeature */; };
+		E4D0796C27A88ACF00B1C736 /* SpringboardFeature in Frameworks */ = {isa = PBXBuildFile; productRef = E4D0796B27A88ACF00B1C736 /* SpringboardFeature */; };
 		E4DFE932267FBD7900F21A5B /* TapItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DFE931267FBD7900F21A5B /* TapItApp.swift */; };
 		E4DFE936267FBD7A00F21A5B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4DFE935267FBD7A00F21A5B /* Assets.xcassets */; };
 		E4DFE939267FBD7A00F21A5B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4DFE938267FBD7A00F21A5B /* Preview Assets.xcassets */; };
@@ -61,6 +63,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E473E145277CFFD1001729DF /* UserProfileFeature in Frameworks */,
+				E4D0796C27A88ACF00B1C736 /* SpringboardFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +72,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4AC9A8D27725169009101AF /* TapFeature in Frameworks */,
+				E448E9B727FC727F001BF509 /* Inject in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,6 +237,7 @@
 			name = UserProfileFeaturePreview;
 			packageProductDependencies = (
 				E473E144277CFFD1001729DF /* UserProfileFeature */,
+				E4D0796B27A88ACF00B1C736 /* SpringboardFeature */,
 			);
 			productName = UserProfileFeaturePreview;
 			productReference = E4685EEF277286C800393DDA /* UserProfileFeaturePreview.app */;
@@ -253,6 +258,7 @@
 			name = TapFeaturePreview;
 			packageProductDependencies = (
 				E4AC9A8C27725169009101AF /* TapFeature */,
+				E448E9B627FC727F001BF509 /* Inject */,
 			);
 			productName = TapFeaturePreview;
 			productReference = E4AC9A7D277250F1009101AF /* TapFeaturePreview.app */;
@@ -310,6 +316,9 @@
 				Base,
 			);
 			mainGroup = E4DFE925267FBD7900F21A5B;
+			packageReferences = (
+				E448E9B527FC727F001BF509 /* XCRemoteSwiftPackageReference "Inject" */,
+			);
 			productRefGroup = E4DFE92F267FBD7900F21A5B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -640,6 +649,10 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = (
+					"-Xlinker",
+					"-interposable",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -795,7 +808,23 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		E448E9B527FC727F001BF509 /* XCRemoteSwiftPackageReference "Inject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzysztofzablocki/Inject";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		E448E9B627FC727F001BF509 /* Inject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E448E9B527FC727F001BF509 /* XCRemoteSwiftPackageReference "Inject" */;
+			productName = Inject;
+		};
 		E4685EE92772857B00393DDA /* HistoryFeature */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = HistoryFeature;
@@ -811,6 +840,10 @@
 		E4AC9A8C27725169009101AF /* TapFeature */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TapFeature;
+		};
+		E4D0796B27A88ACF00B1C736 /* SpringboardFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpringboardFeature;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

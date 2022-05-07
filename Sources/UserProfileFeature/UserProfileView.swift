@@ -11,8 +11,8 @@ import SwiftUI
 
 public struct UserProfileState: Equatable {
     public var profile: UserProfile
-    public var springboard: SpringboardState
     public var profilePictureEdit: PFPEditState?
+    public var springboard: SpringboardState
     public var openSocial: OpenSocialState
     
     public init(
@@ -133,7 +133,12 @@ public struct UserProfileView: View {
     
     public var body: some View {
         EmptyView()
+        .eraseToAnyView()
     }
+
+    #if DEBUG
+    @ObservedObject var iO = injectionObserver
+    #endif
 }
 
 extension CasePath where Root == UserProfileAction, Value == SpringboardAction {
