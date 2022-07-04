@@ -6,8 +6,8 @@ public extension OpenSocialClient {
     )
     
     #if DEBUG
-    static let failing = Self(
-        open: { _, _ in .failing("\(Self.self).open is unimplemented")}
+    static let unimplemented = Self(
+        open: { _, _ in .unimplemented("\(Self.self).open")}
     )
     #endif
 }

@@ -8,8 +8,8 @@ public extension BiometricsClient {
 
 #if DEBUG
 public extension BiometricsClient {
-    static let failing = Self(
-        authenticate: { .failing("\(Self.self).authenticate is unimplemented")}
+    static let unimplemented = Self(
+        authenticate: { .unimplemented("\(Self.self).authenticate")}
     )
 }
 #endif

@@ -38,41 +38,41 @@ public extension ConnectionClient {
 
 #if DEBUG
 public extension P2PClient {
-    static let failing = Self(
-        browser: .failing,
-        listener: .failing,
-        connection: .failing
+    static let unimplemented = Self(
+        browser: .unimplemented,
+        listener: .unimplemented,
+        connection: .unimplemented
     )
 }
 
 public extension BrowserClient {
-    static let failing = Self(
-        create: { _, _ in .failing("\(Self.self).create is unimplemented") },
-        startBrowsing: { _ in .failing("\(Self.self).startBrowsing is unimplemented") },
-        stopBrowsing: { _ in .failing("\(Self.self).stopBrowsing is unimplemented") }
+    static let unimplemented = Self(
+        create: { _, _ in .unimplemented("\(Self.self).create") },
+        startBrowsing: { _ in .unimplemented("\(Self.self).startBrowsing") },
+        stopBrowsing: { _ in .unimplemented("\(Self.self).stopBrowsing") }
     )
 }
 
 public extension ListenerClient {
-    static let failing = Self(
-        create: { _, _, _ in .failing("\(Self.self).create is unimplemented") },
-        startListening: { _ in .failing("\(Self.self).startListening is unimplemented") },
-        stopListening: { _ in .failing("\(Self.self).stopListening is unimplemented") },
+    static let unimplemented = Self(
+        create: { _, _, _ in .unimplemented("\(Self.self).create") },
+        startListening: { _ in .unimplemented("\(Self.self).startListening") },
+        stopListening: { _ in .unimplemented("\(Self.self).stopListening") },
         uuid: {
-            XCTFail("\(Self.self).uuid is unimplemented")
+            XCTFail("\(Self.self).uuid")
             return UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
         }
     )
 }
 
 public extension ConnectionClient {
-    static let failing = Self(
-        create: { _, _ in .failing("\(Self.self).create is unimplemented") },
-        startConnection: { _ in .failing("\(Self.self).startConnection is unimplemented") },
-        stopConnection: { _ in .failing("\(Self.self).stopConnection is unimplemented") },
-        sendMessage: { _, _, _ in .failing("\(Self.self).sendMessage is unimplemented") },
+    static let unimplemented = Self(
+        create: { _, _ in .unimplemented("\(Self.self).create") },
+        startConnection: { _ in .unimplemented("\(Self.self).startConnection") },
+        stopConnection: { _ in .unimplemented("\(Self.self).stopConnection") },
+        sendMessage: { _, _, _ in .unimplemented("\(Self.self).sendMessage") },
         connectionExists: { _ in
-            XCTFail("\(Self.self).connectionExists is unimplemented")
+            XCTFail("\(Self.self).connectionExists")
             return false
             
         }

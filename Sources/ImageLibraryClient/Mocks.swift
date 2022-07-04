@@ -6,8 +6,8 @@ public extension ImageLibraryClient {
     )
     
     #if DEBUG
-    static let failing = Self(
-        openImagePicker: { .failing("\(Self.self).openImagePicker is unimplemented.") }
+    static let unimplemented = Self(
+        openImagePicker: { .unimplemented("\(Self.self).openImagePicker.") }
     )
     #endif
 }

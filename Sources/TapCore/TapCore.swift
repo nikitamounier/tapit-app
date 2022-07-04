@@ -67,7 +67,7 @@ public enum TapAction: Equatable {
     case startReconnectionTimer
     case timerResponse
     case pingExistingConnections
-    case killFailingConnections
+    case killunimplementedConnections
     case attemptNewConnections
     
     case cancelConnection(NWConnection)
@@ -496,7 +496,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
     case .timerResponse:
         return .merge(
             Effect(value: .pingExistingConnections),
-            Effect(value: .killFailingConnections),
+            Effect(value: .killunimplementedConnections),
             Effect(value: .attemptNewConnections)
         )
         
@@ -505,7 +505,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             state.foundConnections.keys.map { env.p2p.connection.sendMessage($0.endpoint, .ping, Data()).fireAndForget() }
         )
         
-    case .killFailingConnections:
+    case .killunimplementedConnections:
         return .merge(
             state.foundConnections.keys
                 .filter {

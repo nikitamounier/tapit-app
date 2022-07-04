@@ -67,10 +67,10 @@ class HistoryFeatureTests: XCTestCase {
             initialState: HistoryState(profiles: [firstProfile, secondProfile, thirdProfile]),
             reducer: historyReducer,
             environment: HistoryEnvironment(
-                mainQueue: .failing,
-                feedbackGenerator: .failing,
-                isSentProfileExpired: .failing,
-                openSocial: .failing,
+                mainQueue: .unimplemented,
+                feedbackGenerator: .unimplemented,
+                isSentProfileExpired: .unimplemented,
+                openSocial: .unimplemented,
                 openAppSettings: { XCTFail() }
             )
         )
@@ -110,10 +110,10 @@ class HistoryFeatureTests: XCTestCase {
             ),
             reducer: historyReducer,
             environment: HistoryEnvironment(
-                mainQueue: .failing,
-                feedbackGenerator: .failing,
-                isSentProfileExpired: .failing,
-                openSocial: .failing,
+                mainQueue: .unimplemented,
+                feedbackGenerator: .unimplemented,
+                isSentProfileExpired: .unimplemented,
+                openSocial: .unimplemented,
                 openAppSettings: { XCTFail() }
             )
         )
@@ -156,10 +156,10 @@ class HistoryFeatureTests: XCTestCase {
             ),
             reducer: historyReducer,
             environment: HistoryEnvironment(
-                mainQueue: .failing,
-                feedbackGenerator: .failing,
-                isSentProfileExpired: .failing,
-                openSocial: .failing,
+                mainQueue: .unimplemented,
+                feedbackGenerator: .unimplemented,
+                isSentProfileExpired: .unimplemented,
+                openSocial: .unimplemented,
                 openAppSettings: { XCTFail() }
             )
         )
@@ -204,10 +204,10 @@ class HistoryFeatureTests: XCTestCase {
             initialState: HistoryState(profiles: [firstProfile, secondProfile, thirdProfile]),
             reducer: historyReducer,
             environment: HistoryEnvironment(
-                mainQueue: .failing,
-                feedbackGenerator: .failing,
-                isSentProfileExpired: .failing,
-                openSocial: .failing,
+                mainQueue: .unimplemented,
+                feedbackGenerator: .unimplemented,
+                isSentProfileExpired: .unimplemented,
+                openSocial: .unimplemented,
                 openAppSettings: { XCTFail() }
             )
         )
@@ -229,9 +229,9 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .immediate,
-                feedbackGenerator: .failing,
-                isSentProfileExpired: .failing,
-                openSocial: .failing,
+                feedbackGenerator: .unimplemented,
+                isSentProfileExpired: .unimplemented,
+                openSocial: .unimplemented,
                 openAppSettings: { XCTFail() }
             )
         )
@@ -290,9 +290,9 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .immediate,
-                feedbackGenerator: .failing,
-                isSentProfileExpired: .failing,
-                openSocial: .failing,
+                feedbackGenerator: .unimplemented,
+                isSentProfileExpired: .unimplemented,
+                openSocial: .unimplemented,
                 openAppSettings: { XCTFail() }
             )
         )
@@ -358,9 +358,9 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: scheduler.eraseToAnyScheduler(),
-                feedbackGenerator: .failing,
-                isSentProfileExpired: .failing,
-                openSocial: .failing,
+                feedbackGenerator: .unimplemented,
+                isSentProfileExpired: .unimplemented,
+                openSocial: .unimplemented,
                 openAppSettings: { XCTFail() }
             )
         )

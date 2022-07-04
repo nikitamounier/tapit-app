@@ -368,7 +368,7 @@ struct TapFeatureView_Previews: PreviewProvider {
             store: .init(
                 initialState: .init(profile: .mock),
                 reducer: tapFeatureReducer,
-                environment: TapFeatureEnvironment(mainQueue: .immediate, beaconQueue: .failing, beacon: .failing, p2p: .failing, p2pEncodeDecode: .noop, feedbackGenerator: .failing, proximitySensor: .failing, orientation: .failing, dispatchNow: {.distantFuture}, openAppSettings: {})
+                environment: TapFeatureEnvironment(mainQueue: .immediate, beaconQueue: .unimplemented, beacon: .unimplemented, p2p: .unimplemented, p2pEncodeDecode: .noop, feedbackGenerator: .unimplemented, proximitySensor: .unimplemented, orientation: .unimplemented, dispatchNow: {.distantFuture}, openAppSettings: {})
             )
         )
     }

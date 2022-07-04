@@ -73,16 +73,10 @@ public struct SpringboardView: View {
                                 }
                             }
                         }
-                        .wobble(amount: 50)
-                        
+                        .wobble(viewStore.isEditing, amount: 50)
                 }
             }
             
         }
-        .eraseToAnyView()
     }
-
-    #if DEBUG
-    @ObservedObject var iO = injectionObserver
-    #endif
 }

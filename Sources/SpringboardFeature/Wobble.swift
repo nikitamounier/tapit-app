@@ -9,7 +9,7 @@ struct Wobble: GeometryEffect {
     func effectValue(size: CGSize) -> ProjectionTransform {
         ProjectionTransform(
             CGAffineTransform(
-                translationX: condition? amount * sin(animatableData * .pi * CGFloat(shakesPerUnit)) : 0,
+                translationX: condition ? amount * sin(animatableData * .pi * CGFloat(shakesPerUnit)) : 0,
                 y: 0
             )
         )

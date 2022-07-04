@@ -8,9 +8,9 @@ public extension BeaconClient {
     )
     
     #if DEBUG
-    static let failing = Self(
-        detector: .failing,
-        advertiser: .failing
+    static let unimplemented = Self(
+        detector: .unimplemented,
+        advertiser: .unimplemented
     )
     #endif
 }
@@ -26,20 +26,20 @@ public extension AdvertiserClient {
     )
     
     #if DEBUG
-    static let failing = Self(
-        createBeaconAdvertiser: { _, _, _, _, _ in .failing("\(Self.self).createBeaconAdvertiser is unimplemented") },
-        startAdvertisingBeacon: { _ in .failing("\(Self.self).startBeaconAdvertiser is unimplemented") },
-        stopAdvertisingBeacon: { _ in .failing("\(Self.self).stopAdvertisingBeacon is unimplemented") },
+    static let unimplemented = Self(
+        createBeaconAdvertiser: { _, _, _, _, _ in .unimplemented("\(Self.self).createBeaconAdvertiser") },
+        startAdvertisingBeacon: { _ in .unimplemented("\(Self.self).startBeaconAdvertiser") },
+        stopAdvertisingBeacon: { _ in .unimplemented("\(Self.self).stopAdvertisingBeacon") },
         uuid: {
-            XCTFail("\(Self.self).uuid is unimplemented")
+            XCTFail("\(Self.self).uuid")
             return UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
         },
         major: {
-            XCTFail("\(Self.self).major is unimplemented")
+            XCTFail("\(Self.self).major")
             return .zero
         },
         minor: {
-            XCTFail("\(Self.self).minor is unimplemented")
+            XCTFail("\(Self.self).minor")
             return .zero
         }
     )
@@ -56,12 +56,12 @@ public extension DetectorClient {
     )
     
     #if DEBUG
-    static let failing = Self(
-        createBeaconDetector: { _, _, _ in .failing("\(Self.self).createBeaconDetector is unimplemented") },
-        startDetectingBeacons: { _ in .failing("\(Self.self).startDetectingBeacons is unimplemented") },
-        stopDetectingBeacons: { _ in .failing("\(Self.self).stopDetectingBeacons is unimplemented") },
+    static let unimplemented = Self(
+        createBeaconDetector: { _, _, _ in .unimplemented("\(Self.self).createBeaconDetector") },
+        startDetectingBeacons: { _ in .unimplemented("\(Self.self).startDetectingBeacons") },
+        stopDetectingBeacons: { _ in .unimplemented("\(Self.self).stopDetectingBeacons") },
         uuid: {
-            XCTFail("\(Self.self).uuid is unimplemented")
+            XCTFail("\(Self.self).uuid")
             return UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
         }
     )

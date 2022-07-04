@@ -7,9 +7,9 @@ public extension OrientationClient {
     )
     
     #if DEBUG
-    static var failing = Self(
-        start: { .failing("\(Self.self).start is unimplemented") },
-        stop: .failing("\(Self.self).stop is unimplemented")
+    static var unimplemented = Self(
+        start: { .unimplemented("\(Self.self).start") },
+        stop: .unimplemented("\(Self.self).stop")
     )
     #endif
 }

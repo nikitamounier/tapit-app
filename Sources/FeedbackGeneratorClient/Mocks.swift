@@ -9,11 +9,11 @@ public extension FeedbackGeneratorClient {
     )
     
     #if DEBUG
-    static let failing = Self(
-        prepareSelectionGenerator: { .failing("\(Self.self).prepareSelectionGenerator is unimplemented") },
-        prepareNotificationGenerator: { .failing("\(Self.self).prepareNotificationGenerator is unimplemented") },
-        selectionChanged: { .failing("\(Self.self).selectionChanged is unimplemented") },
-        notificationOccurred: { _ in .failing("\(Self.self).notificationOccured is unimplemented") }
+    static let unimplemented = Self(
+        prepareSelectionGenerator: { .unimplemented("\(Self.self).prepareSelectionGenerator") },
+        prepareNotificationGenerator: { .unimplemented("\(Self.self).prepareNotificationGenerator") },
+        selectionChanged: { .unimplemented("\(Self.self).selectionChanged") },
+        notificationOccurred: { _ in .unimplemented("\(Self.self).notificationOccured") }
     )
     #endif
 }

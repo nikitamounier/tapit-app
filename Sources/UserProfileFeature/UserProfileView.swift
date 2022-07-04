@@ -132,8 +132,9 @@ public struct UserProfileView: View {
     }
     
     public var body: some View {
-        EmptyView()
-        .eraseToAnyView()
+        VStack {
+            
+        }
     }
 
     #if DEBUG

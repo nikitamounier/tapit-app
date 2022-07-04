@@ -48,12 +48,12 @@ class TapCoreTests: XCTestCase {
             environment: TapEnvironment(
                 mainQueue: scheduler.eraseToAnyScheduler(),
                 beaconQueue: .immediate,
-                beacon: .failing,
-                p2p: .failing,
+                beacon: .unimplemented,
+                p2p: .unimplemented,
                 p2pEncodeDecode: .live,
                 feedbackGenerator: .noop,
-                proximitySensor: .failing,
-                orientation: .failing,
+                proximitySensor: .unimplemented,
+                orientation: .unimplemented,
                 dispatchNow: { scheduler.now.dispatchTime },
                 openAppSettings: {}
             )
@@ -197,7 +197,7 @@ class TapCoreTests: XCTestCase {
         
         store.receive(.timerResponse)
         store.receive(.pingExistingConnections)
-        store.receive(.killFailingConnections)
+        store.receive(.killunimplementedConnections)
         store.receive(.attemptNewConnections)
         
         p2pConnectionEventPublisher.send(.receivedMessage(type: .peerInfo, data: <#T##Data#>))

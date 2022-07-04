@@ -8,10 +8,10 @@ public extension FileClient {
     )
     
     #if DEBUG
-    static let failing = Self(
-        load: { _ in .failing("\(Self.self).load is unimplemented") },
-        save: { _, _ in .failing("\(Self.self).save is unimplemented") },
-        delete: { _ in .failing("\(Self.self).delete is unimplemented") }
+    static let unimplemented = Self(
+        load: { _ in .unimplemented("\(Self.self).load") },
+        save: { _, _ in .unimplemented("\(Self.self).save") },
+        delete: { _ in .unimplemented("\(Self.self).delete") }
     )
     #endif
 }
