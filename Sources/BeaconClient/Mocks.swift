@@ -30,18 +30,9 @@ public extension AdvertiserClient {
         createBeaconAdvertiser: { _, _, _, _, _ in .unimplemented("\(Self.self).createBeaconAdvertiser") },
         startAdvertisingBeacon: { _ in .unimplemented("\(Self.self).startBeaconAdvertiser") },
         stopAdvertisingBeacon: { _ in .unimplemented("\(Self.self).stopAdvertisingBeacon") },
-        uuid: {
-            XCTFail("\(Self.self).uuid")
-            return UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-        },
-        major: {
-            XCTFail("\(Self.self).major")
-            return .zero
-        },
-        minor: {
-            XCTFail("\(Self.self).minor")
-            return .zero
-        }
+        uuid: XCTUnimplemented("\(Self.self).uuid")
+        major: XCTUnimplemented("\(Self.self).major")
+        minor: XCTUnimplemented("\(Self.self).minor")
     )
     #endif
 }
@@ -60,10 +51,7 @@ public extension DetectorClient {
         createBeaconDetector: { _, _, _ in .unimplemented("\(Self.self).createBeaconDetector") },
         startDetectingBeacons: { _ in .unimplemented("\(Self.self).startDetectingBeacons") },
         stopDetectingBeacons: { _ in .unimplemented("\(Self.self).stopDetectingBeacons") },
-        uuid: {
-            XCTFail("\(Self.self).uuid")
-            return UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-        }
+        uuid: XCTUnimplemented("\(Self.self).uuid")
     )
     #endif
 }

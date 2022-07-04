@@ -58,10 +58,7 @@ public extension ListenerClient {
         create: { _, _, _ in .unimplemented("\(Self.self).create") },
         startListening: { _ in .unimplemented("\(Self.self).startListening") },
         stopListening: { _ in .unimplemented("\(Self.self).stopListening") },
-        uuid: {
-            XCTFail("\(Self.self).uuid")
-            return UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-        }
+        uuid: XCTUnimplemented("\(Self.self).uuid")
     )
 }
 
@@ -71,11 +68,7 @@ public extension ConnectionClient {
         startConnection: { _ in .unimplemented("\(Self.self).startConnection") },
         stopConnection: { _ in .unimplemented("\(Self.self).stopConnection") },
         sendMessage: { _, _, _ in .unimplemented("\(Self.self).sendMessage") },
-        connectionExists: { _ in
-            XCTFail("\(Self.self).connectionExists")
-            return false
-            
-        }
+        connectionExists: XCTUnimplemented("\(Self.self).connectionExists")
     )
 }
 #endif

@@ -71,9 +71,9 @@ class HistoryFeatureTests: XCTestCase {
                 feedbackGenerator: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
-                openAppSettings: { XCTFail() }
+                openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
             )
-        )
+        ).
 
         store.send(.setNavigation(id: firstProfile.id)) {
             $0.selectedProfile = .deadbeef
@@ -114,7 +114,7 @@ class HistoryFeatureTests: XCTestCase {
                 feedbackGenerator: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
-                openAppSettings: { XCTFail() }
+                openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
             )
         )
 
@@ -160,7 +160,7 @@ class HistoryFeatureTests: XCTestCase {
                 feedbackGenerator: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
-                openAppSettings: { XCTFail() }
+                openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
             )
         )
         
@@ -208,7 +208,7 @@ class HistoryFeatureTests: XCTestCase {
                 feedbackGenerator: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
-                openAppSettings: { XCTFail() }
+                openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
             )
         )
 
@@ -232,7 +232,7 @@ class HistoryFeatureTests: XCTestCase {
                 feedbackGenerator: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
-                openAppSettings: { XCTFail() }
+                openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
             )
         )
 
@@ -293,7 +293,7 @@ class HistoryFeatureTests: XCTestCase {
                 feedbackGenerator: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
-                openAppSettings: { XCTFail() }
+                openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
             )
         )
         
@@ -361,7 +361,7 @@ class HistoryFeatureTests: XCTestCase {
                 feedbackGenerator: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
-                openAppSettings: { XCTFail() }
+                openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
             )
         )
 
