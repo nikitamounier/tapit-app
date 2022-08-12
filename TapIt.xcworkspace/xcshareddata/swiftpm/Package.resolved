@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/LucasMucGH/BottomSheet",
         "state": {
           "branch": "main",
-          "revision": "23f37fd59f899df4d4f423ed99e3b7e5411d1e2f",
+          "revision": "f7c688031ab9edc2ff3d283f27e4c6a90fc7e0c9",
           "version": null
         }
       },
@@ -15,8 +15,17 @@
         "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
         "state": {
           "branch": null,
-          "revision": "0ba3a562716efabb585ccb169450c5389107286b",
-          "version": "0.6.0"
+          "revision": "73807a36dab1d676526c2267418fccaf86d8b0b4",
+          "version": "0.7.1"
+        }
+      },
+      {
+        "package": "Inject",
+        "repositoryURL": "https://github.com/krzysztofzablocki/Inject",
+        "state": {
+          "branch": null,
+          "revision": "a45509eac083b42afd4b6fd00a93a2b53f99f3eb",
+          "version": "1.2.1"
         }
       },
       {
@@ -33,8 +42,8 @@
         "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit",
         "state": {
           "branch": null,
-          "revision": "d4c094934237b23344cf948dd999c431feb8da06",
-          "version": "3.4.1"
+          "revision": "104a53d62c55aa5794faf30b29ccad319653b552",
+          "version": "3.4.5"
         }
       },
       {
@@ -51,8 +60,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-case-paths",
         "state": {
           "branch": null,
-          "revision": "b4a872984463070c71e2e97e5c02c73a07d0fe36",
-          "version": "0.9.0"
+          "revision": "a09839348486db8866f85a727b8550be1d671c50",
+          "version": "0.9.1"
         }
       },
       {
@@ -69,8 +78,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-composable-architecture.git",
         "state": {
           "branch": null,
-          "revision": "d0ba4b87358a11d5be26d125ef3d3d492a07d8cf",
-          "version": "0.38.2"
+          "revision": "108e3a536fcebb16c4f247ef92c2d7326baf9fe3",
+          "version": "0.39.0"
         }
       },
       {
@@ -123,8 +132,8 @@
         "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
         "state": {
           "branch": null,
-          "revision": "8816142e27f1127d87c61cee4a0a5db93e9df7c4",
-          "version": "0.3.1"
+          "revision": "38bc9242e4388b80bd23ddfdf3071428859e3260",
+          "version": "0.4.0"
         }
       }
     ]

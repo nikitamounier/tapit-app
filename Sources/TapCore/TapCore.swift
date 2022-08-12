@@ -60,7 +60,7 @@ public enum TapAction: Equatable {
     case receivePeerInfoResponse(String, from: NWConnection)
     case receiveProfileResponse(UserProfile, from: NWConnection)
     
-    case tapButtonTapped
+    case shareButtonTapped
     case sendProfile
     case profileSentResponse
     
@@ -442,7 +442,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             )
         }
         
-    case .tapButtonTapped:
+    case .shareButtonTapped:
         return state.peerMajorMinor != nil ? Effect(value: .sendProfile) : .none
         
     case .sendProfile:

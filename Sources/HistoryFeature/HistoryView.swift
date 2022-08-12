@@ -187,7 +187,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
             enum SearchResult: Hashable, CaseIterable {
                 case completeMatch
                 case firstWordMatch
-                case notFirstWordMatch
+                case otherWordMatch
                 case firstWordContains
                 case notFirstWordContains
                 case socialContains
@@ -226,7 +226,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
                     
                     for (index, word) in words.indexed() {
                         if profileWords.contains(word), index != 0 {
-                            result[.notFirstWordMatch]!.append(profile.id)
+                            result[.otherWordMatch]!.append(profile.id)
                             break
                             
                         } else if profile.name.localizedCaseInsensitiveContains(word), index != 0 {
@@ -315,12 +315,7 @@ public struct HistoryView: View {
             }
             .navigationTitle(Text("History"))
         }
-        .eraseToAnyView()
     }
-
-    #if DEBUG
-    @ObservedObject var iO = injectionObserver
-    #endif
 }
 
 struct HistoryView_Previews: PreviewProvider {

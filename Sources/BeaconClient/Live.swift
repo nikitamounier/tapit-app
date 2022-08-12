@@ -1,237 +1,200 @@
-import Combine
-import ComposableArchitecture
 import CoreBluetooth
+import ComposableArchitecture
 import CoreLocation
-import OSLog
 
 public extension BeaconClient {
-    static var live = Self(
-        detector: .live,
-        advertiser: .live
-    )
+  static var live: Self {
+    let beacon = BeaconActor()
+    
+    return Self { await beacon.start(major: $0, minor: $1) }
+  }
 }
 
-public extension DetectorClient {
-    static var live: Self {
-        let logger = Logger(subsystem: "Beacon", category: "DetectorClient")
-        
-        return Self(
-            createBeaconDetector: { id, beaconUUID, identifier in
-                .run { subscriber in
-                    logger.debug("Creating beacon detector")
-                    let locationManager = CLLocationManager()
-                    let delegate = DetectorDelegate(subscriber)
-                    let detectingRegion = CLBeaconRegion(uuid: beaconUUID, identifier: identifier)
-                    
-                    locationManager.delegate = delegate
-                    
-                    detectorDependencies[id] = DetectorDependencies(
-                        locationManager: locationManager,
-                        delegate: delegate,
-                        detectingRegion: detectingRegion
-                    )
-                    
-                    return AnyCancellable {
-                        logger.debug("Deinitializing beacon detector")
-                        detectorDependencies[id]?.locationManager.stopMonitoring(for: detectingRegion)
-                        detectorDependencies[id]?.locationManager.stopRangingBeacons(
-                            satisfying: detectingRegion.beaconIdentityConstraint
-                        )
-                        detectorDependencies[id] = nil
-                    }
-                }
-            },
-            startDetectingBeacons: { id in
-                .fireAndForget {
-                    logger.debug("Starting to detect beacons")
-                    let detectingRegion = detectorDependencies[id]!.detectingRegion
-                    
-                    detectorDependencies[id]?.locationManager.startMonitoring(for: detectingRegion)
-                    detectorDependencies[id]?.locationManager.startRangingBeacons(
-                        satisfying: detectingRegion.beaconIdentityConstraint
-                    )
-                    logger.debug("Monitoring/ranging for beacons")
-                }
-            },
-            stopDetectingBeacons: { id in
-                .fireAndForget {
-                    logger.debug("Stopping detecting beacons")
-                    let detectingRegion = detectorDependencies[id]!.detectingRegion
-                    
-                    detectorDependencies[id]?.locationManager.stopMonitoring(for: detectingRegion)
-                    detectorDependencies[id]?.locationManager.stopRangingBeacons(
-                        satisfying: detectingRegion.beaconIdentityConstraint
-                    )
-                    
-                    detectorDependencies[id] = nil
-                }
-            },
-            uuid: UUID.init
-        )
-    }
+public enum BeaconError: Error, Equatable {
+  case deniedAuthorization
 }
 
-public extension AdvertiserClient {
-    static var live: Self {
-        let logger = Logger(subsystem: "Beacon", category: "AdvertiserClient")
-        
-        return Self(
-            createBeaconAdvertiser: { id, beaconUUID, major, minor, identifier in
-                .run { subscriber in
-                    logger.debug("Creating beacon advertiser")
-                    let peripheralManager = CBPeripheralManager()
-                    let delegate = AdvertiserDelegate(subscriber)
-                    let advertisingRegion = CLBeaconRegion(
-                        uuid: beaconUUID,
-                        major: major,
-                        minor: minor,
-                        identifier: identifier
-                    )
-                    
-                    peripheralManager.delegate = delegate
-                    
-                    advertiserDependencies[id] = AdvertiserDependencies(
-                        peripheralManager: peripheralManager,
-                        delegate: delegate,
-                        advertisingRegion: advertisingRegion,
-                        beaconPeripheralData: advertisingRegion.peripheralData(withMeasuredPower: nil))
-                    
-                    return AnyCancellable {
-                        logger.debug("Deinitializing beacon advertiser")
-                        advertiserDependencies[id]?.peripheralManager.stopAdvertising()
-                        advertiserDependencies[id] = nil
-                    }
-                }
-            },
-            startAdvertisingBeacon: { id in
-                .fireAndForget {
-                    logger.debug("Starting to advertise beacon")
-                    let data = advertiserDependencies[id]!.beaconPeripheralData
-                    advertiserDependencies[id]?.peripheralManager.startAdvertising(data as? [String: Any])
-                }
-            },
-            stopAdvertisingBeacon: { id in
-                .fireAndForget {
-                    logger.debug("Stopping advertising beacon")
-                    advertiserDependencies[id]?.peripheralManager.stopAdvertising()
-                    advertiserDependencies[id] = nil
-                }
-            },
-            uuid: UUID.init,
-            major: {
-                .random(in: UInt16.min...UInt16.max)
-            },
-            minor: {
-                .random(in: UInt16.min...UInt16.max)
+private actor BeaconActor {
+  var delegate: Delegate?
+  
+  @Box var locationManager: CLLocationManager?
+  @Box var peripheralManager: CBPeripheralManager?
+  
+  
+  func start(major: UInt16, minor: UInt16) async -> AsyncThrowingStream<[Beacon], Error> {
+    return AsyncThrowingStream { continuation in
+      let detectingRegion = CLBeaconRegion(
+        uuid: UUID(uuidString: "3281D6D1-F2E7-4436-80C0-4EF265331538")!,
+        identifier: Bundle.main.bundleIdentifier!
+      )
+      
+      let advertisingRegion = CLBeaconRegion(
+        uuid: UUID(uuidString: "3281D6D1-F2E7-4436-80C0-4EF265331538")!,
+        major: major,
+        minor: minor,
+        identifier: Bundle.main.bundleIdentifier!
+      )
+      
+      self.delegate = Delegate(
+        detectorAuthorizationChanged: { [locationManager = UncheckedSendable($locationManager)] auth in
+          
+          print("Detector authorization changed: \(auth)")
+          switch auth {
+          case .authorizedAlways, .authorizedWhenInUse:
+            
+            guard CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self),
+                  CLLocationManager.isRangingAvailable()
+            else {
+              continuation.finish(throwing: BeaconError.deniedAuthorization)
+              return
             }
-        )
-    }
-}
-
-private var detectorDependencies: [AnyHashable: DetectorDependencies] = [:]
-private var advertiserDependencies: [AnyHashable: AdvertiserDependencies] = [:]
-
-private struct DetectorDependencies {
-    let locationManager: CLLocationManager
-    let delegate: DetectorDelegate
-    let detectingRegion: CLBeaconRegion
-}
-
-private struct AdvertiserDependencies {
-    let peripheralManager: CBPeripheralManager
-    let delegate: AdvertiserDelegate
-    let advertisingRegion: CLBeaconRegion
-    let beaconPeripheralData: NSDictionary
-}
-
-private final class DetectorDelegate: NSObject, CLLocationManagerDelegate {
-    let subscriber: Effect<DetectorClient.Event, Never>.Subscriber
-    let logger: Logger = Logger(subsystem: "Beacon.DetectorDelegate", category: "AdvertiseClient")
-    
-    init(_ subscriber: Effect<DetectorClient.Event, Never>.Subscriber) {
-        self.subscriber = subscriber
-    }
-    
-    func locationManagerAuthorizationChanged(_ manager: CLLocationManager) {
-        logger.debug("Location manager authorization changed to \(manager.authorizationStatus.debugDescription), privacy: .public)")
-        subscriber.send(.authorizationChanged(manager.authorizationStatus))
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        logger.debug("Location manager failed with error \(error.localizedDescription, privacy: .public)")
-        subscriber.send(.failed(error))
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
-        logger.debug("Location manager ranged beacons \(beacons.map(\.rssi), privacy: .public)")
-        subscriber.send(.ranged(beacons: beacons.map(Beacon.init(beacon:))))
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
-        logger.debug("Location Manager failed ranging for beacon constraint with error: \(error.localizedDescription)")
-        subscriber.send(.failedRanging(error))
-    }
-}
-
-private final class AdvertiserDelegate: NSObject, CBPeripheralManagerDelegate {
-    let subscriber: Effect<AdvertiserClient.Event, Never>.Subscriber
-    let logger: Logger = Logger(subsystem: "Beacon.AdvertiserDelegate", category: "AdvertiseClient")
-    
-    init(_ subscriber: Effect<AdvertiserClient.Event, Never>.Subscriber) {
-        self.subscriber = subscriber
-    }
-    
-    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        logger.debug("Peripheral manager updated state to \(peripheral.state.debugDescription, privacy: .public)")
-        subscriber.send(.stateUpdated(peripheral.state))
-    }
-    
-    func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
-        if let error = error {
-            logger.debug("Peripheral manager did not start advertising, error: \(error.localizedDescription, privacy: .public)")
-            subscriber.send(.didNotStartAdvertising(error))
-        } else {
-            logger.debug("Peripheral manager started advertising")
+            
+            locationManager.wrappedValue.wrappedValue?.startMonitoring(for: detectingRegion)
+            locationManager.wrappedValue.wrappedValue?.startRangingBeacons(satisfying: detectingRegion.beaconIdentityConstraint)
+            
+            break
+            
+          case .restricted, .denied:
+            continuation.finish(throwing: BeaconError.deniedAuthorization)
+            
+          case .notDetermined:
+            break
+            
+          @unknown default:
+            fatalError()
+          }
+        },
+        detectorFailed: { error in
+          print("Detector Failed: \(error)")
+          continuation.finish(throwing: error)
+        },
+        detectorRangedBeacons: { beacons in
+          print("Detector ranged beacons: \(beacons)")
+          continuation.yield(beacons)
+        },
+        advertiserStateChanged: { [peripheralManager = UncheckedSendable($peripheralManager)] state in
+          print("Advertiser state changed: \(state)")
+          switch state {
+          case .poweredOn:
+            peripheralManager.wrappedValue.wrappedValue?.startAdvertising(
+              advertisingRegion.peripheralData(withMeasuredPower: nil) as? [String: Any]
+            )
+            
+            
+          case .unsupported, .unauthorized, .poweredOff:
+            continuation.finish(throwing: BeaconError.deniedAuthorization)
+            
+          case .resetting, .unknown:
+            break
+            
+          @unknown default:
+            break
+          }
+        },
+        advertiserFailed: { error in
+          print("Advertiser failed: \(error)")
+          continuation.finish(throwing: error)
         }
+      )
+      
+      continuation.onTermination = { @Sendable [locationManager = UncheckedSendable($locationManager), peripheralManager = UncheckedSendable($peripheralManager)] _ in
+        print("continuation terminated")
+        locationManager.wrappedValue.wrappedValue?.stopMonitoring(for: detectingRegion)
+        locationManager.wrappedValue.wrappedValue?.stopRangingBeacons(satisfying: detectingRegion.beaconIdentityConstraint)
+        peripheralManager.wrappedValue.wrappedValue?.stopAdvertising()
+      }
+      
+      self.locationManager = CLLocationManager()
+      self.peripheralManager = CBPeripheralManager()
+      
+      locationManager?.delegate = self.delegate
+      peripheralManager?.delegate = self.delegate
+      
+      locationManager?.requestWhenInUseAuthorization()
+      
     }
+  }
 }
 
-extension CLAuthorizationStatus: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        switch self {
-        case .notDetermined:
-            return "notDetermined"
-        case .restricted:
-            return "restricted"
-        case .denied:
-            return "denied"
-        case .authorizedAlways:
-            return "authorizedAlways"
-        case .authorizedWhenInUse:
-            return "authorizedWhenInUse"
-        @unknown default:
-            return "unknown"
-        }
+private final class Delegate: NSObject, CLLocationManagerDelegate, CBPeripheralManagerDelegate, Sendable {
+  let detectorAuthorizationChanged: @Sendable (CLAuthorizationStatus) -> Void
+  let detectorFailed: @Sendable (Error) -> Void
+  let detectorRangedBeacons: @Sendable ([Beacon]) -> Void
+  
+  let advertiserStateChanged: @Sendable (CBManagerState) -> Void
+  let advertiserFailed: @Sendable (Error) -> Void
+  
+  init(
+    detectorAuthorizationChanged: @Sendable @escaping (CLAuthorizationStatus) -> Void,
+    detectorFailed: @Sendable @escaping (Error) -> Void,
+    detectorRangedBeacons: @Sendable @escaping ([Beacon]) -> Void,
+    advertiserStateChanged: @Sendable @escaping (CBManagerState) -> Void,
+    advertiserFailed: @Sendable @escaping (Error) -> Void
+  ) {
+    self.detectorAuthorizationChanged = detectorAuthorizationChanged
+    self.detectorFailed = detectorFailed
+    self.detectorRangedBeacons = detectorRangedBeacons
+    self.advertiserStateChanged = advertiserStateChanged
+    self.advertiserFailed = advertiserFailed
+  }
+  
+  // Detector
+
+  func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+    print("authorization changed: \(manager.authorizationStatus)")
+    self.detectorAuthorizationChanged(manager.authorizationStatus)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    print("authorization changed: \(status)")
+    self.detectorAuthorizationChanged(status)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    self.detectorFailed(error)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+    self.detectorFailed(error)
+  }
+
+  
+  func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
+    let beacons = beacons.map {
+      Beacon(major: $0.major as! UInt16, minor: $0.minor as! UInt16, proximity: Beacon.Proximity(rawValue: $0.proximity.rawValue)!, accuracy: $0.accuracy, rssi: $0.rssi)
     }
+    self.detectorRangedBeacons(beacons)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didFailRangingFor beaconConstraint: CLBeaconIdentityConstraint, error: Error) {
+    self.detectorFailed(error)
+  }
+  
+  // Advertiser
+  
+  func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+    self.advertiserStateChanged(peripheral.state)
+  }
+  
+  func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
+    if let error {
+      self.advertiserFailed(error)
+    }
+  }
 }
 
-extension CBManagerState: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        switch self {
-        case .unknown:
-            return "unknown"
-        case .resetting:
-            return "resetting"
-        case .unsupported:
-            return "unsupported"
-        case .unauthorized:
-            return "unauthorized"
-        case .poweredOff:
-            return "poweredOff"
-        case .poweredOn:
-            return "poweredOn"
-        @unknown default:
-            return "unknown"
-        }
-    }
+@propertyWrapper
+private final class Box<Value> {
+  var wrappedValue: Value
+  
+  var projectedValue: Box<Value> { self }
+  
+  init(wrappedValue: Value) {
+    self.wrappedValue = wrappedValue
+  }
+  
+  deinit {
+    print("\(wrappedValue) and its Box were deinitialized")
+  }
 }
+

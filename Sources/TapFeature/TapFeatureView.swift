@@ -72,7 +72,7 @@ public enum TapFeatureAction: Equatable {
     case deselectPreset(TapFeatureState.Preset.ID)
     
     case tapSheetShown(Bool)
-    case tapButtonTapped
+    case shareButtonTapped
     case tap(TapAction)
 }
 
@@ -195,13 +195,13 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
                 
                 return .none
                 
-            case .tapButtonTapped:
+            case .shareButtonTapped:
                 state.session?.userProfile.socials.removeAll { profileSocial in
                     !state.selectedSocials.contains(profileSocial.id)
                 }
                 state.showTapSheet = true
                 
-                return Effect(value: .tap(.tapButtonTapped))
+                return Effect(value: .tap(.shareButtonTapped))
                 
             case let .tapSheetShown(showing):
                 state.showTapSheet = showing
@@ -313,7 +313,7 @@ public struct TapFeatureView: View {
         .backport.overlay(alignment: .bottom) {
             VStack {
                 if !viewStore.selectedSocials.isEmpty {
-                    Button(action: { viewStore.send(.tapButtonTapped) } ) {
+                    Button(action: { viewStore.send(.shareButtonTapped) } ) {
                         Text("Share")
                             .foregroundColor(.white)
                             .bold()
