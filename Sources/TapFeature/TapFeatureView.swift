@@ -5,7 +5,7 @@ import IdentifiedCollections
 import Inject
 import OrientationClient
 import OrderedCollections
-import P2PClient
+import MultipeerClient
 import P2PEncodeDecode
 import ProximitySensorClient
 import SharedModels
@@ -80,7 +80,7 @@ public struct TapFeatureEnvironment {
     public var mainQueue: AnySchedulerOf<DispatchQueue>
     public var beaconQueue: AnySchedulerOf<DispatchQueue>
     public var beacon: BeaconClient
-    public var p2p: P2PClient
+    public var multipeer: Multipeerclient
     public var p2pEncodeDecode: P2PEncodeDecode
     public var feedbackGenerator: FeedbackGeneratorClient
     public var proximitySensor: ProximitySensorClient
@@ -92,7 +92,7 @@ public struct TapFeatureEnvironment {
         mainQueue: AnySchedulerOf<DispatchQueue>,
         beaconQueue: AnySchedulerOf<DispatchQueue>,
         beacon: BeaconClient,
-        p2p: P2PClient,
+        p2p: MultipeerClient,
         p2pEncodeDecode: P2PEncodeDecode,
         feedbackGenerator: FeedbackGeneratorClient,
         proximitySensor: ProximitySensorClient,

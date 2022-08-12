@@ -1,466 +1,463 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "TapIt",
-    platforms: [
-        .iOS(.v14),
-    ],
-    products: [
-        .library(
-            name: "AppFeature",
-            targets: ["AppFeature"]
-        ),
-        .library(
-            name: "BeaconClient",
-            targets: ["BeaconClient"]
-        ),
-        .library(
-            name: "BiometricsClient",
-            targets: ["BiometricsClient"]
-        ),
-        .library(
-            name: "BottomMenu",
-            targets: ["BottomMenu"]
-        ),
-        .library(
-            name: "CombineHelpers",
-            targets: ["CombineHelpers"]
-        ),
-        .library(
-            name: "ComposablePhoneNumberValidation",
-            targets: ["ComposablePhoneNumberValidation"]
-        ),
-        .library(
-            name: "ExpirationClient",
-            targets: ["ExpirationClient"]
-        ),
-        .library(
-            name: "FeedbackGeneratorClient",
-            targets: ["FeedbackGeneratorClient"]
-        ),
-        .library(
-            name: "FileClient",
-            targets: ["FileClient"]
-        ),
-        .library(
-            name: "GeneralMocks",
-            targets: ["GeneralMocks"]
-        ),
-        .library(
-            name: "GlobalQueues",
-            targets: ["GlobalQueues"]
-        ),
-        .library(
-            name: "HistoryFeature",
-            targets: ["HistoryFeature"]
-        ),
-        .library(
-            name: "ImageLibraryClient",
-            targets: ["ImageLibraryClient"]
-        ),
-        .library(
-            name: "OpenSocialClient",
-            targets: ["OpenSocialClient"]
-        ),
-        .library(
-            name: "OpenSocialFeature",
-            targets: ["OpenSocialFeature"]
-        ),
-        .library(
-            name: "OrientationClient",
-            targets: ["OrientationClient"]
-        ),
-        .library(
-            name: "P2PClient",
-            targets: ["P2PClient"]
-        ),
-        .library(
-            name: "P2PEncodeDecode",
-            targets: ["P2PEncodeDecode"]
-        ),
-        .library(
-            name: "ProximitySensorClient",
-            targets: ["ProximitySensorClient"]
-        ),
-        .library(
-            name: "SentProfileFeature",
-            targets: ["SentProfileFeature"]
-        ),
-        .library(
-            name: "SharedModels",
-            targets: ["SharedModels"]
-        ),
-        .library(
-            name: "SpringboardFeature",
-            targets: ["SpringboardFeature"]
-        ),
-        .library(
-            name: "Styleguide",
-            targets: ["Styleguide"]
-        ),
-        .library(
-            name: "SwiftHelpers",
-            targets: ["SwiftHelpers"]
-        ),
-        .library(
-            name: "SwiftUIHelpers",
-            targets: ["SwiftUIHelpers"]
-        ),
-        .library(
-            name: "TapCore",
-            targets: ["TapCore"]
-        ),
-        .library(
-            name: "TapFeature",
-            targets: ["TapFeature"]
-        ),
-        .library(
-            name: "UserProfileFeature",
-            targets: ["UserProfileFeature"]
-        ),
-        .library(
-            name: "VisualEffects",
-            targets: ["VisualEffects"]
-        ),
-    ],
-    dependencies: [
-        .package(
-            url: "https://github.com/pointfreeco/swift-composable-architecture.git",
-            .upToNextMajor(from: "0.31.0")
-        ),
-        .package(
-            url: "https://github.com/marmelroy/PhoneNumberKit",
-            .upToNextMajor(from: "3.3.3")
-        ),
-        .package(
-            name: "swift-nonempty",
-            url: "https://github.com/nikitamounier/swift-nonempty.git",
-            .branch("main")
-        ),
-        .package(
-            name: "swift-prelude",
-            url: "https://github.com/pointfreeco/swift-prelude",
-            .branch("main")
-        ),
-        .package(
-            url: "https://github.com/apple/swift-collections",
-            .upToNextMajor(from: "1.0.1")
-        ),
-        .package(
-            url: "https://github.com/apple/swift-algorithms",
-            .upToNextMajor(from: "1.0.0")
-        ),
-        .package(
-            url: "https://github.com/xmartlabs/PagerTabStripView",
-            .upToNextMajor(from: "3.1.1")
-        ),
-        .package(
-            name: "BottomSheet",
-            url: "https://github.com/LucasMucGH/BottomSheet",
-            .branch("main")
-        ),
-        .package(
-            name: "Inject",
-            url: "https://github.com/krzysztofzablocki/Inject.git",
-            from: "1.0.2"
-        )
-    ],
-    targets: [
-        .target(
-            name: "AppFeature",
-            dependencies: [
-                "HistoryFeature",
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .testTarget(
-            name: "AppFeatureTests",
-            dependencies: [
-                "AppFeature",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "BeaconClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "BiometricsClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "BottomMenu",
-            dependencies: [
-                "SwiftUIHelpers",
-                .product(name: "BottomSheet", package: "BottomSheet")
-            ]
-        ),
-        .target(
-            name: "CombineHelpers",
-            dependencies: []
-        ),
-        .target(
-            name: "ComposablePhoneNumberValidation",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
-            ]
-        ),
-        .testTarget(
-            name: "ComposablePhoneNumberValidationTests",
-            dependencies: [
-                "ComposablePhoneNumberValidation"
-            ]
-        ),
-        .target(
-            name: "ExpirationClient",
-            dependencies: [
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "FeedbackGeneratorClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "FileClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "GeneralMocks",
-            dependencies: []
-        ),
-        .target(
-            name: "GlobalQueues",
-            dependencies: []
-        ),
-        .target(
-            name: "HistoryFeature",
-            dependencies: [
-                "FeedbackGeneratorClient",
-                "ExpirationClient",
-                "OpenSocialClient",
-                "SentProfileFeature",
-                "SharedModels",
-                "SwiftHelpers",
-                .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "NonEmpty", package: "swift-nonempty"),
-            ]
-        ),
-        .testTarget(
-            name: "HistoryFeatureTests",
-            dependencies: [
-                "HistoryFeature",
-                "GeneralMocks",
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "NonEmpty", package: "swift-nonempty"),
-                .product(name: "Optics", package: "swift-prelude"),
-            ]
-        ),
-        .target(
-            name: "ImageLibraryClient",
-            dependencies: [
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "OpenSocialClient",
-            dependencies: [
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "OpenSocialFeature",
-            dependencies: [
-                "CombineHelpers",
-                "FeedbackGeneratorClient",
-                "OpenSocialClient",
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "OrientationClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "P2PClient",
-            dependencies: [
-                "GlobalQueues",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "P2PEncodeDecode",
-            dependencies: [
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "ProximitySensorClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "SentProfileFeature",
-            dependencies: [
-                "CombineHelpers",
-                "FeedbackGeneratorClient",
-                "OpenSocialClient",
-                "OpenSocialFeature",
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "SharedModels",
-            dependencies: [
-                "GeneralMocks",
-                .product(name: "Optics", package: "swift-prelude"),
-                .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
-            ]
-        ),
-        .testTarget(
-            name: "SharedModelsTests",
-            dependencies: [
-                "SharedModels",
-            ]
-        ),
-        .target(
-            name: "SpringboardFeature",
-            dependencies: [
-                "SharedModels",
-                "SwiftUIHelpers",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "Algorithms", package: "swift-algorithms"),
-            ]
-        ),
-        .testTarget(
-            name: "SpringboardFeatureTests",
-            dependencies: [
-                "SharedModels",
-                "SpringboardFeature",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "Styleguide",
-            dependencies: [
-                .product(name: "PagerTabStripView", package: "PagerTabStripView"),
-            ]
-        ),
-        .target(
-            name: "SwiftHelpers",
-            dependencies: []
-        ),
-        .testTarget(
-            name: "SwiftHelpersTests",
-            dependencies: [
-                "SwiftHelpers",
-            ]
-        ),
-        .target(
-            name: "SwiftUIHelpers",
-            dependencies: []
-        ),
-        .target(
-            name: "TapCore",
-            dependencies: [
-                "BeaconClient",
-                "FeedbackGeneratorClient",
-                "GeneralMocks",
-                "OrientationClient",
-                "P2PClient",
-                "P2PEncodeDecode",
-                "ProximitySensorClient",
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .testTarget(
-            name: "TapCoreTests",
-            dependencies: [
-                "BeaconClient",
-                "FeedbackGeneratorClient",
-                "GeneralMocks",
-                "OrientationClient",
-                "P2PClient",
-                "P2PEncodeDecode",
-                "ProximitySensorClient",
-                "SharedModels",
-                "TapCore",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "TapFeature",
-            dependencies: [
-                "BeaconClient",
-                "FeedbackGeneratorClient",
-                "OrientationClient",
-                "P2PClient",
-                "P2PEncodeDecode",
-                "ProximitySensorClient",
-                "SharedModels",
-                "Styleguide",
-                "SwiftUIHelpers",
-                "TapCore",
-                .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "OrderedCollections", package: "swift-collections"),
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "Inject", package: "Inject"),
-            ]
-        ),
-        .testTarget(
-            name: "TapFeatureTests",
-            dependencies: [
-                "TapFeature",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "UserProfileFeature",
-            dependencies: [
-                "BottomMenu",
-                "FeedbackGeneratorClient",
-                "ImageLibraryClient",
-                "OpenSocialClient",
-                "OpenSocialFeature",
-                "SharedModels",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .testTarget(
-            name: "UserProfileFeatureTests",
-            dependencies: [
-                "UserProfileFeature",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "VisualEffects",
-            dependencies: []
-        ),
-    ]
+  name: "TapIt",
+  platforms: [
+    .iOS("15.1"),
+  ],
+  products: [
+    .library(
+      name: "AppFeature",
+      targets: ["AppFeature"]
+    ),
+    .library(
+      name: "BeaconClient",
+      targets: ["BeaconClient"]
+    ),
+    .library(
+      name: "BiometricsClient",
+      targets: ["BiometricsClient"]
+    ),
+    .library(
+      name: "BottomMenu",
+      targets: ["BottomMenu"]
+    ),
+    .library(
+      name: "CombineHelpers",
+      targets: ["CombineHelpers"]
+    ),
+    .library(
+      name: "ComposablePhoneNumberValidation",
+      targets: ["ComposablePhoneNumberValidation"]
+    ),
+    .library(
+      name: "ExpirationClient",
+      targets: ["ExpirationClient"]
+    ),
+    .library(
+      name: "FeedbackGeneratorClient",
+      targets: ["FeedbackGeneratorClient"]
+    ),
+    .library(
+      name: "FileClient",
+      targets: ["FileClient"]
+    ),
+    .library(
+      name: "GeneralMocks",
+      targets: ["GeneralMocks"]
+    ),
+    .library(
+      name: "HistoryFeature",
+      targets: ["HistoryFeature"]
+    ),
+    .library(
+      name: "ImageLibraryClient",
+      targets: ["ImageLibraryClient"]
+    ),
+    .library(
+      name: "OpenSocialClient",
+      targets: ["OpenSocialClient"]
+    ),
+    .library(
+      name: "OpenSocialFeature",
+      targets: ["OpenSocialFeature"]
+    ),
+    .library(
+      name: "OrientationClient",
+      targets: ["OrientationClient"]
+    ),
+    .library(
+      name: "MultipeerClient",
+      targets: ["MultipeerClient"]
+    ),
+    .library(
+      name: "P2PEncodeDecode",
+      targets: ["P2PEncodeDecode"]
+    ),
+    .library(
+      name: "ProximitySensorClient",
+      targets: ["ProximitySensorClient"]
+    ),
+    .library(
+      name: "SentProfileFeature",
+      targets: ["SentProfileFeature"]
+    ),
+    .library(
+      name: "SharedModels",
+      targets: ["SharedModels"]
+    ),
+    .library(
+      name: "SpringboardFeature",
+      targets: ["SpringboardFeature"]
+    ),
+    .library(
+      name: "Styleguide",
+      targets: ["Styleguide"]
+    ),
+    .library(
+      name: "SwiftHelpers",
+      targets: ["SwiftHelpers"]
+    ),
+    .library(
+      name: "SwiftUIHelpers",
+      targets: ["SwiftUIHelpers"]
+    ),
+    .library(
+      name: "TapCore",
+      targets: ["TapCore"]
+    ),
+    .library(
+      name: "TapFeature",
+      targets: ["TapFeature"]
+    ),
+    .library(
+      name: "UserProfileFeature",
+      targets: ["UserProfileFeature"]
+    ),
+    .library(
+      name: "VisualEffects",
+      targets: ["VisualEffects"]
+    ),
+  ],
+  dependencies: [
+    .package(
+      url: "https://github.com/pointfreeco/swift-composable-architecture.git",
+      .upToNextMajor(from: "0.31.0")
+    ),
+    .package(
+      url: "https://github.com/insidegui/MultipeerKit",
+      .upToNextMajor(from: "0.4.0")
+    ),
+    .package(
+      url: "https://github.com/marmelroy/PhoneNumberKit",
+      .upToNextMajor(from: "3.3.3")
+    ),
+    .package(
+      name: "swift-nonempty",
+      url: "https://github.com/nikitamounier/swift-nonempty.git",
+      .branch("main")
+    ),
+    .package(
+      name: "swift-prelude",
+      url: "https://github.com/pointfreeco/swift-prelude",
+      .branch("main")
+    ),
+    .package(
+      url: "https://github.com/apple/swift-collections",
+      .upToNextMajor(from: "1.0.1")
+    ),
+    .package(
+      url: "https://github.com/apple/swift-algorithms",
+      .upToNextMajor(from: "1.0.0")
+    ),
+    .package(
+      url: "https://github.com/xmartlabs/PagerTabStripView",
+      .upToNextMajor(from: "3.1.1")
+    ),
+    .package(
+      name: "BottomSheet",
+      url: "https://github.com/LucasMucGH/BottomSheet",
+      .branch("main")
+    ),
+    .package(
+      name: "Inject",
+      url: "https://github.com/krzysztofzablocki/Inject.git",
+      from: "1.0.2"
+    )
+  ],
+  targets: [
+    .target(
+      name: "AppFeature",
+      dependencies: [
+        "HistoryFeature",
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .testTarget(
+      name: "AppFeatureTests",
+      dependencies: [
+        "AppFeature",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "BeaconClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "BiometricsClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "BottomMenu",
+      dependencies: [
+        "SwiftUIHelpers",
+        .product(name: "BottomSheet", package: "BottomSheet")
+      ]
+    ),
+    .target(
+      name: "CombineHelpers",
+      dependencies: []
+    ),
+    .target(
+      name: "ComposablePhoneNumberValidation",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
+      ]
+    ),
+    .testTarget(
+      name: "ComposablePhoneNumberValidationTests",
+      dependencies: [
+        "ComposablePhoneNumberValidation"
+      ]
+    ),
+    .target(
+      name: "ExpirationClient",
+      dependencies: [
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "FeedbackGeneratorClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "FileClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "GeneralMocks",
+      dependencies: []
+    ),
+    .target(
+      name: "HistoryFeature",
+      dependencies: [
+        "FeedbackGeneratorClient",
+        "ExpirationClient",
+        "OpenSocialClient",
+        "SentProfileFeature",
+        "SharedModels",
+        "SwiftHelpers",
+        .product(name: "Algorithms", package: "swift-algorithms"),
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "NonEmpty", package: "swift-nonempty"),
+      ]
+    ),
+    .testTarget(
+      name: "HistoryFeatureTests",
+      dependencies: [
+        "HistoryFeature",
+        "GeneralMocks",
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "NonEmpty", package: "swift-nonempty"),
+        .product(name: "Optics", package: "swift-prelude"),
+      ]
+    ),
+    .target(
+      name: "ImageLibraryClient",
+      dependencies: [
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "OpenSocialClient",
+      dependencies: [
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "OpenSocialFeature",
+      dependencies: [
+        "CombineHelpers",
+        "FeedbackGeneratorClient",
+        "OpenSocialClient",
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "OrientationClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "MultipeerClient",
+      dependencies: [
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "MultipeerKit", package: "MultipeerKit"),
+      ]
+    ),
+    .target(
+      name: "P2PEncodeDecode",
+      dependencies: [
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "ProximitySensorClient",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "SentProfileFeature",
+      dependencies: [
+        "CombineHelpers",
+        "FeedbackGeneratorClient",
+        "OpenSocialClient",
+        "OpenSocialFeature",
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "SharedModels",
+      dependencies: [
+        "GeneralMocks",
+        .product(name: "Optics", package: "swift-prelude"),
+        .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
+      ]
+    ),
+    .testTarget(
+      name: "SharedModelsTests",
+      dependencies: [
+        "SharedModels",
+      ]
+    ),
+    .target(
+      name: "SpringboardFeature",
+      dependencies: [
+        "SharedModels",
+        "SwiftUIHelpers",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "Algorithms", package: "swift-algorithms"),
+      ]
+    ),
+    .testTarget(
+      name: "SpringboardFeatureTests",
+      dependencies: [
+        "SharedModels",
+        "SpringboardFeature",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "Styleguide",
+      dependencies: [
+        .product(name: "PagerTabStripView", package: "PagerTabStripView"),
+      ]
+    ),
+    .target(
+      name: "SwiftHelpers",
+      dependencies: []
+    ),
+    .testTarget(
+      name: "SwiftHelpersTests",
+      dependencies: [
+        "SwiftHelpers",
+      ]
+    ),
+    .target(
+      name: "SwiftUIHelpers",
+      dependencies: []
+    ),
+    .target(
+      name: "TapCore",
+      dependencies: [
+        "BeaconClient",
+        "FeedbackGeneratorClient",
+        "GeneralMocks",
+        "OrientationClient",
+        "MultipeerClient",
+        "P2PEncodeDecode",
+        "ProximitySensorClient",
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .testTarget(
+      name: "TapCoreTests",
+      dependencies: [
+        "BeaconClient",
+        "FeedbackGeneratorClient",
+        "GeneralMocks",
+        "OrientationClient",
+        "MultipeerClient",
+        "P2PEncodeDecode",
+        "ProximitySensorClient",
+        "SharedModels",
+        "TapCore",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "TapFeature",
+      dependencies: [
+        "BeaconClient",
+        "FeedbackGeneratorClient",
+        "OrientationClient",
+        "MultipeerClient",
+        "P2PEncodeDecode",
+        "ProximitySensorClient",
+        "SharedModels",
+        "Styleguide",
+        "SwiftUIHelpers",
+        "TapCore",
+        .product(name: "Algorithms", package: "swift-algorithms"),
+        .product(name: "OrderedCollections", package: "swift-collections"),
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "Inject", package: "Inject"),
+      ]
+    ),
+    .testTarget(
+      name: "TapFeatureTests",
+      dependencies: [
+        "TapFeature",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "UserProfileFeature",
+      dependencies: [
+        "BottomMenu",
+        "FeedbackGeneratorClient",
+        "ImageLibraryClient",
+        "OpenSocialClient",
+        "OpenSocialFeature",
+        "SharedModels",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .testTarget(
+      name: "UserProfileFeatureTests",
+      dependencies: [
+        "UserProfileFeature",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
+      name: "VisualEffects",
+      dependencies: []
+    ),
+  ]
 )

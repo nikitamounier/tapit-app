@@ -4,7 +4,7 @@ import ComposableArchitecture
 import FeedbackGeneratorClient
 import Network
 import OrientationClient
-import P2PClient
+import MultipeerClient
 import P2PEncodeDecode
 import ProximitySensorClient
 import SharedModels
@@ -76,7 +76,7 @@ class TapCoreTests: XCTestCase {
             )
         )
         
-        store.environment.p2p = P2PClient(
+        store.environment.p2p = MultipeerClient(
             browser: BrowserClient(
                 create: { _, _ in p2pBrowserEventPublisher.eraseToEffect() },
                 startBrowsing: { _ in .none },

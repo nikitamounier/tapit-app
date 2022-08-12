@@ -6,7 +6,7 @@ import FeedbackGeneratorClient
 import GeneralMocks
 import Network
 import OrientationClient
-import P2PClient
+import MultipeerClient
 import P2PEncodeDecode
 import ProximitySensorClient
 import SharedModels
@@ -85,7 +85,7 @@ public struct TapEnvironment {
     public var mainQueue: AnySchedulerOf<DispatchQueue>
     public var beaconQueue: AnySchedulerOf<DispatchQueue>
     public var beacon: BeaconClient
-    public var p2p: P2PClient
+    public var multipeer: Multipeerclient
     public var p2pEncodeDecode: P2PEncodeDecode
     public var feedbackGenerator: FeedbackGeneratorClient
     public var proximitySensor: ProximitySensorClient
@@ -97,7 +97,7 @@ public struct TapEnvironment {
         mainQueue: AnySchedulerOf<DispatchQueue>,
         beaconQueue: AnySchedulerOf<DispatchQueue>,
         beacon: BeaconClient,
-        p2p: P2PClient,
+        p2p: MultipeerClient,
         p2pEncodeDecode: P2PEncodeDecode,
         feedbackGenerator: FeedbackGeneratorClient,
         proximitySensor: ProximitySensorClient,
@@ -256,11 +256,11 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         
     case .startP2P:
         return .merge(
-            env.p2p.browser.create(P2PBrowserID(), "_deadbeef._tcp")
+            env.multipeer.browser.create(P2PBrowserID(), "_deadbeef._tcp")
                 .flatMap { event -> Effect<TapAction, Never> in
                     switch event {
                     case .stateUpdated(.ready):
-                        return env.p2p.browser.startBrowsing(P2PBrowserID())
+                        return env.multipeer.browser.startBrowsing(P2PBrowserID())
                             .fireAndForget()
                         
                     case .stateUpdated(.failed):
@@ -279,7 +279,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                 .receive(on: env.mainQueue)
                 .eraseToEffect(),
             
-            env.p2p.listener.create(P2PListenerID(), "_deadbeef._tcp", env.p2p.listener.uuid().uuidString)
+            env.multipeer.listener.create(P2PListenerID(), "_deadbeef._tcp", env.multipeer.listener.uuid().uuidString)
                 .flatMap { event -> Effect<TapAction, Never> in
                     switch event {
                     case .failedToCreate:
@@ -289,7 +289,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                         )
                         
                     case .stateUpdated(.ready):
-                        return env.p2p.listener.startListening(P2PListenerID())
+                        return env.multipeer.listener.startListening(P2PListenerID())
                             .fireAndForget()
                         
                     case .stateUpdated(.failed):
@@ -339,11 +339,11 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
     case let .createConnection(connection):
         state.foundConnections[connection] = .init(date: env.dispatchNow(), lastPing: env.dispatchNow())
         
-        return env.p2p.connection.create(connection.endpoint, connection)
+        return env.multipeer.connection.create(connection.endpoint, connection)
             .flatMap { [state] event -> Effect<TapAction, Never> in
                 switch event {
                 case .stateUpdated(.setup):
-                    return env.p2p.connection.startConnection(connection.endpoint)
+                    return env.multipeer.connection.startConnection(connection.endpoint)
                         .flatMap { event -> Effect<TapAction, Never> in
                             switch event {
                             case .receivedMessage(type: MessageType.ping, data: _): // received ping
@@ -361,7 +361,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                                 
                                 return .merge(
                                     Effect(value: .receiveProfileResponse(profile, from: connection)),
-                                    env.p2p.connection.sendMessage(connection.endpoint, .profileReceived, Data()).fireAndForget()
+                                    env.multipeer.connection.sendMessage(connection.endpoint, .profileReceived, Data()).fireAndForget()
                                 )
                                 
                             case .receivedMessage(type: .profileReceived, data: _): // peer successfully received our profile
@@ -385,12 +385,12 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                     guard let myPeerInfo = env.p2pEncodeDecode.encodePeerInfo(state.peerMajorMinor!) else { return .none }
                     
                     return .merge(
-                        env.p2p.connection.sendMessage(connection.endpoint, .ping, Data()).fireAndForget(),
-                        env.p2p.connection.sendMessage(connection.endpoint, .peerInfo, myPeerInfo).fireAndForget()
+                        env.multipeer.connection.sendMessage(connection.endpoint, .ping, Data()).fireAndForget(),
+                        env.multipeer.connection.sendMessage(connection.endpoint, .peerInfo, myPeerInfo).fireAndForget()
                     )
                     
                 case .stateUpdated(.ready):
-                    return env.p2p.connection.sendMessage(connection.endpoint, .ping, Data())
+                    return env.multipeer.connection.sendMessage(connection.endpoint, .ping, Data())
                         .fireAndForget()
                     
                 case .stateUpdated(.failed):
@@ -419,7 +419,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
             .eraseToEffect()
         
     case let .cancelConnection(connection):
-        return env.p2p.connection.stopConnection(connection.endpoint)
+        return env.multipeer.connection.stopConnection(connection.endpoint)
             .fireAndForget()
         
     case let .receivePingResponse(connection):
@@ -438,7 +438,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         } else {
             return .merge(
                 .cancel(id: CancelBeaconSetupID()),
-                env.p2p.browser.stopBrowsing(P2PBrowserID()).fireAndForget()
+                env.multipeer.browser.stopBrowsing(P2PBrowserID()).fireAndForget()
             )
         }
         
@@ -468,7 +468,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                 guard let data = env.p2pEncodeDecode.encodeUserProfile(profile)
                 else { return Effect(value: .connectionFailed) }
                 
-                return env.p2p.connection.sendMessage(endpoint, .sendProfile, data)
+                return env.multipeer.connection.sendMessage(endpoint, .sendProfile, data)
                     .fireAndForget()
             }
             .eraseToEffect()
@@ -482,7 +482,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         } else {
             return .merge(
                 .cancel(ids: CancelBeaconSetupID(), CancelSendProfileID()),
-                env.p2p.listener.stopListening(P2PBrowserID()).fireAndForget(),
+                env.multipeer.listener.stopListening(P2PBrowserID()).fireAndForget(),
                 env.proximitySensor.stop.fireAndForget(),
                 env.orientation.stop.fireAndForget()
             )
@@ -502,7 +502,7 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
         
     case .pingExistingConnections:
         return .merge(
-            state.foundConnections.keys.map { env.p2p.connection.sendMessage($0.endpoint, .ping, Data()).fireAndForget() }
+            state.foundConnections.keys.map { env.multipeer.connection.sendMessage($0.endpoint, .ping, Data()).fireAndForget() }
         )
         
     case .killunimplementedConnections:
@@ -512,15 +512,15 @@ public let tapReducer = Reducer<TapState, TapAction, TapEnvironment> { state, ac
                     $0.state == .preparing
                     && env.dispatchNow() - (state.foundConnections[$0]?.lastPing ?? env.dispatchNow()) > .seconds(8)
                 }
-                .map { env.p2p.connection.stopConnection($0.endpoint).fireAndForget() }
+                .map { env.multipeer.connection.stopConnection($0.endpoint).fireAndForget() }
         )
         
     case .attemptNewConnections:
         return .merge(
             state.browserResults.map { result in
-                guard !env.p2p.connection.connectionExists(result.endpoint),
+                guard !env.multipeer.connection.connectionExists(result.endpoint),
                       case let .service(name, type, _, _) = result.endpoint,
-                      type == "_deadbeef._tcp" && name < env.p2p.listener.uuid().uuidString
+                      type == "_deadbeef._tcp" && name < env.multipeer.listener.uuid().uuidString
                 else { return .none }
                 
                 let connection = NWConnection(
