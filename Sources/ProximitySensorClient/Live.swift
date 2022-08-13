@@ -1,16 +1,25 @@
-import ComposableArchitecture
 import UIKit
 
 public extension ProximitySensorClient {
-    static let live = Self(
-        start: {
-            UIDevice.current.isProximityMonitoringEnabled = true
-            return NotificationCenter.default.publisher(for: UIDevice.proximityStateDidChangeNotification)
-                .map { _ in UIDevice.current.proximityState ? .inProximity : .notInProximity }
-                .eraseToEffect()
-        },
-        stop: .fireAndForget {
-            UIDevice.current.isProximityMonitoringEnabled = false
-        }
-    )
+  static let live = Self {
+    await UIDevice.current.startProximitySensor()
+    
+    let proximity = await NotificationCenter.default.publisher(for: UIDevice.proximityStateDidChangeNotification)
+      .values
+      .map { _ in () }
+    
+    _ = await proximity
+      .first { await UIDevice.current.proximityState }
+    
+    await UIDevice.current.endGeneratingDeviceOrientationNotifications()
+    
+    return true
+  }
 }
+
+extension UIDevice {
+  func startProximitySensor() {
+    self.isProximityMonitoringEnabled = true
+  }
+}
+

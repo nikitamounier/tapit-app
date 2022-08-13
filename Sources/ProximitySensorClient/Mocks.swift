@@ -1,15 +1,11 @@
-import ComposableArchitecture
+import XCTestDynamicOverlay
 
 public extension ProximitySensorClient {
-    static let noop = Self(
-        start:  { .none },
-        stop: .none
-    )
-    
-    #if DEBUG
-    static let unimplemented = Self(
-        start: { .unimplemented("\(Self.self).start") },
-        stop: .unimplemented("\(Self.self).stop")
-    )
-    #endif
+  static let noop = Self { return false }
 }
+
+#if DEBUG
+public extension ProximitySensorClient {
+  static let unimplemented = Self(sensedProximity: XCTUnimplemented("\(Self.self)", placeholder: false))
+}
+#endif
