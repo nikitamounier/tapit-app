@@ -1,6 +1,6 @@
 import CombineHelpers
 import ComposableArchitecture
-import FeedbackGeneratorClient
+import HapticClient
 import OpenSocialClient
 import SharedModels
 
@@ -31,12 +31,12 @@ public enum OpenSocialAction: Equatable {
 
 public struct OpenSocialEnvironment {
     public var openSocial: OpenSocialClient
-    public var feedbackGenerator: FeedbackGeneratorClient
+    public var feedbackGenerator: HapticClient
     public var openAppSettings: () -> Void
     
     public init(
         openSocial: OpenSocialClient,
-        feedbackGenerator: FeedbackGeneratorClient,
+        feedbackGenerator: HapticClient,
         openAppSettings: @escaping () -> Void
     ) {
         self.openSocial = openSocial
@@ -45,18 +45,18 @@ public struct OpenSocialEnvironment {
     }
 }
 
-public let openSocialReducer = Reducer<OpenSocialState, OpenSocialAction, OpenSocialEnvironment> { state, action, env in
+public let openSocialReducer = Reducer<OpenSocialState, OpenSocialAction, OpenSocialEnvironment> { state, action, environment in
     switch action {
     case let .open(social, option):
         let effect: Effect<Result<OpenSocialClient.OpenEvent, OpenSocialClient.OpenError>, Never>
         
         switch social {
         case .instagram, .snapchat, .twitter, .facebook, .reddit, .tikTok, .weChat, .github, .linkedIn, .address, .email:
-            effect = env.openSocial
+            effect = environmentopenSocial
                 .open(social, option: nil)
                 .catchToEffect()
         case .phone:
-            effect = env.openSocial
+            effect = environmentopenSocial
                 .open(social, option: option)
                 .catchToEffect()
         }
@@ -87,7 +87,7 @@ public let openSocialReducer = Reducer<OpenSocialState, OpenSocialAction, OpenSo
                 }
             }
             .compactMap(\.self)
-            .merge(with: env.feedbackGenerator.notificationOccurred(.error).fireAndForget())
+            .merge(with: environmentfeedbackGenerator.notificationOccurred(.error).fireAndForget())
             .eraseToEffect()
         
     case let .alert(alertAction):
@@ -97,7 +97,7 @@ public let openSocialReducer = Reducer<OpenSocialState, OpenSocialAction, OpenSo
             return .none
             
         case .openAppSettings:
-            return .fireAndForget(env.openAppSettings)
+            return .fireAndForget(environmentopenAppSettings)
             
         case .failedToOpenURL:
             state.alert = .init(

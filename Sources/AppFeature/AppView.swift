@@ -15,7 +15,7 @@ public struct AppView: View {
                     categories: []),
                 reducer: historyReducer,
                 environment: HistoryEnvironment(
-                    feedbackGenerator: .live,
+                    haptic: .live,
                     openSocial: .live,
                     openAppSettings: {}
                 )

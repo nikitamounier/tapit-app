@@ -68,7 +68,7 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .unimplemented,
-                feedbackGenerator: .unimplemented,
+                haptic: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
                 openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
@@ -111,7 +111,7 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .unimplemented,
-                feedbackGenerator: .unimplemented,
+                haptic: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
                 openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
@@ -157,7 +157,7 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .unimplemented,
-                feedbackGenerator: .unimplemented,
+                haptic: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
                 openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
@@ -205,7 +205,7 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .unimplemented,
-                feedbackGenerator: .unimplemented,
+                haptic: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
                 openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
@@ -229,7 +229,7 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .immediate,
-                feedbackGenerator: .unimplemented,
+                haptic: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
                 openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
@@ -290,7 +290,7 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: .immediate,
-                feedbackGenerator: .unimplemented,
+                haptic: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
                 openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")
@@ -358,7 +358,7 @@ class HistoryFeatureTests: XCTestCase {
             reducer: historyReducer,
             environment: HistoryEnvironment(
                 mainQueue: scheduler.eraseToAnyScheduler(),
-                feedbackGenerator: .unimplemented,
+                haptic: .unimplemented,
                 isSentProfileExpired: .unimplemented,
                 openSocial: .unimplemented,
                 openAppSettings: XCTUnimplemented("HistoryEnvironment.openAppSettings")

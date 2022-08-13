@@ -40,7 +40,7 @@ public enum UserProfileAction: Equatable {
 public struct UserProfileEnvironment {
     public var imageLibrary: ImageLibraryClient
     public var openSocial: OpenSocialClient
-    public var feedbackGenerator: FeedbackGeneratorClient
+    public var haptic: HapticClient
     public var openAppSettings: () -> Void
 }
 
@@ -62,7 +62,7 @@ public let userProfileReducer = Reducer<UserProfileState, UserProfileAction, Use
             environment: {
                 PFPEditEnvironment(
                     imageLibrary: $0.imageLibrary,
-                    feedbackGenerator: $0.feedbackGenerator
+                    haptic: $0.haptic
                 )
             }
         ),
@@ -74,13 +74,13 @@ public let userProfileReducer = Reducer<UserProfileState, UserProfileAction, Use
             environment: {
                 OpenSocialEnvironment(
                     openSocial: $0.openSocial,
-                    feedbackGenerator: $0.feedbackGenerator,
+                    haptic: $0.haptic,
                     openAppSettings: $0.openAppSettings
                 )
             }
         ),
     
-    Reducer { state, action, env in
+    Reducer { state, action, environment in
         switch action {
         case let .profileImageTapped:
             state.profilePictureEdit = PFPEditState(image: state.profile.profileImage)
