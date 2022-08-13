@@ -1,15 +1,11 @@
-import ComposableArchitecture
+import XCTestDynamicOverlay
 
 public extension OrientationClient {
-    static var noop = Self(
-        start: { .none },
-        stop: .none
-    )
-    
-    #if DEBUG
-    static var unimplemented = Self(
-        start: { .unimplemented("\(Self.self).start") },
-        stop: .unimplemented("\(Self.self).stop")
-    )
-    #endif
+    static let noop = Self { false }
 }
+
+#if DEBUG
+public extension OrientationClient {
+    static let unimplemented = Self(horizontal: XCTUnimplemented("\(Self.self).horizontal", placeholder: false))
+}
+#endif
