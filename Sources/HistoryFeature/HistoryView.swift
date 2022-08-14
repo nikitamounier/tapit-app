@@ -179,7 +179,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case let .searchInput(text: text):
             state.currentSearch = text
             return Effect(value: .searchResponse(input: text))
-                .debounce(id: SearchID(), for: 0.5, scheduler: environmentmainQueue)
+                .debounce(id: SearchID(), for: 0.5, scheduler: environment.mainQueue)
                 .removeDuplicates()
                 .eraseToEffect()
  

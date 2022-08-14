@@ -303,11 +303,9 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       state.selectedSocials = []
       state.selectedPresets = []
 
-      return .run { send in
-        await environment.haptic.generateFeedback(.error)
-        await send(.cancel(id: CancelTapID.self))
+      // TODO: - Remove use of .merge(_:...)
+      return .merge(.fireAndForget { await environment.haptic.generateFeedback(.error) }, .cancel(id: CancelTapID.self))
         
-      }
 
     case .alertOKTapped:
       state.errorAlert = nil
