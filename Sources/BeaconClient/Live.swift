@@ -161,7 +161,14 @@ private final class Delegate: NSObject, CLLocationManagerDelegate, CBPeripheralM
   
   func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
     let beacons = beacons.map {
-      Beacon(major: $0.major as! UInt16, minor: $0.minor as! UInt16, proximity: Beacon.Proximity(rawValue: $0.proximity.rawValue)!, accuracy: $0.accuracy, rssi: $0.rssi)
+      let accuracy = $0.accuracy.sign == .minus ? .infinity : $0.accuracy // if accuracy negative means it could not be determined
+      return Beacon(
+        major: $0.major as! UInt16,
+        minor: $0.minor as! UInt16,
+        proximity: Beacon.Proximity(rawValue: $0.proximity.rawValue)!,
+        accuracy: accuracy,
+        rssi: $0.rssi
+      )
     }
     self.detectorRangedBeacons(beacons)
   }

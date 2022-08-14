@@ -38,8 +38,8 @@ let package = Package(
       targets: ["ExpirationClient"]
     ),
     .library(
-      name: "FeedbackGeneratorClient",
-      targets: ["FeedbackGeneratorClient"]
+      name: "HapticClient",
+      targets: ["HapticClient"]
     ),
     .library(
       name: "FileClient",
@@ -74,10 +74,6 @@ let package = Package(
       targets: ["MultipeerClient"]
     ),
     .library(
-      name: "P2PEncodeDecode",
-      targets: ["P2PEncodeDecode"]
-    ),
-    .library(
       name: "ProximitySensorClient",
       targets: ["ProximitySensorClient"]
     ),
@@ -104,10 +100,6 @@ let package = Package(
     .library(
       name: "SwiftUIHelpers",
       targets: ["SwiftUIHelpers"]
-    ),
-    .library(
-      name: "TapCore",
-      targets: ["TapCore"]
     ),
     .library(
       name: "TapFeature",
@@ -228,7 +220,7 @@ let package = Package(
       ]
     ),
     .target(
-      name: "FeedbackGeneratorClient",
+      name: "HapticClient",
       dependencies: [
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
       ]
@@ -246,7 +238,7 @@ let package = Package(
     .target(
       name: "HistoryFeature",
       dependencies: [
-        "FeedbackGeneratorClient",
+        "HapticClient",
         "ExpirationClient",
         "OpenSocialClient",
         "SentProfileFeature",
@@ -286,7 +278,7 @@ let package = Package(
       name: "OpenSocialFeature",
       dependencies: [
         "CombineHelpers",
-        "FeedbackGeneratorClient",
+        "HapticClient",
         "OpenSocialClient",
         "SharedModels",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -307,13 +299,6 @@ let package = Package(
       ]
     ),
     .target(
-      name: "P2PEncodeDecode",
-      dependencies: [
-        "SharedModels",
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-      ]
-    ),
-    .target(
       name: "ProximitySensorClient",
       dependencies: [
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -323,7 +308,7 @@ let package = Package(
       name: "SentProfileFeature",
       dependencies: [
         "CombineHelpers",
-        "FeedbackGeneratorClient",
+        "HapticClient",
         "OpenSocialClient",
         "OpenSocialFeature",
         "SharedModels",
@@ -382,47 +367,16 @@ let package = Package(
       dependencies: []
     ),
     .target(
-      name: "TapCore",
-      dependencies: [
-        "BeaconClient",
-        "FeedbackGeneratorClient",
-        "GeneralMocks",
-        "OrientationClient",
-        "MultipeerClient",
-        "P2PEncodeDecode",
-        "ProximitySensorClient",
-        "SharedModels",
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-      ]
-    ),
-    .testTarget(
-      name: "TapCoreTests",
-      dependencies: [
-        "BeaconClient",
-        "FeedbackGeneratorClient",
-        "GeneralMocks",
-        "OrientationClient",
-        "MultipeerClient",
-        "P2PEncodeDecode",
-        "ProximitySensorClient",
-        "SharedModels",
-        "TapCore",
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-      ]
-    ),
-    .target(
       name: "TapFeature",
       dependencies: [
         "BeaconClient",
-        "FeedbackGeneratorClient",
+        "HapticClient",
         "OrientationClient",
         "MultipeerClient",
-        "P2PEncodeDecode",
         "ProximitySensorClient",
         "SharedModels",
         "Styleguide",
         "SwiftUIHelpers",
-        "TapCore",
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "OrderedCollections", package: "swift-collections"),
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -440,7 +394,7 @@ let package = Package(
       name: "UserProfileFeature",
       dependencies: [
         "BottomMenu",
-        "FeedbackGeneratorClient",
+        "HapticClient",
         "ImageLibraryClient",
         "OpenSocialClient",
         "OpenSocialFeature",

@@ -11,7 +11,7 @@ struct HistoryFeaturePreviewApp: App {
                     reducer: historyReducer,
                     environment: .init(
                         mainQueue: .main,
-                        feedbackGenerator: .noop,
+                        haptic: .noop,
                         isSentProfileExpired: .noop,
                         openSocial: .noop,
                         openAppSettings: {}

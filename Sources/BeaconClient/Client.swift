@@ -1,15 +1,19 @@
 public struct BeaconClient {
-  var start: @Sendable (_ major: UInt16, _ minor: UInt16) async -> AsyncThrowingStream<[Beacon], Error>
+  public var start: @Sendable (_ major: UInt16, _ minor: UInt16) async -> AsyncThrowingStream<[Beacon], Error>
+
+  public init(start: @escaping @Sendable (_ major: UInt16, _ minor: UInt16) async -> AsyncThrowingStream<[Beacon], Error>) {
+    self.start = start
+  }
 }
 
 public struct Beacon: Equatable {
-  let major: UInt16
-  let minor: UInt16
-  let proximity: Proximity
-  let accuracy: Double
-  let rssi: Int
+  public let major: UInt16
+  public let minor: UInt16
+  public let proximity: Proximity
+  public let accuracy: Double
+  public let rssi: Int
   
-  enum Proximity: Int {
+  public enum Proximity: Int {
     case unknown, immediate, near, far
   }
 }

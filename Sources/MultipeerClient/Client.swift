@@ -19,7 +19,7 @@ public struct MultipeerClient {
 }
 
 public struct PeerID: Equatable {
-  let name: String
+  public let name: String
   
   public init(name: String) {
     self.name = name

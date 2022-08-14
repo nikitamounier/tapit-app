@@ -1,6 +1,6 @@
 import Combine
 import ComposableArchitecture
-import FeedbackGeneratorClient
+import HapticClient
 import ExpirationClient
 import IdentifiedCollections
 import NonEmpty
@@ -77,20 +77,20 @@ public enum HistoryAction: Equatable {
 
 public struct HistoryEnvironment {
     public var mainQueue: AnySchedulerOf<DispatchQueue>
-    public var feedbackGenerator: FeedbackGeneratorClient
+    public var haptic: HapticClient
     public var isSentProfileExpired: ExpirationClient
     public var openSocial: OpenSocialClient
     public var openAppSettings: () -> Void
     
     public init(
         mainQueue: AnySchedulerOf<DispatchQueue>,
-        feedbackGenerator: FeedbackGeneratorClient,
+        haptic: HapticClient,
         isSentProfileExpired: ExpirationClient,
         openSocial: OpenSocialClient,
         openAppSettings: @escaping () -> Void
     ) {
         self.mainQueue = mainQueue
-        self.feedbackGenerator = feedbackGenerator
+        self.haptic = haptic
         self.isSentProfileExpired = isSentProfileExpired
         self.openSocial = openSocial
         self.openAppSettings = openAppSettings
@@ -103,14 +103,14 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         action: .sentProfile,
         environment: {
             SentProfileEnvironment(
-                feedbackGenerator: $0.feedbackGenerator,
+                haptic: $0.haptic,
                 openSocial: $0.openSocial,
                 openAppSettings: $0.openAppSettings
             )
         }
     ),
     
-    Reducer { state, action, env in
+    Reducer { state, action, environment in
         struct SearchID: Hashable {}
         
         switch action {
@@ -179,7 +179,7 @@ public let historyReducer = Reducer<HistoryState, HistoryAction, HistoryEnvironm
         case let .searchInput(text: text):
             state.currentSearch = text
             return Effect(value: .searchResponse(input: text))
-                .debounce(id: SearchID(), for: 0.5, scheduler: env.mainQueue)
+                .debounce(id: SearchID(), for: 0.5, scheduler: environmentmainQueue)
                 .removeDuplicates()
                 .eraseToEffect()
  
@@ -326,7 +326,7 @@ struct HistoryView_Previews: PreviewProvider {
                 reducer: historyReducer,
                 environment: HistoryEnvironment(
                     mainQueue: .main,
-                    feedbackGenerator: .live,
+                    haptic: .live,
                     isSentProfileExpired: .live,
                     openSocial: .live,
                     openAppSettings: {}
