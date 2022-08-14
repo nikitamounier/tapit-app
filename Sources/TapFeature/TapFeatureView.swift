@@ -14,7 +14,7 @@ import SwiftUIHelpers
 
 public struct TapFeatureState: Equatable {
   public var profile: UserProfile
-  public var presets: IdentifiedArrayOf<Preset>  
+  public var presets: IdentifiedArrayOf<Preset>
   public var currentSection: Section
   
   public var selectedSocials: Set<Social.ID>
@@ -26,7 +26,7 @@ public struct TapFeatureState: Equatable {
   public var beacons: [Beacon] = []
   public var peers: [PeerID] = []
   public var errorAlert: AlertState<TapFeatureAction>?
-
+  
   public struct Preset: Equatable, Identifiable {
     public let id = UUID()
     public var name: String
@@ -186,7 +186,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
               await send(.beaconsResponse(beacons))
             }
           }
-
+          
           group.addTask {
             let myPeerID = "\(String(format: "%016d-%016d", major, minor))"
             for await peer in await environment.multipeer.start(myPeerID) {
@@ -203,17 +203,17 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
     case let .beaconsResponse(beacons):
       state.beacons = beacons
       return .none
-
+      
     case let .peerResponse(peer):
       state.peers.append(peer)
-      return .none 
-
+      return .none
+      
     case .shareButtonPressed(true):
       state.showTapSheet = true
       
       return .run { [profile = state.profile, peers = state.peers, beacons = state.beacons] send in
         await environment.haptic.prepare()
-
+        
         async let isHorizontal = environment.orientation.horizontal()
         async let sensedProximity = environment.proximitySensor.sensedProximity()
         
@@ -276,13 +276,13 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       state.showTapSheet = false
       state.selectedSocials = []
       state.selectedPresets = []
-
+      
       return .cancel(id: CancelTapID.self)
-
+      
     case let .receivedProfileResponse(profile):
       state.receivedProfile = profile
       return .cancel(id: CancelTapID.self)
-    
+      
     case let .showErrorAlert(reason: reason):
       let message: TextState
       switch reason {
@@ -296,17 +296,17 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
         message: message,
         dismissButton: .default(TextState("OK"), action: .send(.alertOKTapped))
       )
-
+      
       state.beacons = []
       state.peers = []
       state.showTapSheet = false
       state.selectedSocials = []
       state.selectedPresets = []
-
+      
       // TODO: - Remove use of .merge(_:...)
       return .merge(.fireAndForget { await environment.haptic.generateFeedback(.error) }, .cancel(id: CancelTapID.self))
-        
-
+      
+      
     case .alertOKTapped:
       state.errorAlert = nil
       return .none
