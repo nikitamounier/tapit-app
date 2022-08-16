@@ -1,12 +1,13 @@
 import CoreBluetooth
 import ComposableArchitecture
 import CoreLocation
+import Foundation
 
 public extension BeaconClient {
   static var live: Self {
-    let beacon = BeaconActor()
+    let beacon = BeaconManager()
     
-    return Self { await beacon.start(major: $0, minor: $1) }
+    return Self { await beacon.start(major: $0, minor: $1)}
   }
 }
 
@@ -14,13 +15,13 @@ public enum BeaconError: Error, Equatable {
   case deniedAuthorization
 }
 
-private actor BeaconActor {
-  var delegate: Delegate?
+private final class BeaconManager {
+  @BeaconActor var delegate: Delegate?
   
-  @Box var locationManager: CLLocationManager?
-  @Box var peripheralManager: CBPeripheralManager?
+  @BeaconActor @Box var locationManager: CLLocationManager?
+  @BeaconActor @Box var peripheralManager: CBPeripheralManager?
   
-  
+  @BeaconActor
   func start(major: UInt16, minor: UInt16) async -> AsyncThrowingStream<[Beacon], Error> {
     return AsyncThrowingStream { continuation in
       let detectingRegion = CLBeaconRegion(
@@ -199,9 +200,4 @@ private final class Box<Value> {
   init(wrappedValue: Value) {
     self.wrappedValue = wrappedValue
   }
-  
-  deinit {
-    print("\(wrappedValue) and its Box were deinitialized")
-  }
 }
-
