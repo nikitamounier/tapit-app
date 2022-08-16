@@ -192,7 +192,7 @@ private final class Delegate: NSObject, CLLocationManagerDelegate, CBPeripheralM
 }
 
 @globalActor
-actor BeaconActor {
+private actor BeaconActor {
   static let shared = BeaconActor()
   
   init() {
