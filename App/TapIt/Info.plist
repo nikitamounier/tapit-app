@@ -20,6 +20,22 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Tap It uses bluetooth to know which phone you want to tap.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Tap It uses bluetooth to know which phone you want to tap.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_tapit._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Tap It uses a local network to tap the other phone.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need some location data to know which phone you want to tap. All information stays on-device – nothing is shared.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need some location data to know which phone you want to tap. All information stays on-device – nothing is shared.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need some location data to know which phone you want to tap. All information stays on-device – nothing is shared.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
