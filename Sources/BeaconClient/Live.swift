@@ -209,7 +209,7 @@ private actor BeaconActor {
   private final class RunLoopExecutor: Thread, SerialExecutor, @unchecked Sendable {
     override init() {
       super.init()
-      name = "AccessibilityElement.SystemObserver"
+      name = "BeaconClient.BeaconActor"
       qualityOfService = .userInitiated
     }
     override func main() {
