@@ -36,14 +36,11 @@ struct TapFeaturePreview: View {
                     reducer: tapFeatureReducer,
                     environment: .init(
                         mainQueue: .main,
-                        beaconQueue: .immediate,
-                        beacon: .noop,
-                        multipeer: .noop,
-                        haptic: .noop,
-                        proximitySensor: .noop,
-                        orientation: .noop,
-                        dispatchNow: { .now() },
-                        openAppSettings: {}
+                        beacon: .live,
+                        multipeer: .live,
+                        haptic: .live,
+                        proximitySensor: .live,
+                        orientation: .live
                     )
                 )
             )

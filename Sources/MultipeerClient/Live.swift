@@ -3,7 +3,7 @@ import SharedModels
 import ComposableArchitecture
 
 
-extension MultipeerClient {
+public extension MultipeerClient {
     static var live: Self {
         let multipeer = Multipeer()
         
@@ -27,7 +27,8 @@ private actor Multipeer {
         var configuration: MultipeerConfiguration = .default
         configuration.peerName = peerID
         configuration.serviceType = "tapit"
-        configuration.security.encryptionPreference = .required
+        // TODO: - Change encryption to .required once have Apple Developer Program Membership
+        configuration.security.encryptionPreference = .none
         
         transceiver = MultipeerTransceiver(configuration: configuration)
         transceiver?.resume()

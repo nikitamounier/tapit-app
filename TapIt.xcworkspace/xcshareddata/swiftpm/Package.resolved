@@ -1,15 +1,6 @@
 {
   "pins" : [
     {
-      "identity" : "bottomsheet",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LucasMucGH/BottomSheet",
-      "state" : {
-        "branch" : "main",
-        "revision" : "f7c688031ab9edc2ff3d283f27e4c6a90fc7e0c9"
-      }
-    },
-    {
       "identity" : "combine-schedulers",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/combine-schedulers",
@@ -39,10 +30,10 @@
     {
       "identity" : "pagertabstripview",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/xmartlabs/PagerTabStripView",
+      "location" : "https://github.com/nikitamounier/PagerTabStripView",
       "state" : {
-        "revision" : "96967dce463637e070fe17eba6537237b095c2ba",
-        "version" : "3.2.0"
+        "branch" : "main",
+        "revision" : "29a86f27ccbea7a392df2bf1ab7b54fee99391dd"
       }
     },
     {

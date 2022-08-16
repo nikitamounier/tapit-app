@@ -65,7 +65,7 @@ public struct SpringboardView: View {
       LazyVGrid(columns: columns) {
         ForEach(viewStore.socials.indexed(), id: \.1) { index, social in
           Image(social: social)
-            .backport.overlay(alignment: .topTrailing) {
+            .overlay(alignment: .topTrailing) {
               if viewStore.isEditing {
                 Button(action: { viewStore.send(.removeSocial(index: index)) }) {
                   Image(systemName: "x.circle")

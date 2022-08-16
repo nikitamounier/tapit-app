@@ -291,6 +291,9 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       case .closeness:
         message = TextState("An error occurred. Make sure that you're close to the person you're tapping.")
       }
+      
+      state.showTapSheet = false
+      
       state.errorAlert = AlertState(
         title: TextState("Error"),
         message: message,
@@ -299,7 +302,6 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       
       state.beacons = []
       state.peers = []
-      state.showTapSheet = false
       state.selectedSocials = []
       state.selectedPresets = []
       
@@ -312,6 +314,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       return .none
     }
   }
+  .debug()
 
 public struct TapFeatureView: View {
   struct ViewState: Equatable {
@@ -350,58 +353,80 @@ public struct TapFeatureView: View {
         send: { .goToSection(.init(rawValue: $0)!) }
       )
     ) {
-      // socials
-      ScrollView {
-        SocialsGrid(
-          using: viewStore.profileSocials,
-          containsID: { viewStore.selectedSocials.contains($0) },
-          selectElement: { viewStore.send(.selectSocial($0)) },
-          deselectElement: { viewStore.send(.deselectSocial($0)) },
-          showGradientBorder: { viewStore.selectedSocials.contains($0) },
-          gradientDegrees: gradientDegrees,
-          textFromElement: Text.init,
-          imageFromElement: Image.init
-        )
-      }
-      .swipeTabItem {
-        Text("Socials")
-          .bold()
-          .foregroundColor(.blue)
-      }
-      .onPageAppear {
-        withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-          if !gradientAlreadySet {
-            self.gradientDegrees = 360
-            self.gradientAlreadySet = true
+      LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+        ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
+          Button {
+            _ = viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
+          } label: {
+            RoundedRectangle(cornerRadius: 20)
+              .rotatingGradientBorder(
+                showBorder: viewStore.selectedSocials.contains(social.id),
+                degrees: gradientDegrees
+              )
+              .aspectRatio(1.25, contentMode: .fit)
+              .overlay(alignment: .center) {
+                VStack {
+                  //image(social)
+                  EmptyView()
+                    .padding(.bottom, 15)
+                  Text(social: social)
+                    .bold()
+                }
+              }
           }
+          .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+          .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
         }
       }
-      
-      // presets
-      ScrollView {
-        SocialsGrid(
-          using: viewStore.profilePresets,
-          containsID: { viewStore.selectedPresets.contains($0) },
-          selectElement: { viewStore.send(.selectPreset($0)) },
-          deselectElement: { viewStore.send(.deselectPreset($0)) },
-          showGradientBorder: { viewStore.selectedPresets.contains($0) },
-          gradientDegrees: gradientDegrees,
-          textFromElement: { Text($0.name) },
-          imageFromElement: { _ in Image(systemName: "command.circle.fill") }
-        )
+    }
+    .swipeTabItem {
+      Text("Socials")
+        .bold()
+        .foregroundColor(.blue)
+    }
+    .onPageAppear {
+      withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+        if !gradientAlreadySet {
+          self.gradientDegrees = 360
+          self.gradientAlreadySet = true
+        }
       }
-      .swipeTabItem {
-        Text("Presets")
-          .bold()
-          .foregroundColor(.blue)
+    }
+    LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+      ForEach(viewStore.profilePresets.indexed(), id: \.1.id) { index, preset in
+        Button {
+          _ = viewStore.selectedPresets.contains(preset.id) ? viewStore.send(.deselectPreset(preset.id)) : viewStore.send(.selectPreset(preset.id))
+        } label: {
+          RoundedRectangle(cornerRadius: 20)
+            .rotatingGradientBorder(
+              showBorder: viewStore.selectedPresets.contains(preset.id),
+              degrees: gradientDegrees
+            )
+            .aspectRatio(1.25, contentMode: .fit)
+            .overlay(alignment: .center) {
+              VStack {
+                EmptyView()
+                  .padding(.bottom, 15)
+                Text(preset.name)
+                  .bold()
+              }
+            }
+        }
+        .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+        .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
       }
+    }
+    .swipeTabItem {
+      Text("Presets")
+        .bold()
+        .foregroundColor(.blue)
     }
     .onDisappear {
       withAnimation(.default) { // `nil` doesn't stop the .repeatForever(), but this does
         self.gradientDegrees = 0
       }
     }
-    .backport.overlay(alignment: .bottom) {
+    .overlay(alignment: .bottom) {
       VStack {
         if !viewStore.selectedSocials.isEmpty {
           Button(action: { viewStore.send(.shareButtonPressed(true)) } ) {
@@ -411,7 +436,7 @@ public struct TapFeatureView: View {
           }
           .padding()
           .padding(.horizontal, 40)
-          .backport.background {
+          .background {
             LinearGradient(gradient: .tapGradient, startPoint: .topLeading, endPoint: .trailing)
           }
           .clipShape(Capsule())
@@ -423,8 +448,10 @@ public struct TapFeatureView: View {
     .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: TapFeatureAction.shareButtonPressed)) {
       TapSheet(store: store.scope(state: TapSheet.ViewState.init))
     }
+    .alert(store.scope(state: \.errorAlert), dismiss: .alertOKTapped)
   }
 }
+
 
 //struct TapFeatureView_Previews: PreviewProvider {
 //  static var previews: some View {

@@ -62,8 +62,8 @@ struct TapSheet: View {
           self.rotation = 0
         }
       }
-      .drawingGroup()
       .navigationBarHidden(true)
+      .drawingGroup()
     case .some:
       EmptyView()
     }

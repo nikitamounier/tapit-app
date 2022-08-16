@@ -20,7 +20,7 @@ struct RotatingGradient<Content: InsettableShape>: View, Animatable {
           center: .center,
           angle: .degrees(gradientDegrees)
         ) :
-          AngularGradient(colors: [], center: .center, angle: .degrees(gradientDegrees)),
+          AngularGradient(colors: [.secondary], center: .center, angle: .degrees(gradientDegrees)),
         lineWidth: 2.5
       )
   }
