@@ -64,8 +64,10 @@ struct TapSheet: View {
       }
       .navigationBarHidden(true)
       .drawingGroup()
-    case .some:
-      EmptyView()
+    case let .some(receivedProfile):
+      VStack {
+        Text(receivedProfile.name)
+      }
     }
   }
 }

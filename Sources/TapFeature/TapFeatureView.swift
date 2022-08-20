@@ -1,3 +1,4 @@
+import Algorithms
 import BeaconClient
 import ComposableArchitecture
 import HapticClient
@@ -177,20 +178,22 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       
     case .startTapSession:
       return .run { send in
+        await withTaskCancellation(id: CancelTapID.self, cancelInFlight: false) {
         let major: UInt16 = .random(in: UInt16.min...UInt16.max)
         let minor: UInt16 = .random(in: UInt16.min...UInt16.max)
         
-        await withThrowingTaskGroup(of: Void.self) { group in
-          group.addTask {
-            for try await beacons in await environment.beacon.start(major, minor) {
-              await send(.beaconsResponse(beacons))
+          await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+              for try await beacons in await environment.beacon.start(major, minor) {
+                await send(.beaconsResponse(beacons))
+              }
             }
-          }
-          
-          group.addTask {
-            let myPeerID = "\(String(format: "%016d-%016d", major, minor))"
-            for await peer in await environment.multipeer.start(myPeerID) {
-              await send(.peerResponse(peer))
+            
+            group.addTask {
+              let myPeerID = "\(String(format: "%016d-%016d", major, minor))"
+              for await peer in await environment.multipeer.start(myPeerID) {
+                await send(.peerResponse(peer))
+              }
             }
           }
         }
@@ -212,61 +215,62 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       state.showTapSheet = true
       
       return .run { [profile = state.profile, peers = state.peers, beacons = state.beacons] send in
-        await environment.haptic.prepare()
-        
-        async let isHorizontal = environment.orientation.horizontal()
-        async let sensedProximity = environment.proximitySensor.sensedProximity()
-        
-        _ = await (isHorizontal, sensedProximity)
-        
-        // First see if there are any beacons in immediate surrounding. If not, see if beacons in "near" surrounding.
-        // If multiple beacons in immediate/near surrounding, take one with lowest accuracy value (== closest).
-        // In unlikely case that multiple beacons have same accuracy value, take one with highest RSSI (== signal strength).
-        let immediate = beacons.filter { $0.proximity == .immediate }
-        
-        guard !beacons.isEmpty, !immediate.isEmpty || beacons.contains(where: { $0.proximity == .near })
-        else {
-          await send(.showErrorAlert(reason: .closeness))
-          return
-        }
-        
-        let closestBeacon: Beacon
-        
-        if !immediate.isEmpty {
-          guard let immediateBeacon = immediate.max(by: { $0.accuracy > $1.accuracy }) ?? immediate.max(by: { $0.rssi > $1.rssi })
+        try await withTaskCancellation(id: CancelTapID.self, cancelInFlight: false) {
+          await environment.haptic.prepare()
+          
+          async let isHorizontal = environment.orientation.horizontal()
+          async let sensedProximity = environment.proximitySensor.sensedProximity()
+          
+          _ = await (isHorizontal, sensedProximity)
+          
+          // First see if there are any beacons in immediate surrounding. If not, see if beacons in "near" surrounding.
+          // If multiple beacons in immediate/near surrounding, take one with lowest accuracy value (== closest).
+          // In unlikely case that multiple beacons have same accuracy value, take one with highest RSSI (== signal strength).
+          let immediate = beacons.filter { $0.proximity == .immediate }
+          
+          guard !beacons.isEmpty, !immediate.isEmpty || beacons.contains(where: { $0.proximity == .near })
           else {
             await send(.showErrorAlert(reason: .closeness))
             return
           }
-          closestBeacon = immediateBeacon
-        } else {
-          let near = beacons.filter { $0.proximity == .near }
-          guard let nearBeacon = near.max(by: { $0.accuracy < $1.accuracy }) ?? immediate.max(by: { $0.rssi > $1.rssi })
+          
+          let closestBeacon: Beacon
+          
+          if !immediate.isEmpty {
+            guard let immediateBeacon = immediate.max(by: { $0.accuracy > $1.accuracy }) ?? immediate.max(by: { $0.rssi > $1.rssi })
+            else {
+              await send(.showErrorAlert(reason: .closeness))
+              return
+            }
+            closestBeacon = immediateBeacon
+          } else {
+            let near = beacons.filter { $0.proximity == .near }
+            guard let nearBeacon = near.max(by: { $0.accuracy < $1.accuracy }) ?? immediate.max(by: { $0.rssi > $1.rssi })
+            else {
+              await send(.showErrorAlert(reason: .closeness))
+              return
+            }
+            closestBeacon = nearBeacon
+          }
+          
+          guard let closestPeer = peers
+            .first(where: { $0.name == "\(String(format: "%016d-%016d", closestBeacon.major, closestBeacon.minor))" })
           else {
-            await send(.showErrorAlert(reason: .closeness))
+            await send(.showErrorAlert(reason: .bluetoothWifi))
             return
           }
-          closestBeacon = nearBeacon
-        }
-        
-        guard let closestPeer = peers
-          .first(where: { $0.name == "\(String(format: "%016d-%016d", closestBeacon.major, closestBeacon.minor))" })
-        else {
+          
+          async let sendProfile: Void = environment.multipeer.send(profile, closestPeer)
+          async let receiveProfile: UserProfile = environment.multipeer.receive(closestPeer)
+          
+          let (_, receivedProfile) = try await (sendProfile, receiveProfile)
+          
+          await environment.haptic.generateFeedback(.success)
+          await send(.receivedProfileResponse(receivedProfile))
+          }
+        } catch: { error, send in
+          print("send/receive error: \(error.localizedDescription)")
           await send(.showErrorAlert(reason: .bluetoothWifi))
-          return
-        }
-        
-        async let sendProfile: Void = environment.multipeer.send(profile, closestPeer)
-        async let receiveProfile: UserProfile = environment.multipeer.receive(closestPeer)
-        
-        let (_, receivedProfile) = try await (sendProfile, receiveProfile)
-        
-        await environment.haptic.generateFeedback(.success)
-        await send(.receivedProfileResponse(receivedProfile))
-        
-      } catch: { error, send in
-        print("send/receive error: \(error.localizedDescription)")
-        await send(.showErrorAlert(reason: .bluetoothWifi))
       }
       .cancellable(id: CancelTapID.self)
       
@@ -281,7 +285,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       
     case let .receivedProfileResponse(profile):
       state.receivedProfile = profile
-      return .cancel(id: CancelTapID.self)
+      return .none
       
     case let .showErrorAlert(reason: reason):
       let message: TextState
@@ -314,7 +318,6 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       return .none
     }
   }
-  .debug()
 
 public struct TapFeatureView: View {
   struct ViewState: Equatable {
@@ -353,73 +356,78 @@ public struct TapFeatureView: View {
         send: { .goToSection(.init(rawValue: $0)!) }
       )
     ) {
-      LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
-        ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
-          Button {
-            _ = viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
-          } label: {
-            RoundedRectangle(cornerRadius: 20)
-              .rotatingGradientBorder(
-                showBorder: viewStore.selectedSocials.contains(social.id),
-                degrees: gradientDegrees
-              )
-              .aspectRatio(1.25, contentMode: .fit)
-              .overlay(alignment: .center) {
-                VStack {
-                  //image(social)
-                  EmptyView()
-                    .padding(.bottom, 15)
-                  Text(social: social)
-                    .bold()
+      ScrollView(showsIndicators: false) {
+        // Socials
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+          ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
+            Button {
+              _ = viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
+            } label: {
+              RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .foregroundColor(viewStore.selectedSocials.contains(social.id) ? Color(social: social) : .tertiary)
+                .aspectRatio(1.25, contentMode: .fit)
+                .overlay(alignment: .center) {
+                  VStack {
+                    //image(social)
+                    Image("Whatsapp")
+                      .resizable()
+                      .aspectRatio(contentMode: .fit)
+                      .padding([.trailing, .leading], 55)
+                      //.padding(.bottom, 5)
+                    Text(social: social)
+                      .foregroundColor(.primary)
+                      .bold()
+                  }
                 }
-              }
-          }
-          .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
-          .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
-        }
-      }
-    }
-    .swipeTabItem {
-      Text("Socials")
-        .bold()
-        .foregroundColor(.blue)
-    }
-    .onPageAppear {
-      withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
-        if !gradientAlreadySet {
-          self.gradientDegrees = 360
-          self.gradientAlreadySet = true
-        }
-      }
-    }
-    LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
-      ForEach(viewStore.profilePresets.indexed(), id: \.1.id) { index, preset in
-        Button {
-          _ = viewStore.selectedPresets.contains(preset.id) ? viewStore.send(.deselectPreset(preset.id)) : viewStore.send(.selectPreset(preset.id))
-        } label: {
-          RoundedRectangle(cornerRadius: 20)
-            .rotatingGradientBorder(
-              showBorder: viewStore.selectedPresets.contains(preset.id),
-              degrees: gradientDegrees
-            )
-            .aspectRatio(1.25, contentMode: .fit)
-            .overlay(alignment: .center) {
-              VStack {
-                EmptyView()
-                  .padding(.bottom, 15)
-                Text(preset.name)
-                  .bold()
-              }
             }
+            .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+            .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
+          }
         }
-        .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
-        .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
       }
-    }
-    .swipeTabItem {
-      Text("Presets")
-        .bold()
-        .foregroundColor(.blue)
+        .swipeTabItem {
+          Text("Socials")
+            .bold()
+            .foregroundColor(.blue)
+        }
+        .onPageAppear {
+          withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
+            if !gradientAlreadySet {
+              self.gradientDegrees = 100
+              self.gradientAlreadySet = true
+            }
+          }
+        }
+      
+      // Presets
+      ScrollView(showsIndicators: false) {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+          ForEach(viewStore.profilePresets.indexed(), id: \.1.id) { index, preset in
+            Button {
+              _ = viewStore.selectedPresets.contains(preset.id) ? viewStore.send(.deselectPreset(preset.id)) : viewStore.send(.selectPreset(preset.id))
+            } label: {
+              RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .foregroundColor(viewStore.selectedPresets.contains(preset.id) ? .purple : .tertiary)
+                .aspectRatio(1.25, contentMode: .fit)
+                .overlay(alignment: .center) {
+                  VStack {
+                    EmptyView()
+                      .padding(.bottom, 15)
+                    Text(preset.name)
+                      .bold()
+                  }
+                }
+            }
+            .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+            .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
+          }
+        }
+      }
+        .swipeTabItem {
+          Text("Presets")
+            .bold()
+            .foregroundColor(.blue)
+        }
     }
     .onDisappear {
       withAnimation(.default) { // `nil` doesn't stop the .repeatForever(), but this does

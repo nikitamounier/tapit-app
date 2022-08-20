@@ -19,3 +19,5 @@ public struct Beacon: Equatable {
     case unknown, immediate, near, far
   }
 }
+
+public enum CancelBeaconID {}
