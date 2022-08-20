@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E448E9B727FC727F001BF509 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = E448E9B627FC727F001BF509 /* Inject */; };
 		E4612FDB26977117004B8F2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4612FDA26977117004B8F2A /* ContentView.swift */; };
 		E4685EDE2772856800393DDA /* HistoryFeaturePreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4685EDD2772856800393DDA /* HistoryFeaturePreviewApp.swift */; };
 		E4685EE22772856A00393DDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4685EE12772856A00393DDA /* Assets.xcassets */; };
@@ -73,7 +72,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4AC9A8D27725169009101AF /* TapFeature in Frameworks */,
-				E448E9B727FC727F001BF509 /* Inject in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,7 +258,6 @@
 			name = TapFeaturePreview;
 			packageProductDependencies = (
 				E4AC9A8C27725169009101AF /* TapFeature */,
-				E448E9B627FC727F001BF509 /* Inject */,
 			);
 			productName = TapFeaturePreview;
 			productReference = E4AC9A7D277250F1009101AF /* TapFeaturePreview.app */;
@@ -836,11 +833,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E448E9B627FC727F001BF509 /* Inject */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E448E9B527FC727F001BF509 /* XCRemoteSwiftPackageReference "Inject" */;
-			productName = Inject;
-		};
 		E4685EE92772857B00393DDA /* HistoryFeature */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = HistoryFeature;

@@ -1,4 +1,3 @@
-import Inject
 import SharedModels
 import SwiftUI
 import TapFeature
@@ -14,7 +13,6 @@ struct TapFeaturePreviewApp: App {
 }
 
 struct TapFeaturePreview: View {
-    @ObservedObject private var iO = Inject.observer
     
     var body: some View {
         NavigationView {
@@ -46,6 +44,5 @@ struct TapFeaturePreview: View {
             )
             .navigationTitle(Text("Tap It"))
         }
-        .enableInjection()
     }
 }

@@ -341,6 +341,7 @@ let package = Package(
     .target(
       name: "Styleguide",
       dependencies: [
+        "SharedModels",
         .product(name: "PagerTabStripView", package: "PagerTabStripView"),
       ]
     ),

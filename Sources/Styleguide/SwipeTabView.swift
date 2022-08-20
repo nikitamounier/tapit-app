@@ -13,17 +13,8 @@ public struct SwipeTabView<Content: View>: View {
   public var body: some View {
     PagerTabStripView(selection: selection, content: content)
       .pagerTabStripViewStyle(
-        .scrollableBarButton(
-          padding: EdgeInsets(
-            top: 5,
-            leading: 15,
-            bottom: 0,
-            trailing: 10
-          ),
-          tabItemSpacing: 15,
-          tabItemHeight: 45
+        .scrollableBarButton(padding: EdgeInsets(top: 5, leading: 20, bottom: 0, trailing: 10), tabItemSpacing: 15)
         )
-      )
   }
 }
 
