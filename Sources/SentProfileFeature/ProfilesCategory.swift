@@ -1,12 +1,13 @@
 import CasePaths
+import SharedModels
 
 @dynamicMemberLookup
 public enum ProfilesCategory: Hashable, Equatable, Identifiable {
   case all
-  case custom(name: String, profileIDs: Set<SentProfile.ID>)
+  case custom(name: String, profileIDs: Set<UserProfile.ID>)
   
   @inline(__always)
-  public subscript<Value>(dynamicMember keyPath: KeyPath<Set<SentProfile.ID>, Value>) -> Value? {
+  public subscript<Value>(dynamicMember keyPath: KeyPath<Set<UserProfile.ID>, Value>) -> Value? {
     guard case .custom(name: _, profileIDs: let profileIDs) = self else { return nil }
     return profileIDs[keyPath: keyPath]
   }
@@ -19,35 +20,27 @@ public enum ProfilesCategory: Hashable, Equatable, Identifiable {
   }
   
   public mutating func add(
-    _ id: SentProfile.ID
-  ) -> Result<Void, Error> {
-    Result {
-      try (CasePath.custom).modify(&self) { $0.1.insert(id) }
-    }
+    _ id: UserProfile.ID
+  ) throws {
+    _ = try (CasePath.custom).modify(&self) { $0.1.insert(id) }
   }
   
   public mutating func addMany<IDs>(
     _ ids: IDs
-  ) -> Result<Void, Error> where IDs: Sequence, IDs.Element == SentProfile.ID {
-    Result {
-      try (CasePath.custom).modify(&self) { $0.1.formUnion(ids) }
-    }
+  ) throws where IDs: Sequence, IDs.Element == UserProfile.ID {
+    _ = try (CasePath.custom).modify(&self) { $0.1.formUnion(ids) }
   }
   
   public mutating func remove(
-    _ id: SentProfile.ID
-  ) -> Result<Void, Error> {
-    Result {
-      try (CasePath.custom).modify(&self) { $0.1.remove(id) }
-    }
+    _ id: UserProfile.ID
+  ) throws {
+    _ = try (CasePath.custom).modify(&self) { $0.1.insert(id) }
   }
   
   public mutating func removeMany<IDs>(
     _ ids: IDs
-  ) -> Result<Void, Error> where IDs: Sequence, IDs.Element == SentProfile.ID {
-    Result {
-      try (CasePath.custom).modify(&self) { $0.1.subtract(ids) }
-    }
+  ) throws where IDs: Sequence, IDs.Element == UserProfile.ID {
+    _ = try (CasePath.custom).modify(&self) { $0.1.subtract(ids) }
   }
 }
 
@@ -70,7 +63,7 @@ extension ProfilesCategory: Codable {
     case "custom":
       let subContainer = try container.nestedContainer(keyedBy: CodingKeys.CustomKeys.self, forKey: .associatedValues)
       let associatedValues0 = try subContainer.decode(String.self, forKey: .name)
-      let associatedValues1 = try subContainer.decode(Set<SentProfile.ID>.self, forKey: .profileIDs)
+      let associatedValues1 = try subContainer.decode(Set<UserProfile.ID>.self, forKey: .profileIDs)
       self = .custom(name: associatedValues0, profileIDs: associatedValues1)
     default:
       throw DecodingError.keyNotFound(CodingKeys.type, .init(codingPath: container.codingPath, debugDescription: "Unknown key"))
@@ -91,7 +84,7 @@ extension ProfilesCategory: Codable {
   }
 }
 
-extension CasePath where Root == ProfilesCategory, Value == (String, Set<SentProfile.ID>) {
+extension CasePath where Root == ProfilesCategory, Value == (String, Set<UserProfile.ID>) {
   static let custom = Self(
     embed: ProfilesCategory.custom,
     extract: {

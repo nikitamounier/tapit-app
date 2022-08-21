@@ -34,7 +34,7 @@ public extension OpenSocialClient {
             }
             
           case let .address(coordinates):
-            let mapItem = MKMapItem(placemark: .init(coordinate: coordinates))
+            let mapItem = MKMapItem(placemark: .init(coordinate: .init(coordinates)))
             
             mapItem.openInMaps(launchOptions: nil, from: nil) { completion in
               guard completion else {

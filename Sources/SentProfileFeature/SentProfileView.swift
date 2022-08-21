@@ -3,10 +3,14 @@ import HapticClient
 import OpenSocialClient
 import OpenSocialFeature
 import SharedModels
+import SwiftUI
 
 public struct SentProfileState: Equatable {
-  public var profile: SentProfile
+  public var profile: UserProfile
   public var openSocial: OpenSocialState
+  
+  public var sendDate: Date
+  public var expirationInterval: Days?
 }
 
 public enum SentProfileAction: Equatable {
@@ -68,6 +72,54 @@ public let sentProfileReducer = Reducer<SentProfileState, SentProfileAction, Sen
   }
 )
 
+public struct SentProfileView: View {
+  let store: Store<SentProfileState, SentProfileAction>
+  @ObservedObject var viewStore: ViewStore<SentProfileState, SentProfileAction>
+  
+  init(store: Store<SentProfileState, SentProfileAction>) {
+    self.store = store
+    self.viewStore = ViewStore(store)
+  }
+  
+  public var body: some View {
+    HStack {
+      Image(uiImage: viewStore.profile.profileImage.image)
+      VStack {
+        Text(viewStore.profile.name)
+        socials
+      }
+    }
+  }
+  
+  public var socials: some View {
+    ForEach(viewStore.profile.socials, id: \.id) { social in
+      switch social {
+      case .phone:
+        Image(social: social)
+          .contextMenu {
+            Button("Show contact") { viewStore.send(.openSocial(.open(social, .phone(.showUserContact))))}
+            Button("Add contact") {
+              viewStore.send(
+                .openSocial(
+                  .open(
+                    social,
+                    .phone(.addContact(name: viewStore.profile.name, image: viewStore.profile.profileImage.image))
+                  )
+                )
+              )
+            }
+            Button("Call") { viewStore.send(.openSocial(.open(social, .phone(.call))))}
+          }
+        
+      default:
+        Button(action: { viewStore.send(.openSocial(.open(social, nil)))}) {
+          Image(social: social)
+        }
+      }
+    }
+  }
+}
+
 extension CasePath where Root == SentProfileAction, Value == OpenSocialAction {
   static let openSocial = Self(
     embed: SentProfileAction.openSocial,
@@ -77,3 +129,4 @@ extension CasePath where Root == SentProfileAction, Value == OpenSocialAction {
     }
   )
 }
+

@@ -59,7 +59,11 @@ public struct TapFeatureState: Equatable {
     currentSection: Section = .socials,
     selectedSocials: Set<Social.ID> = [],
     selectedPresets: Set<Preset.ID> = [],
-    showTapSheet: Bool = false
+    showTapSheet: Bool = false,
+    receivedProfile: UserProfile?,
+    beacons: [Beacon] = [],
+    peers: [PeerID] = [],
+    errorAlert: AlertState<TapFeatureAction>?
   ) {
     self.profile = profile
     self.presets = presets

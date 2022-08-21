@@ -31,16 +31,16 @@ public enum OpenSocialAction: Equatable {
 
 public struct OpenSocialEnvironment {
   public var openSocial: OpenSocialClient
-  public var feedbackGenerator: HapticClient
+  public var haptic: HapticClient
   public var openAppSettings: () -> Void
   
   public init(
     openSocial: OpenSocialClient,
-    feedbackGenerator: HapticClient,
+    haptic: HapticClient,
     openAppSettings: @escaping () -> Void
   ) {
     self.openSocial = openSocial
-    self.feedbackGenerator = feedbackGenerator
+    self.haptic = haptic
     self.openAppSettings = openAppSettings
   }
 }
@@ -52,17 +52,17 @@ public let openSocialReducer = Reducer<OpenSocialState, OpenSocialAction, OpenSo
     
     switch social {
     case .instagram, .snapchat, .twitter, .facebook, .reddit, .tikTok, .weChat, .github, .linkedIn, .address, .email:
-      effect = environmentopenSocial
+      effect = environment.openSocial
         .open(social, option: nil)
         .catchToEffect()
     case .phone:
-      effect = environmentopenSocial
+      effect = environment.openSocial
         .open(social, option: option)
         .catchToEffect()
     }
     
     return effect
-      .map { result -> OpenSocialAction in
+      .compactMap { result -> OpenSocialAction? in
         switch result {
         case .success:
           return nil
@@ -86,8 +86,7 @@ public let openSocialReducer = Reducer<OpenSocialState, OpenSocialAction, OpenSo
           }
         }
       }
-      .compactMap(\.self)
-      .merge(with: environmentfeedbackGenerator.notificationOccurred(.error).fireAndForget())
+      .merge(with: Effect.fireAndForget { await environment.haptic.generateFeedback(.error) })
       .eraseToEffect()
     
   case let .alert(alertAction):
@@ -97,7 +96,7 @@ public let openSocialReducer = Reducer<OpenSocialState, OpenSocialAction, OpenSo
       return .none
       
     case .openAppSettings:
-      return .fireAndForget(environmentopenAppSettings)
+      return .fireAndForget(environment.openAppSettings)
       
     case .failedToOpenURL:
       state.alert = .init(

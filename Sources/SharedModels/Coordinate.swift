@@ -1,3 +1,5 @@
+import MapKit
+
 public struct Coordinate: Codable, Hashable, Equatable {
   public var latitude: Double
   public var longitude: Double
@@ -8,3 +10,9 @@ public struct Coordinate: Codable, Hashable, Equatable {
   }
 }
 
+
+public extension CLLocationCoordinate2D {
+  init(_ coordinates: Coordinate) {
+    self.init(latitude: coordinates.latitude, longitude: coordinates.longitude)
+  }
+}

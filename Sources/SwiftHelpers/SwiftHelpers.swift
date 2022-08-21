@@ -12,3 +12,11 @@ public extension Optional {
     return ()
   }
 }
+
+public extension Array {
+  func removingAll(where predicate: (Element) throws -> Bool) rethrows -> Self {
+    var new = self
+    try new.removeAll { try predicate($0) }
+    return new
+  }
+}
