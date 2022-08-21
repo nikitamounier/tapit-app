@@ -4,8 +4,10 @@ import XCTestDynamicOverlay
 public extension MultipeerClient {
   static let noop = Self(
     start: { _ in .finished },
-    send: { _, _ in return },
-    receive: { _ in .mock }
+    sendProfile: { _, _ in return },
+    receiveProfile: { _ in .mock },
+    sendAck: { _ in return },
+    receiveAck: { _ in return }
   )
 }
 
@@ -13,8 +15,10 @@ public extension MultipeerClient {
 public extension MultipeerClient {
   static let unimplemented = Self(
     start: XCTUnimplemented("\(Self.self).start", placeholder: .finished),
-    send: XCTUnimplemented("\(Self.self).send", placeholder: ()),
-    receive: XCTUnimplemented("\(Self.self).receive", placeholder: .mock)
+    sendProfile: XCTUnimplemented("\(Self.self).send", placeholder: ()),
+    receiveProfile: XCTUnimplemented("\(Self.self).receive", placeholder: .mock),
+    sendAck: XCTUnimplemented("\(Self.self).send", placeholder: ()),
+    receiveAck: XCTUnimplemented("\(Self.self).receive", placeholder: ())
   )
 }
 #endif

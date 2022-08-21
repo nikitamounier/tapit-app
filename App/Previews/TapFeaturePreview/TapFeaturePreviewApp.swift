@@ -43,6 +43,11 @@ struct TapFeaturePreview: View {
                 )
             )
             .navigationTitle(Text("Tap It"))
+          #if DEBUG
+            .onAppear {
+              UserDefaults.standard.setValue(false, forKey:"_UIConstraintBasedLayoutLogUnsatisfiable")
+            }
+          #endif
         }
     }
 }

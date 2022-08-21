@@ -4,12 +4,15 @@ import ComposableArchitecture
 import HapticClient
 import IdentifiedCollections
 import Inject
+import Optics
 import OrientationClient
 import OrderedCollections
 import MultipeerClient
+import Prelude
 import ProximitySensorClient
 import SharedModels
 import Styleguide
+import SwiftHelpers
 import SwiftUI
 import SwiftUIHelpers
 
@@ -77,11 +80,11 @@ public enum TapFeatureAction: Equatable {
   case startTapSession
   case beaconsResponse([Beacon])
   case peerResponse(PeerID)
-  case shareButtonPressed(Bool)
+  case shareButtonPressed
+  case dismissTapSheet
   case receivedProfileResponse(UserProfile)
   case showErrorAlert(reason: TapFeatureState.ErrorAlertType)
   case alertOKTapped
-  
 }
 
 public struct TapFeatureEnvironment {
@@ -199,6 +202,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
         }
       } catch: { error, send in
         print("multipeer/beacon error: \(error.localizedDescription)")
+        await send(.dismissTapSheet)
         await send(.showErrorAlert(reason: .bluetoothWifi))
       }
       .cancellable(id: CancelTapID.self)
@@ -211,10 +215,11 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       state.peers.append(peer)
       return .none
       
-    case .shareButtonPressed(true):
+    case .shareButtonPressed:
       state.showTapSheet = true
       
-      return .run { [profile = state.profile, peers = state.peers, beacons = state.beacons] send in
+      return .run { [profile = state.profile, selectedSocials = state.selectedSocials, peers = state.peers, beacons = state.beacons] send in
+        
         try await withTaskCancellation(id: CancelTapID.self, cancelInFlight: false) {
           await environment.haptic.prepare()
           
@@ -230,6 +235,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
           
           guard !beacons.isEmpty, !immediate.isEmpty || beacons.contains(where: { $0.proximity == .near })
           else {
+            await send(.dismissTapSheet)
             await send(.showErrorAlert(reason: .closeness))
             return
           }
@@ -260,32 +266,41 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
             return
           }
           
-          async let sendProfile: Void = environment.multipeer.send(profile, closestPeer)
-          async let receiveProfile: UserProfile = environment.multipeer.receive(closestPeer)
+          let userProfile = profile
+            |> \.socials .~ profile.socials.removingAll { !selectedSocials.contains($0.id) }
+          
+          async let sendProfile: Void = environment.multipeer.sendProfile(userProfile, closestPeer)
+          async let receiveProfile: UserProfile = environment.multipeer.receiveProfile(closestPeer)
           
           let (_, receivedProfile) = try await (sendProfile, receiveProfile)
+          
+          async let sendAck: Void = environment.multipeer.sendAck(closestPeer)
+          async let receiveAck: Void = environment.multipeer.receiveAck(closestPeer)
+          
+          _ = try await (sendAck, receiveAck)
           
           await environment.haptic.generateFeedback(.success)
           await send(.receivedProfileResponse(receivedProfile))
           }
         } catch: { error, send in
           print("send/receive error: \(error.localizedDescription)")
+          await send(.dismissTapSheet)
           await send(.showErrorAlert(reason: .bluetoothWifi))
       }
       .cancellable(id: CancelTapID.self)
       
-    case .shareButtonPressed(false):
+    case let .receivedProfileResponse(profile):
+      state.receivedProfile = profile
+      return .none
+      
+    case .dismissTapSheet:
+      state.showTapSheet = false
       state.beacons = []
       state.peers = []
-      state.showTapSheet = false
       state.selectedSocials = []
       state.selectedPresets = []
       
       return .cancel(id: CancelTapID.self)
-      
-    case let .receivedProfileResponse(profile):
-      state.receivedProfile = profile
-      return .none
       
     case let .showErrorAlert(reason: reason):
       let message: TextState
@@ -295,8 +310,6 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       case .closeness:
         message = TextState("An error occurred. Make sure that you're close to the person you're tapping.")
       }
-      
-      state.showTapSheet = false
       
       state.errorAlert = AlertState(
         title: TextState("Error"),
@@ -310,7 +323,10 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       state.selectedPresets = []
       
       // TODO: - Remove use of .merge(_:...)
-      return .merge(.fireAndForget { await environment.haptic.generateFeedback(.error) }, .cancel(id: CancelTapID.self))
+      return .merge(
+        .fireAndForget { await environment.haptic.generateFeedback(.error) },
+        .cancel(id: CancelTapID.self)
+      )
       
       
     case .alertOKTapped:
@@ -318,6 +334,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       return .none
     }
   }
+  .debug()
 
 public struct TapFeatureView: View {
   struct ViewState: Equatable {
@@ -437,7 +454,7 @@ public struct TapFeatureView: View {
     .overlay(alignment: .bottom) {
       VStack {
         if !viewStore.selectedSocials.isEmpty {
-          Button(action: { viewStore.send(.shareButtonPressed(true)) } ) {
+          Button(action: { viewStore.send(.shareButtonPressed) } ) {
             Text("Share")
               .foregroundColor(.white)
               .bold()
@@ -453,13 +470,12 @@ public struct TapFeatureView: View {
       }
       .animation(.interactiveSpring(), value: viewStore.selectedSocials.isEmpty)
     }
-    .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: TapFeatureAction.shareButtonPressed)) {
+    .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: { $0 ? .shareButtonPressed : .dismissTapSheet })) {
       TapSheet(store: store.scope(state: TapSheet.ViewState.init))
     }
     .alert(store.scope(state: \.errorAlert), dismiss: .alertOKTapped)
   }
 }
-
 
 //struct TapFeatureView_Previews: PreviewProvider {
 //  static var previews: some View {

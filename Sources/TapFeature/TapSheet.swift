@@ -1,3 +1,4 @@
+import CasePaths
 import ComposableArchitecture
 import SharedModels
 import Styleguide
@@ -65,8 +66,15 @@ struct TapSheet: View {
       .navigationBarHidden(true)
       .drawingGroup()
     case let .some(receivedProfile):
-      VStack {
-        Text(receivedProfile.name)
+      HStack {
+        Image(uiImage: receivedProfile.profileImage.image)
+          .resizable()
+        VStack {
+          Text(receivedProfile.name)
+          ForEach(receivedProfile.socials) { social in
+
+          }
+        }
       }
     }
   }

@@ -9,8 +9,10 @@ public extension MultipeerClient {
     
     return Self(
       start: { await multipeer.start(peerID: $0) } ,
-      send: { try await multipeer.send(profile: $0, to: $1) },
-      receive: { try await multipeer.receive(from: $0) }
+      sendProfile: { try await multipeer.sendProfile($0, to: $1) },
+      receiveProfile: { try await multipeer.receiveProfile(from: $0) },
+      sendAck: { try await multipeer.sendAck(to: $0) },
+      receiveAck: { try await multipeer.receiveAck(from: $0) }
     )
   }
 }
@@ -21,6 +23,8 @@ private actor Multipeer {
   enum Error: Swift.Error, Equatable {
     case peerUnavailable
   }
+  
+  struct Ack: Codable {}
   
   func start(peerID: String) -> AsyncStream<PeerID> {
     
@@ -46,14 +50,15 @@ private actor Multipeer {
     }
   }
   
-  func send(profile: UserProfile, to peerID: PeerID) throws {
+  func sendProfile(_ profile: UserProfile, to peerID: PeerID) throws {
     guard let peer = transceiver!.availablePeers.first(where: { $0.name == peerID.name })
     else { throw Error.peerUnavailable }
     
     transceiver?.send(profile, to: [peer])
+    print("sent profile")
   }
   
-  func receive(from peerID: PeerID) async throws -> UserProfile {
+  func receiveProfile(from peerID: PeerID) async throws -> UserProfile {
     try Task.checkCancellation()
     return try await withCheckedThrowingContinuation { continuation in
         transceiver?.receive(UserProfile.self) { payload, senderPeer in
@@ -63,8 +68,33 @@ private actor Multipeer {
             return
           }
           
+          print("received profile")
           continuation.resume(returning: payload)
         }
+    }
+  }
+  
+  func sendAck(to peerID: PeerID) throws {
+    guard let peer = transceiver!.availablePeers.first(where: { $0.name == peerID.name })
+    else { throw Error.peerUnavailable }
+    
+    transceiver?.send(Ack(), to: [peer])
+    print("sent ack")
+  }
+  
+  func receiveAck(from peerID: PeerID) async throws {
+    try Task.checkCancellation()
+    return try await withCheckedThrowingContinuation { continuation in
+      transceiver?.receive(Ack.self) { ack, senderPeer in
+        guard senderPeer.name == peerID.name
+        else {
+          continuation.resume(throwing: Error.peerUnavailable)
+          return
+        }
+        
+        print("receive ack")
+        continuation.resume()
+      }
     }
   }
 }

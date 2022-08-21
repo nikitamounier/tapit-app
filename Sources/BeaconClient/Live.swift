@@ -59,7 +59,7 @@ private final class BeaconManager {
             continuation.finish(throwing: BeaconError.deniedAuthorization)
             
           case .notDetermined:
-            break
+            continuation.finish(throwing: BeaconError.deniedAuthorization)
             
           @unknown default:
             fatalError()
@@ -82,10 +82,10 @@ private final class BeaconManager {
             )
             
             
-          case .unsupported, .unauthorized, .poweredOff:
+          case .unsupported, .unauthorized, .unknown, .poweredOff:
             continuation.finish(throwing: BeaconError.deniedAuthorization)
             
-          case .resetting, .unknown:
+          case .resetting:
             break
             
           @unknown default:
