@@ -1,4 +1,6 @@
-public struct HapticClient {
+import Dependencies
+
+public struct HapticClient: DependencyKey {
   public var prepare: @Sendable () async -> Void
   public var selectionResponse: @Sendable () async  -> Void
   public var generateFeedback: @Sendable (FeedbackType) async -> Void
@@ -14,10 +16,16 @@ public struct HapticClient {
     
   }
   
-  
-  public enum FeedbackType: Int {
+    public enum FeedbackType: Int {
     case success
     case warning
     case error
+  }
+}
+
+public extension DependencyValues {
+  var hapticClient: HapticClient {
+    get { self[HapticClient.self] }
+    set { self[HapticClient.self] = newValue}
   }
 }

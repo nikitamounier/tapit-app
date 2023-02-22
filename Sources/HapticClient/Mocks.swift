@@ -1,19 +1,15 @@
-import XCTestDynamicOverlay
+import Dependencies
 
 public extension HapticClient {
-  static let noop = Self(
+  static var previewValue = Self(
     prepare: { },
     selectionResponse: { },
     generateFeedback: { _ in }
   )
-}
-
-#if DEBUG
-public extension HapticClient {
-  static let unimplemented = Self(
-    prepare: XCTUnimplemented("\(Self.self).prepare"),
-    selectionResponse: XCTUnimplemented("\(Self.self).selectionResponse"),
-    generateFeedback: XCTUnimplemented("\(Self.self).generateFeedback")
+  
+  static var testValue = Self(
+    prepare: unimplemented("\(Self.self).prepare"),
+    selectionResponse: unimplemented("\(Self.self).selectionResponse"),
+    generateFeedback: unimplemented("\(Self.self).generateFeedback")
   )
 }
-#endif

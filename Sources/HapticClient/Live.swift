@@ -1,7 +1,7 @@
 import UIKit
 
 public extension HapticClient {
-  static var live: Self {
+  static var liveValue: Self {
     let haptic = Haptic()
     return Self(
       prepare: { await haptic.prepare() },

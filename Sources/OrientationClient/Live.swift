@@ -1,7 +1,7 @@
 import UIKit
 
 public extension OrientationClient {
-  static let live = Self {
+  static let liveValue = Self {
     await UIDevice.current.beginGeneratingDeviceOrientationNotifications()
     let orientations = await NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
       .values

@@ -1,9 +1,9 @@
 import Algorithms
 import BeaconClient
 import ComposableArchitecture
+import Dependencies
 import HapticClient
 import IdentifiedCollections
-import Inject
 import Optics
 import OrientationClient
 import OrderedCollections
@@ -16,111 +16,95 @@ import SwiftHelpers
 import SwiftUI
 import SwiftUIHelpers
 
-public struct TapFeatureState: Equatable {
-  public var profile: UserProfile
-  public var presets: IdentifiedArrayOf<Preset>
-  public var currentSection: Section
-  
-  public var selectedSocials: Set<Social.ID>
-  public var selectedPresets: Set<Preset.ID>
-  
-  public var showTapSheet: Bool
-  
-  public var receivedProfile: UserProfile?
-  public var beacons: [Beacon] = []
-  public var peers: [PeerID] = []
-  public var errorAlert: AlertState<TapFeatureAction>?
-  
-  public struct Preset: Equatable, Identifiable {
-    public let id = UUID()
-    public var name: String
-    public var socials: OrderedSet<Social.ID>
+public struct TapFeature: ReducerProtocol {
+  public struct State: Equatable {
+    public var profile: UserProfile
+    public var presets: IdentifiedArrayOf<Preset>
+    public var currentSection: Section
     
-    public init(name: String, socials: OrderedSet<Social.ID>) {
-      self.name = name
-      self.socials = socials
+    public var selectedSocials: Set<Social.ID>
+    public var selectedPresets: Set<Preset.ID>
+    
+    public var showTapSheet: Bool
+    
+    public var receivedProfile: UserProfile?
+    public var beacons: [Beacon] = []
+    public var peers: [PeerID] = []
+    public var errorAlert: AlertState<Action>?
+    
+    public struct Preset: Equatable, Identifiable {
+      public let id = UUID()
+      public var name: String
+      public var socials: OrderedSet<Social.ID>
+      
+      public init(name: String, socials: OrderedSet<Social.ID>) {
+        self.name = name
+        self.socials = socials
+      }
+    }
+    
+    public enum Section: Int {
+      case socials
+      case presets
+      case helloThere
+    }
+    
+    public enum ErrorAlertType {
+      case bluetoothWifi
+      case closeness
+    }
+    
+    public init(
+      profile: UserProfile,
+      presets: IdentifiedArrayOf<Preset> = [],
+      currentSection: Section = .socials,
+      selectedSocials: Set<Social.ID> = [],
+      selectedPresets: Set<Preset.ID> = [],
+      showTapSheet: Bool = false,
+      receivedProfile: UserProfile? = nil,
+      beacons: [Beacon] = [],
+      peers: [PeerID] = [],
+      errorAlert: AlertState<Action>? = nil
+    ) {
+      self.profile = profile
+      self.presets = presets
+      self.currentSection = currentSection
+      self.selectedSocials = selectedSocials
+      self.selectedPresets = selectedPresets
+      self.showTapSheet = showTapSheet
+      self.receivedProfile = receivedProfile
+      self.beacons = beacons
+      self.peers = peers
+      self.errorAlert = errorAlert
     }
   }
   
-  public enum Section: Int {
-    case socials
-    case presets
-    case helloThere
-  }
-  
-  public enum ErrorAlertType {
-    case bluetoothWifi
-    case closeness
-  }
-  
-  public init(
-    profile: UserProfile,
-    presets: IdentifiedArrayOf<Preset> = [],
-    currentSection: Section = .socials,
-    selectedSocials: Set<Social.ID> = [],
-    selectedPresets: Set<Preset.ID> = [],
-    showTapSheet: Bool = false,
-    receivedProfile: UserProfile?,
-    beacons: [Beacon] = [],
-    peers: [PeerID] = [],
-    errorAlert: AlertState<TapFeatureAction>?
-  ) {
-    self.profile = profile
-    self.presets = presets
-    self.currentSection = currentSection
-    self.selectedSocials = selectedSocials
-    self.selectedPresets = selectedPresets
-    self.showTapSheet = showTapSheet
-  }
-}
-
-public enum TapFeatureAction: Equatable {
-  case goToSection(TapFeatureState.Section)
-  case selectSocial(Social.ID)
-  case deselectSocial(Social.ID)
-  case selectPreset(TapFeatureState.Preset.ID)
-  case deselectPreset(TapFeatureState.Preset.ID)
-  
-  case startTapSession
-  case beaconsResponse([Beacon])
-  case peerResponse(PeerID)
-  case shareButtonPressed
-  case dismissTapSheet
-  case receivedProfileResponse(UserProfile)
-  case showErrorAlert(reason: TapFeatureState.ErrorAlertType)
-  case alertOKTapped
-}
-
-public struct TapFeatureEnvironment {
-  public var mainQueue: AnySchedulerOf<DispatchQueue>
-  public var beacon: BeaconClient
-  public var multipeer: MultipeerClient
-  public var haptic: HapticClient
-  public var proximitySensor: ProximitySensorClient
-  public var orientation: OrientationClient
-  
-  public init(
-    mainQueue: AnySchedulerOf<DispatchQueue>,
-    beacon: BeaconClient,
-    multipeer: MultipeerClient,
-    haptic: HapticClient,
-    proximitySensor: ProximitySensorClient,
-    orientation: OrientationClient
-  ) {
-    self.mainQueue = mainQueue
-    self.beacon = beacon
-    self.multipeer = multipeer
-    self.haptic = haptic
-    self.proximitySensor = proximitySensor
-    self.orientation = orientation
+  public enum Action: Equatable {
+    case goToSection(State.Section)
+    case selectSocial(Social.ID)
+    case deselectSocial(Social.ID)
+    case selectPreset(State.Preset.ID)
+    case deselectPreset(State.Preset.ID)
     
+    case startTapSession
+    case beaconsResponse([Beacon])
+    case peerResponse(PeerID)
+    case shareButtonPressed
+    case dismissTapSheet
+    case receivedProfileResponse(UserProfile)
+    case showErrorAlert(reason: State.ErrorAlertType)
+    case alertOKTapped
   }
-}
-
-// Selecting socials: When a user selects a preset, all the socials which are in that preset are selected. If a user deselects a social afterwards, the preset is deselected, but all the other socials remain selected.
-
-public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFeatureEnvironment>
-  .init { state, action, environment in
+  
+  @Dependency(\.beaconClient) var beacon
+  @Dependency(\.multipeerClient) var multipeer
+  @Dependency(\.mainQueue) var mainQueue
+  @Dependency(\.withRandomNumberGenerator) var withRandomNumberGenerator
+  @Dependency(\.hapticClient) var haptic
+  @Dependency(\.orientationClient.horizontal) var horizontal
+  @Dependency(\.proximitySensorClient.sensedProximity) var sensedProximity
+  
+  public func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
     enum CancelTapID {}
     
     switch action {
@@ -128,6 +112,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       state.currentSection = section
       return .none
       
+    // Selecting socials: When a user selects a preset, all the socials which are in that preset are selected. If a user deselects a social afterwards, the preset is deselected, but all the other socials remain selected.
     case let .selectSocial(socialID):
       state.selectedSocials.insert(socialID)
       
@@ -168,7 +153,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       state.selectedPresets.remove(presetID)
       if state.selectedPresets.isEmpty {
         state.selectedSocials.subtract(state.presets[id: presetID]!.socials)
-        return state.selectedSocials.isEmpty ? Effect.cancel(id: CancelTapID.self) : .none
+        return state.selectedSocials.isEmpty ? .cancel(id: CancelTapID.self) : .none
       }
       
       // Don't remove socials which are still in other selected presets
@@ -186,19 +171,22 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
     case .startTapSession:
       return .run { send in
         await withTaskCancellation(id: CancelTapID.self, cancelInFlight: false) {
-        let major: UInt16 = .random(in: UInt16.min...UInt16.max)
-        let minor: UInt16 = .random(in: UInt16.min...UInt16.max)
+          let (major, minor) = withRandomNumberGenerator { generator in
+            let major = generator.next(upperBound: UInt16.max)
+            let minor = generator.next(upperBound: UInt16.max)
+            return (major, minor)
+          }
         
           await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
-              for try await beacons in await environment.beacon.start(major, minor) {
+              for try await beacons in await beacon.start(major, minor) {
                 await send(.beaconsResponse(beacons))
               }
             }
             
             group.addTask {
               let myPeerID = "\(String(format: "%016d-%016d", major, minor))"
-              for await peer in await environment.multipeer.start(myPeerID) {
+              for await peer in await multipeer.start(myPeerID) {
                 await send(.peerResponse(peer))
               }
             }
@@ -225,10 +213,10 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       return .run { [profile = state.profile, selectedSocials = state.selectedSocials, peers = state.peers, beacons = state.beacons] send in
         
         try await withTaskCancellation(id: CancelTapID.self, cancelInFlight: false) {
-          await environment.haptic.prepare()
+          await haptic.prepare()
           
-          async let isHorizontal = environment.orientation.horizontal()
-          async let sensedProximity = environment.proximitySensor.sensedProximity()
+          async let isHorizontal = horizontal()
+          async let sensedProximity = sensedProximity()
           
           _ = await (isHorizontal, sensedProximity)
           
@@ -276,19 +264,19 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
           let userProfile = profile
             |> \.socials .~ profile.socials.removingAll { !selectedSocials.contains($0.id) }
           
-          async let sendProfile: Void = environment.multipeer.sendProfile(userProfile, closestPeer)
-          async let receiveProfile: UserProfile = environment.multipeer.receiveProfile(closestPeer)
-          async let receiveAck: Void = environment.multipeer.receiveAck(closestPeer)
+          async let sendProfile: Void = multipeer.sendProfile(userProfile, closestPeer)
+          async let receiveProfile: UserProfile = multipeer.receiveProfile(closestPeer)
+          async let receiveAck: Void = multipeer.receiveAck(closestPeer)
           
           let (_, receivedProfile) = try await (sendProfile, receiveProfile)
           
           
-          async let sendAck: Void = environment.multipeer.sendAck(closestPeer)
+          async let sendAck: Void = multipeer.sendAck(closestPeer)
           _ = try await (receiveAck, sendAck)
           
           print("send and received ack")
           
-          await environment.haptic.generateFeedback(.success)
+          await haptic.generateFeedback(.success)
           await send(.receivedProfileResponse(receivedProfile))
           }
         } catch: { error, send in
@@ -320,7 +308,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
         message = TextState("An error occurred. Make sure that you're close to the person you're tapping.")
       }
       
-      state.errorAlert = AlertState(
+      state.errorAlert = AlertState<Action>(
         title: TextState("Error"),
         message: message,
         dismissButton: .default(TextState("OK"), action: .send(.alertOKTapped))
@@ -333,7 +321,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       
       // TODO: - Remove use of .merge(_:...)
       return .merge(
-        .fireAndForget { await environment.haptic.generateFeedback(.error) },
+        .fireAndForget { await haptic.generateFeedback(.error) },
         .cancel(id: CancelTapID.self)
       )
       
@@ -343,18 +331,44 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
       return .none
     }
   }
-  .debug()
+}
+
+public struct TapFeatureEnvironment {
+  public var mainQueue: AnySchedulerOf<DispatchQueue>
+  public var beacon: BeaconClient
+  public var multipeer: MultipeerClient
+  public var haptic: HapticClient
+  public var proximitySensor: ProximitySensorClient
+  public var orientation: OrientationClient
+  
+  public init(
+    mainQueue: AnySchedulerOf<DispatchQueue>,
+    beacon: BeaconClient,
+    multipeer: MultipeerClient,
+    haptic: HapticClient,
+    proximitySensor: ProximitySensorClient,
+    orientation: OrientationClient
+  ) {
+    self.mainQueue = mainQueue
+    self.beacon = beacon
+    self.multipeer = multipeer
+    self.haptic = haptic
+    self.proximitySensor = proximitySensor
+    self.orientation = orientation
+    
+  }
+}
 
 public struct TapFeatureView: View {
   struct ViewState: Equatable {
     var profileSocials: [Social]
     var selectedSocials: Set<Social.ID>
-    var profilePresets: [TapFeatureState.Preset]
-    var selectedPresets: Set<TapFeatureState.Preset.ID>
-    var currentSection: TapFeatureState.Section
+    var profilePresets: [TapFeature.State.Preset]
+    var selectedPresets: Set<TapFeature.State.Preset.ID>
+    var currentSection: TapFeature.State.Section
     var showTapSheet: Bool
     
-    init(state: TapFeatureState) {
+    init(state: TapFeature.State) {
       self.profileSocials = state.profile.socials
       self.selectedSocials = state.selectedSocials
       self.currentSection = state.currentSection
@@ -364,10 +378,10 @@ public struct TapFeatureView: View {
     }
   }
   
-  let store: Store<TapFeatureState, TapFeatureAction>
-  @ObservedObject var viewStore: ViewStore<ViewState, TapFeatureAction>
+  let store: StoreOf<TapFeature>
+  @ObservedObject var viewStore: ViewStore<ViewState, TapFeature.Action>
   
-  public init(store: Store<TapFeatureState, TapFeatureAction>) {
+  public init(store: StoreOf<TapFeature>) {
     self.store = store
     self.viewStore = ViewStore(store.scope(state: ViewState.init))
   }

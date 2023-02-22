@@ -1,7 +1,7 @@
 import UIKit
 
 public extension ProximitySensorClient {
-  static let live = Self {
+  static let liveValue = Self {
     await UIDevice.current.startProximitySensor()
     
     let proximity = await NotificationCenter.default.publisher(for: UIDevice.proximityStateDidChangeNotification)

@@ -1,11 +1,6 @@
-import XCTestDynamicOverlay
+import Dependencies
 
 public extension ProximitySensorClient {
-  static let noop = Self { return false }
+  static let previewValue = Self { return false }
+  static var testValue = Self(sensedProximity: unimplemented("\(Self.self)", placeholder: false))
 }
-
-#if DEBUG
-public extension ProximitySensorClient {
-  static let unimplemented = Self(sensedProximity: XCTUnimplemented("\(Self.self)", placeholder: false))
-}
-#endif
