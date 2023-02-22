@@ -37,6 +37,12 @@ Tap It aims to drastically streamline this process, to both parties simply press
 
 Tap It now has the structure to become hyper-modularized, allowing for better testing, build times, and dependency management. Development will go feature by feature, with the core business logic built before the thin, lightweight views laid on top.
 
+## Interesting code
+
+Most of the important code is in [/Sources](https://github.com/nikitamounier/tapit-app/tree/main/Sources). For some interesting examples using The Composable Architecture looks like, check out  [/Sources/BeaconClient/](https://github.com/nikitamounier/tapit-app/blob/main/Sources/BeaconClient/Live.swift), [/Sources/MultipeerClient/](https://github.com/nikitamounier/tapit-app/blob/main/Sources/MultipeerClient/Live.swift) and [/Sources/TapFeature/](https://github.com/nikitamounier/tapit-app/blob/main/Sources/TapFeature/TapFeatureView.swift)!
+
+On the topic of The Composable Architecture, I'm doing a 30-min talk about it at NSLondon on November 24th. See you there!
+
 ## Author
 
 Nikita Mounier, nikita.mounier@gmail.com
