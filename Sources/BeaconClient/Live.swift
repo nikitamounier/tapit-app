@@ -3,8 +3,8 @@ import ComposableArchitecture
 import CoreLocation
 import Foundation
 
-public extension BeaconClient {
-  static var live: Self {
+extension BeaconClient {
+  public static var liveValue: Self {
     let beacon = BeaconManager()
     
     return Self { await beacon.start(major: $0, minor: $1)}

@@ -12,25 +12,33 @@ struct TapFeaturePreviewApp: App {
     }
 }
 
+let nikita: [Social] = [
+  .mockInstagram(name: "nikitamounier"),
+  .mockPhone(),
+  .mockEmail(name: "nikita.mounier@gmail.com"),
+  .mockTwitter(name: "nikitamounier")
+]
+
+let receivedProfile = UserProfile(id: UUID(), name: "Nikita Mounier", profileImage: ProfileImage(UIImage(systemName: "person.fill")!), socials: nikita)
+
+let state = TapFeatureState(
+  profile: .mock,
+  presets: [],
+  currentSection: .socials,
+  selectedSocials: [],
+  selectedPresets: [],
+  showTapSheet: false,
+  receivedProfile: nil,
+  errorAlert: nil
+)
+
 struct TapFeaturePreview: View {
     
     var body: some View {
         NavigationView {
             TapFeatureView(
                 store: .init(
-                    initialState: .init(
-                        profile: .init(
-                            id: .deadbeef,
-                            name: "Bob",
-                            profileImage: .mock,
-                            socials: [.mockInstagram(), .mockSnapchat(), .mockTwitter(), .mockReddit(), .mockTikTok(), .mockWeChat(), .mockGithub(), .mockLinkedIn(), .mockAddress(), .mockEmail(), .mockPhone()]
-                        ),
-                        presets: [
-                            .init(name: "Friend", socials: [Social.mockInstagram().id, Social.mockTikTok().id]),
-                            .init(name: "Potential?", socials: [Social.mockInstagram().id, Social.mockSnapchat().id, Social.mockPhone().id])
-                        ],
-                        selectedSocials: []
-                    ),
+                    initialState: state,
                     reducer: tapFeatureReducer,
                     environment: .init(
                         mainQueue: .main,

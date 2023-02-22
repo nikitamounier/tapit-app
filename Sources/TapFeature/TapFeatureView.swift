@@ -237,7 +237,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
           // In unlikely case that multiple beacons have same accuracy value, take one with highest RSSI (== signal strength).
           let immediate = beacons.filter { $0.proximity == .immediate }
           
-          guard !beacons.isEmpty, !immediate.isEmpty || beacons.contains(where: { $0.proximity == .near })
+          guard !beacons.isEmpty, (!immediate.isEmpty || beacons.contains(where: { $0.proximity == .near }))
           else {
             await send(.dismissTapSheet)
             await send(.showErrorAlert(reason: .closeness))
@@ -252,7 +252,9 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
               await send(.showErrorAlert(reason: .closeness))
               return
             }
+            
             closestBeacon = immediateBeacon
+            
           } else {
             let near = beacons.filter { $0.proximity == .near }
             guard let nearBeacon = near.max(by: { $0.accuracy < $1.accuracy }) ?? immediate.max(by: { $0.rssi > $1.rssi })
@@ -260,6 +262,7 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
               await send(.showErrorAlert(reason: .closeness))
               return
             }
+            
             closestBeacon = nearBeacon
           }
           
@@ -275,13 +278,15 @@ public let tapFeatureReducer = Reducer<TapFeatureState, TapFeatureAction, TapFea
           
           async let sendProfile: Void = environment.multipeer.sendProfile(userProfile, closestPeer)
           async let receiveProfile: UserProfile = environment.multipeer.receiveProfile(closestPeer)
+          async let receiveAck: Void = environment.multipeer.receiveAck(closestPeer)
           
           let (_, receivedProfile) = try await (sendProfile, receiveProfile)
           
-          async let sendAck: Void = environment.multipeer.sendAck(closestPeer)
-          async let receiveAck: Void = environment.multipeer.receiveAck(closestPeer)
           
-          _ = try await (sendAck, receiveAck)
+          async let sendAck: Void = environment.multipeer.sendAck(closestPeer)
+          _ = try await (receiveAck, sendAck)
+          
+          print("send and received ack")
           
           await environment.haptic.generateFeedback(.success)
           await send(.receivedProfileResponse(receivedProfile))

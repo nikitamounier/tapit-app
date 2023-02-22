@@ -1,11 +1,8 @@
-public extension BeaconClient {
-  static let noop = Self { _, _ in .finished }
+import Dependencies
+
+extension BeaconClient {
+  public static var previewValue = Self { _, _ in .finished() }
+  
+  public static var testValue = Self(start: XCTUnimplemented("\(Self.self).contains", placeholder: .finished()))
 }
 
-#if DEBUG
-import XCTestDynamicOverlay
-
-public extension BeaconClient {
-  static let unimplemented = Self(start: XCTUnimplemented("\(Self.self).contains", placeholder: .finished))
-}
-#endif

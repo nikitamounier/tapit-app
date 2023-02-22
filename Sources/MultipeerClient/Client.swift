@@ -1,7 +1,8 @@
+import Dependencies
 import MultipeerKit
 import SharedModels
 
-public struct MultipeerClient {
+public struct MultipeerClient: DependencyKey {
   public var start: @Sendable (_ peerID: String) async -> AsyncStream<PeerID>
   public var sendProfile: @Sendable (UserProfile, _ to: PeerID) async throws -> Void
   public var receiveProfile: @Sendable (_ from: PeerID) async throws -> UserProfile
@@ -33,3 +34,10 @@ public struct PeerID: Equatable {
 }
 
 public enum CancelMultipeerID {}
+
+public extension DependencyValues {
+  var multipeerClient: MultipeerClient {
+    get { self[MultipeerClient.self] }
+    set { self[MultipeerClient.self] = newValue }
+  }
+}

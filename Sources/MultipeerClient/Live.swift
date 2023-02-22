@@ -4,7 +4,7 @@ import ComposableArchitecture
 
 
 public extension MultipeerClient {
-  static var live: Self {
+  static var liveValue: Self {
     let multipeer = Multipeer()
     
     return Self(
@@ -17,14 +17,17 @@ public extension MultipeerClient {
   }
 }
 
+public struct Ack: Codable {
+  var padding: UInt8 = 0
+}
+
 private actor Multipeer {
   var transceiver: MultipeerTransceiver?
   
   enum Error: Swift.Error, Equatable {
     case peerUnavailable
   }
-  
-  struct Ack: Codable {}
+
   
   func start(peerID: String) -> AsyncStream<PeerID> {
     
@@ -51,7 +54,7 @@ private actor Multipeer {
   }
   
   func sendProfile(_ profile: UserProfile, to peerID: PeerID) throws {
-    guard let peer = transceiver!.availablePeers.first(where: { $0.name == peerID.name })
+    guard let peer = transceiver?.availablePeers.first(where: { $0.name == peerID.name })
     else { throw Error.peerUnavailable }
     
     transceiver?.send(profile, to: [peer])
@@ -64,6 +67,7 @@ private actor Multipeer {
         transceiver?.receive(UserProfile.self) { payload, senderPeer in
           guard senderPeer.name == peerID.name
           else {
+            print("received profile – not same name")
             continuation.resume(throwing: Error.peerUnavailable)
             return
           }
@@ -75,7 +79,7 @@ private actor Multipeer {
   }
   
   func sendAck(to peerID: PeerID) throws {
-    guard let peer = transceiver!.availablePeers.first(where: { $0.name == peerID.name })
+    guard let peer = transceiver?.availablePeers.first(where: { $0.name == peerID.name })
     else { throw Error.peerUnavailable }
     
     transceiver?.send(Ack(), to: [peer])
@@ -83,11 +87,11 @@ private actor Multipeer {
   }
   
   func receiveAck(from peerID: PeerID) async throws {
-    try Task.checkCancellation()
     return try await withCheckedThrowingContinuation { continuation in
       transceiver?.receive(Ack.self) { ack, senderPeer in
         guard senderPeer.name == peerID.name
         else {
+          print("received ack from wrong peer")
           continuation.resume(throwing: Error.peerUnavailable)
           return
         }

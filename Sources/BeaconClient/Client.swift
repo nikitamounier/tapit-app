@@ -1,6 +1,7 @@
+import Dependencies
 import Foundation
 
-public struct BeaconClient {
+public struct BeaconClient: DependencyKey {
   public var start: @Sendable (_ major: UInt16, _ minor: UInt16) async -> AsyncThrowingStream<[Beacon], Error>
 
   public init(start: @escaping @Sendable (_ major: UInt16, _ minor: UInt16) async -> AsyncThrowingStream<[Beacon], Error>) {
@@ -21,3 +22,10 @@ public struct Beacon: Equatable {
 }
 
 public enum CancelBeaconID {}
+
+public extension DependencyValues {
+  var beaconClient: BeaconClient {
+    get { self[BeaconClient.self] }
+    set { self[BeaconClient.self] = newValue }
+  }
+}

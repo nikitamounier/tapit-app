@@ -23,8 +23,18 @@ struct TapSheet: View {
   @State private var rotation: Double = 60
   
   var body: some View {
-    switch viewStore.receivedProfile {
-    case .none:
+    if let profile = viewStore.receivedProfile {
+      HStack {
+        Image(uiImage: profile.profileImage.image)
+          .resizable()
+        VStack {
+          Text(profile.name)
+          ForEach(profile.socials) { social in
+            Text(social: social)
+          }
+        }
+      }
+    } else {
       GeometryReader { geo in
         ZStack {
           HStack {
@@ -65,17 +75,6 @@ struct TapSheet: View {
       }
       .navigationBarHidden(true)
       .drawingGroup()
-    case let .some(receivedProfile):
-      HStack {
-        Image(uiImage: receivedProfile.profileImage.image)
-          .resizable()
-        VStack {
-          Text(receivedProfile.name)
-          ForEach(receivedProfile.socials) { social in
-
-          }
-        }
-      }
     }
   }
 }

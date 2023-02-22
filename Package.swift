@@ -128,14 +128,12 @@ let package = Package(
       .upToNextMajor(from: "3.3.3")
     ),
     .package(
-      name: "swift-nonempty",
       url: "https://github.com/nikitamounier/swift-nonempty.git",
-      .branch("main")
+      branch: "main"
     ),
     .package(
-      name: "swift-prelude",
       url: "https://github.com/pointfreeco/swift-prelude",
-      .branch("main")
+      branch: "main"
     ),
     .package(
       url: "https://github.com/apple/swift-collections",
@@ -147,10 +145,9 @@ let package = Package(
     ),
     .package(
       url: "https://github.com/nikitamounier/PagerTabStripView",
-      .branch("main")
+      branch: "main"
     ),
     .package(
-      name: "Inject",
       url: "https://github.com/krzysztofzablocki/Inject.git",
       from: "1.0.2"
     )

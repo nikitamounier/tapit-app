@@ -120,6 +120,12 @@ public struct SentProfileView: View {
   }
 }
 
+struct SentProfileView_Previews: PreviewProvider {
+  static var previews: some View {
+    SentProfileView(store: .init(initialState: .init(profile: .mock, openSocial: .init(alert: nil), sendDate: .init()), reducer: sentProfileReducer, environment: .init(haptic: .noop, openSocial: .noop, openAppSettings: {})))
+  }
+}
+
 extension CasePath where Root == SentProfileAction, Value == OpenSocialAction {
   static let openSocial = Self(
     embed: SentProfileAction.openSocial,
