@@ -96,6 +96,8 @@ public struct TapFeature: ReducerProtocol {
     case alertOKTapped
   }
   
+  public init() {}
+  
   @Dependency(\.beaconClient) var beacon
   @Dependency(\.multipeerClient) var multipeer
   @Dependency(\.mainQueue) var mainQueue
@@ -112,7 +114,7 @@ public struct TapFeature: ReducerProtocol {
       state.currentSection = section
       return .none
       
-    // Selecting socials: When a user selects a preset, all the socials which are in that preset are selected. If a user deselects a social afterwards, the preset is deselected, but all the other socials remain selected.
+      // Selecting socials: When a user selects a preset, all the socials which are in that preset are selected. If a user deselects a social afterwards, the preset is deselected, but all the other socials remain selected.
     case let .selectSocial(socialID):
       state.selectedSocials.insert(socialID)
       
@@ -176,7 +178,7 @@ public struct TapFeature: ReducerProtocol {
             let minor = generator.next(upperBound: UInt16.max)
             return (major, minor)
           }
-        
+          
           await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
               for try await beacons in await beacon.start(major, minor) {
@@ -262,7 +264,7 @@ public struct TapFeature: ReducerProtocol {
           }
           
           let userProfile = profile
-            |> \.socials .~ profile.socials.removingAll { !selectedSocials.contains($0.id) }
+          |> \.socials .~ profile.socials.removingAll { !selectedSocials.contains($0.id) }
           
           async let sendProfile: Void = multipeer.sendProfile(userProfile, closestPeer)
           async let receiveProfile: UserProfile = multipeer.receiveProfile(closestPeer)
@@ -278,11 +280,11 @@ public struct TapFeature: ReducerProtocol {
           
           await haptic.generateFeedback(.success)
           await send(.receivedProfileResponse(receivedProfile))
-          }
-        } catch: { error, send in
-          print("send/receive error: \(error.localizedDescription)")
-          await send(.dismissTapSheet)
-          await send(.showErrorAlert(reason: .bluetoothWifi))
+        }
+      } catch: { error, send in
+        print("send/receive error: \(error.localizedDescription)")
+        await send(.dismissTapSheet)
+        await send(.showErrorAlert(reason: .bluetoothWifi))
       }
       .cancellable(id: CancelTapID.self)
       
@@ -396,35 +398,7 @@ public struct TapFeatureView: View {
         send: { .goToSection(.init(rawValue: $0)!) }
       )
     ) {
-      ScrollView(showsIndicators: false) {
-        // Socials
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
-          ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
-            Button {
-              _ = viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
-            } label: {
-              RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .foregroundColor(viewStore.selectedSocials.contains(social.id) ? Color(social: social) : .tertiary)
-                .aspectRatio(1.25, contentMode: .fit)
-                .overlay(alignment: .center) {
-                  VStack {
-                    //image(social)
-                    Image("Whatsapp")
-                      .resizable()
-                      .aspectRatio(contentMode: .fit)
-                      .padding([.trailing, .leading], 55)
-                      //.padding(.bottom, 5)
-                    Text(social: social)
-                      .foregroundColor(.primary)
-                      .bold()
-                  }
-                }
-            }
-            .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
-            .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
-          }
-        }
-      }
+      socials
         .swipeTabItem {
           Text("Socials")
             .bold()
@@ -439,30 +413,7 @@ public struct TapFeatureView: View {
           }
         }
       
-      // Presets
-      ScrollView(showsIndicators: false) {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
-          ForEach(viewStore.profilePresets.indexed(), id: \.1.id) { index, preset in
-            Button {
-              _ = viewStore.selectedPresets.contains(preset.id) ? viewStore.send(.deselectPreset(preset.id)) : viewStore.send(.selectPreset(preset.id))
-            } label: {
-              RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .foregroundColor(viewStore.selectedPresets.contains(preset.id) ? .purple : .tertiary)
-                .aspectRatio(1.25, contentMode: .fit)
-                .overlay(alignment: .center) {
-                  VStack {
-                    EmptyView()
-                      .padding(.bottom, 15)
-                    Text(preset.name)
-                      .bold()
-                  }
-                }
-            }
-            .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
-            .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
-          }
-        }
-      }
+      presets
         .swipeTabItem {
           Text("Presets")
             .bold()
@@ -494,20 +445,73 @@ public struct TapFeatureView: View {
       .animation(.interactiveSpring(), value: viewStore.selectedSocials.isEmpty)
     }
     .sheet(isPresented: viewStore.binding(get: \.showTapSheet, send: { $0 ? .shareButtonPressed : .dismissTapSheet })) {
-      TapSheet(store: store.scope(state: TapSheet.ViewState.init))
+      TapSheet(store: store)
     }
     .alert(store.scope(state: \.errorAlert), dismiss: .alertOKTapped)
   }
+  
+  var socials: some View {
+    ScrollView(showsIndicators: false) {
+      LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+        ForEach(viewStore.profileSocials.indexed(), id: \.1.id) { index, social in
+          Button {
+            _ = viewStore.selectedSocials.contains(social.id) ? viewStore.send(.deselectSocial(social.id)) : viewStore.send(.selectSocial(social.id))
+          } label: {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+              .foregroundColor(viewStore.selectedSocials.contains(social.id) ? Color(social: social) : .tertiary)
+              .aspectRatio(1.25, contentMode: .fit)
+              .overlay(alignment: .center) {
+                VStack {
+                  //image(social)
+                  Image("Whatsapp")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding([.trailing, .leading], 55)
+                  //.padding(.bottom, 5)
+                  Text(social: social)
+                    .foregroundColor(.primary)
+                    .bold()
+                }
+              }
+          }
+          .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+          .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
+        }
+      }
+    }
+  }
+  
+  var presets: some View {
+    ScrollView(showsIndicators: false) {
+      LazyVGrid(columns: [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)], spacing: 15) {
+        ForEach(viewStore.profilePresets.indexed(), id: \.1.id) { index, preset in
+          Button {
+            _ = viewStore.selectedPresets.contains(preset.id) ? viewStore.send(.deselectPreset(preset.id)) : viewStore.send(.selectPreset(preset.id))
+          } label: {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+              .foregroundColor(viewStore.selectedPresets.contains(preset.id) ? .purple : .tertiary)
+              .aspectRatio(1.25, contentMode: .fit)
+              .overlay(alignment: .center) {
+                VStack {
+                  EmptyView()
+                    .padding(.bottom, 15)
+                  Text(preset.name)
+                    .bold()
+                }
+              }
+          }
+          .padding(.leading, index.isMultiple(of: 2) ? 15 : 0)
+          .padding(.trailing, !index.isMultiple(of: 2) ? 15 : 0)
+        }
+      }
+    }
+  }
 }
 
-//struct TapFeatureView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    TapFeatureView(
-//      store: .init(
-//        initialState: .init(profile: .mock),
-//        reducer: tapFeatureReducer,
-//        environment: TapFeatureEnvironment(mainQueue: .immediate, beaconQueue: .unimplemented, beacon: .unimplemented, multipeer: .unimplemented, , haptic: .unimplemented, proximitySensor: .unimplemented, orientation: .unimplemented, openAppSettings: {})
-//      )
-//    )
-//  }
-//}
+struct TapFeatureView_Previews: PreviewProvider {
+  static var previews: some View {
+    TapFeatureView(
+      store: .init(initialState: .init(profile: .mock), reducer: TapFeature())
+    )
+  }
+}

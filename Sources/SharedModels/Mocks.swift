@@ -2,7 +2,6 @@ import Foundation
 import GeneralMocks
 import MapKit
 import Optics
-import PhoneNumberKit
 import Prelude
 
 public extension EmailAddress {
@@ -105,11 +104,11 @@ public extension Social {
     return .email(emailAddress ?? .mock)
   }
   
-  static func mockPhone() -> Social {
-    let manager = PhoneNumberKit()
-    let phoneNumber = try! manager.parse("+44 7565825633")
-    return .phone(phoneNumber)
-  }
+//  static func mockPhone() -> Social {
+//    let manager = PhoneNumberKit()
+//    let phoneNumber = try! manager.parse("+44 7565825633")
+//    return .phone(phoneNumber)
+//  }
 }
 
 
@@ -126,7 +125,7 @@ public extension Array where Element == Social {
     .mockLinkedIn(), //
     .mockAddress(), //
     .mockEmail(), //
-    .mockPhone(), //
+    //.mockPhone(), //
   ]
   
 }

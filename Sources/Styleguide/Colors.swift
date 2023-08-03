@@ -48,8 +48,8 @@ public extension Color {
       self = .green
     case .email:
       self = .cyan
-    case .phone:
-      self = .green
+//    case .phone:
+//      self = .green
     }
   }
 }

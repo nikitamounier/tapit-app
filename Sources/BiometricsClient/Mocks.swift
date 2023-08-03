@@ -1,15 +1,6 @@
-import ComposableArchitecture
+import Dependencies
 
 public extension BiometricsClient {
-  static let noop = Self(
-    authenticate: { .none }
-  )
+  static let previewValue = Self { .passed }
+  static let testValue = Self(authenticate: unimplemented("BiometricsClient.authenticate", placeholder: .cancelled))
 }
-
-#if DEBUG
-public extension BiometricsClient {
-  static let unimplemented = Self(
-    authenticate: { .unimplemented("\(Self.self).authenticate")}
-  )
-}
-#endif

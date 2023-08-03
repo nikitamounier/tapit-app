@@ -1,17 +1,15 @@
 import ComposableArchitecture
 
-public extension FileClient {
-  static let noop = Self(
-    load: { _ in .none },
-    save: { _, _ in .none },
-    delete: { _ in .none }
+extension FileClient {
+  public static let previewValue = Self(
+    load: { _ in throw CancellationError() },
+    save: { _, _ in },
+    delete: {_ in }
   )
-  
-#if DEBUG
-  static let unimplemented = Self(
-    load: { _ in .unimplemented("\(Self.self).load") },
-    save: { _, _ in .unimplemented("\(Self.self).save") },
-    delete: { _ in .unimplemented("\(Self.self).delete") }
+
+  public static let testValue = Self(
+    load: unimplemented("\(Self.self).load"),
+    save: unimplemented("\(Self.self).save"),
+    delete: unimplemented("\(Self.self).delete")
   )
-#endif
 }

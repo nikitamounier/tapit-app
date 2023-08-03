@@ -22,24 +22,8 @@ let package = Package(
       targets: ["BiometricsClient"]
     ),
     .library(
-      name: "BottomSheet",
-      targets: ["BottomSheet"]
-    ),
-    .library(
       name: "CombineHelpers",
       targets: ["CombineHelpers"]
-    ),
-    .library(
-      name: "ComposablePhoneNumberValidation",
-      targets: ["ComposablePhoneNumberValidation"]
-    ),
-    .library(
-      name: "ExpirationClient",
-      targets: ["ExpirationClient"]
-    ),
-    .library(
-      name: "HapticClient",
-      targets: ["HapticClient"]
     ),
     .library(
       name: "FileClient",
@@ -48,6 +32,10 @@ let package = Package(
     .library(
       name: "GeneralMocks",
       targets: ["GeneralMocks"]
+    ),
+    .library(
+      name: "HapticClient",
+      targets: ["HapticClient"]
     ),
     .library(
       name: "HistoryFeature",
@@ -124,10 +112,6 @@ let package = Package(
       .upToNextMajor(from: "0.4.0")
     ),
     .package(
-      url: "https://github.com/marmelroy/PhoneNumberKit",
-      .upToNextMajor(from: "3.3.3")
-    ),
-    .package(
       url: "https://github.com/nikitamounier/swift-nonempty.git",
       branch: "main"
     ),
@@ -181,32 +165,8 @@ let package = Package(
       ]
     ),
     .target(
-      name: "BottomSheet",
-      dependencies: []
-    ),
-    .target(
       name: "CombineHelpers",
       dependencies: []
-    ),
-    .target(
-      name: "ComposablePhoneNumberValidation",
-      dependencies: [
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-        .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
-      ]
-    ),
-    .testTarget(
-      name: "ComposablePhoneNumberValidationTests",
-      dependencies: [
-        "ComposablePhoneNumberValidation"
-      ]
-    ),
-    .target(
-      name: "ExpirationClient",
-      dependencies: [
-        "SharedModels",
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-      ]
     ),
     .target(
       name: "HapticClient",
@@ -228,7 +188,6 @@ let package = Package(
       name: "HistoryFeature",
       dependencies: [
         "HapticClient",
-        "ExpirationClient",
         "OpenSocialClient",
         "SentProfileFeature",
         "SharedModels",
@@ -309,7 +268,6 @@ let package = Package(
       dependencies: [
         "GeneralMocks",
         .product(name: "Optics", package: "swift-prelude"),
-        .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
       ]
     ),
     .testTarget(
@@ -385,7 +343,6 @@ let package = Package(
     .target(
       name: "UserProfileFeature",
       dependencies: [
-        "BottomSheet",
         "HapticClient",
         "ImageLibraryClient",
         "OpenSocialClient",

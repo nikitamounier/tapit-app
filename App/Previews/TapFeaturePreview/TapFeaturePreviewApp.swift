@@ -14,16 +14,16 @@ struct TapFeaturePreviewApp: App {
 
 let nikita: [Social] = [
   .mockInstagram(name: "nikitamounier"),
-  .mockPhone(),
+//  .mockPhone(),
   .mockEmail(name: "nikita.mounier@gmail.com"),
   .mockTwitter(name: "nikitamounier")
 ]
 
 let receivedProfile = UserProfile(id: UUID(), name: "Nikita Mounier", profileImage: ProfileImage(UIImage(systemName: "person.fill")!), socials: nikita)
 
-let state = TapFeatureState(
+let state = TapFeature.State(
   profile: .mock,
-  presets: [],
+  presets: [.init(name: "Public", socials: [UserProfile.mock.socials[0].id, UserProfile.mock.socials[2].id, UserProfile.mock.socials[7].id])],
   currentSection: .socials,
   selectedSocials: [],
   selectedPresets: [],
@@ -37,18 +37,7 @@ struct TapFeaturePreview: View {
     var body: some View {
         NavigationView {
             TapFeatureView(
-                store: .init(
-                    initialState: state,
-                    reducer: tapFeatureReducer,
-                    environment: .init(
-                        mainQueue: .main,
-                        beacon: .live,
-                        multipeer: .live,
-                        haptic: .live,
-                        proximitySensor: .live,
-                        orientation: .live
-                    )
-                )
+              store: .init(initialState: state, reducer: TapFeature())
             )
             .navigationTitle(Text("Tap It"))
           #if DEBUG

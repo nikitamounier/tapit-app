@@ -6,33 +6,21 @@ extension FileClient {
     .urls(for: .documentDirectory, in: .userDomainMask)
     .first!
   
-  public static let live = Self(
+  public static let liveValue = Self(
     load: { fileName in
-        .catching {
-          try Data(
-            contentsOf: documentDirectory
-              .appendingPathComponent(fileName)
-              .appendingPathExtension("json")
-          )
-        }
+      try Data(
+        contentsOf: documentDirectory.appendingPathComponent(fileName).appendingPathExtension("json")
+      )
     },
     save: { fileName, data in
-        .fireAndForget {
-          _ = try? data.write(
-            to: documentDirectory
-              .appendingPathExtension(fileName)
-              .appendingPathExtension("json")
-          )
-        }
+      try data.write(
+        to: documentDirectory.appendingPathComponent(fileName).appendingPathExtension("json")
+      )
     },
     delete: { fileName in
-        .fireAndForget {
-          try? FileManager.default.removeItem(
-            at: documentDirectory
-              .appendingPathComponent(fileName)
-              .appendingPathExtension("json")
-          )
-        }
+      try FileManager.default.removeItem(
+        at: documentDirectory.appendingPathComponent(fileName).appendingPathExtension("json")
+      )
     }
   )
 }

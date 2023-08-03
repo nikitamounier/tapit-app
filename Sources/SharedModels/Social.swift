@@ -1,6 +1,5 @@
 import Foundation
 import MapKit
-@_exported import PhoneNumberKit
 import SwiftUI
 
 public enum Social: Codable, Hashable, Identifiable, Equatable {
@@ -15,7 +14,7 @@ public enum Social: Codable, Hashable, Identifiable, Equatable {
   case linkedIn(URLComponents)
   case address(Coordinate)
   case email(EmailAddress)
-  case phone(PhoneNumber)
+  //case phone(PhoneNumber)
   
   public var id: Int {
     self.hashValue
@@ -79,8 +78,8 @@ public extension Text {
       self.init("Address")
     case .email:
       self.init("Email")
-    case .phone:
-      self.init("Phone")
+//    case .phone:
+//      self.init("Phone")
     }
   }
 }
